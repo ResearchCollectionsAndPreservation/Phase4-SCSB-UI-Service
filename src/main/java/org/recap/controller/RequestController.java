@@ -165,8 +165,8 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/first")
-    public RequestForm searchFirst(RequestForm requestForm) {
-        System.out.println("working");
+    public RequestForm searchFirst(@RequestBody RequestForm requestForm) {
+        requestForm.setPageNumber(0);
         return setSearch(requestForm);
         //return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
     }
@@ -180,8 +180,8 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/last")
-    public RequestForm searchLast(RequestForm requestForm) {
-        disableRequestSearchInstitutionDropDown(requestForm);
+    public RequestForm searchLast(@RequestBody RequestForm requestForm) {
+        //disableRequestSearchInstitutionDropDown(requestForm);
         requestForm.setPageNumber(requestForm.getTotalPageCount() - 1);
         return searchAndSetResults(requestForm);
        /* model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
@@ -198,9 +198,8 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/previous")
-    public RequestForm searchPrevious(@Valid @ModelAttribute("requestForm") RequestForm requestForm,
-                                      BindingResult result,
-                                      Model model) {
+    public RequestForm searchPrevious(@RequestBody RequestForm requestForm) {
+        requestForm.setPageNumber(requestForm.getPageNumber()-1);
         return search(requestForm);
     }
 
@@ -213,7 +212,8 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/next")
-    public RequestForm searchNext(@Valid @ModelAttribute("requestForm") RequestForm requestForm) {
+    public RequestForm searchNext(@RequestBody RequestForm requestForm) {
+        requestForm.setPageNumber(requestForm.getPageNumber()+1);
         return search(requestForm);
     }
 
@@ -226,10 +226,8 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/requestPageSizeChange")
-    public RequestForm onRequestPageSizeChange(@Valid @ModelAttribute("requestForm") RequestForm requestForm,
-                                               BindingResult result,
-                                               Model model) {
-        disableRequestSearchInstitutionDropDown(requestForm);
+    public RequestForm onRequestPageSizeChange(@RequestBody RequestForm requestForm) {
+        //disableRequestSearchInstitutionDropDown(requestForm);
         requestForm.setPageNumber(getPageNumberOnPageSizeChange(requestForm));
         return searchAndSetResults(requestForm);
         /*model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
@@ -274,8 +272,8 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/loadSearchRequest")
-    public RequestForm loadSearchRequest(Model model, HttpServletRequest request) {
-        UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+    public RequestForm loadSearchRequest() {
+        UserDetailsForm userDetails = new UserDetailsForm(4,false,false,true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);
         return setRequestAttribute(requestForm);
@@ -430,9 +428,7 @@ public class RequestController extends RecapController {
      * @return the string
      */
     @PostMapping("/cancelRequest")
-    public String cancelRequest(@Valid @ModelAttribute("requestForm") RequestForm requestForm,
-                                BindingResult result,
-                                Model model) {
+    public String cancelRequest(@RequestBody RequestForm requestForm) {
         JSONObject jsonObject = new JSONObject();
         String requestStatus = null;
         String requestNotes = null;
@@ -461,9 +457,7 @@ public class RequestController extends RecapController {
      * Resubmit the exception request. Creates a new request with the same data.
      */
     @PostMapping("/resubmitRequest")
-    public String resubmitRequest(@RequestBody RequestForm requestForm,
-                                  BindingResult result,
-                                  Model model) {
+    public String resubmitRequest(@RequestBody RequestForm requestForm) {
         JSONObject jsonObject = new JSONObject();
         try {
             ReplaceRequest replaceRequest = new ReplaceRequest();
@@ -632,8 +626,8 @@ public class RequestController extends RecapController {
     }
 
     private RequestForm setSearch(RequestForm requestForm) {
-        requestForm = disableRequestSearchInstitutionDropDown(requestForm);
-        requestForm.resetPageNumber();
+        //requestForm = disableRequestSearchInstitutionDropDown(requestForm);
+        requestForm.setPageNumber(0);
         return searchAndSetResults(requestForm);
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
     }
