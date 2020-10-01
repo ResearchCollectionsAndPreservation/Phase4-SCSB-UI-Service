@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+	<appender name="jsonConsoleAppender"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<timestamp>
+					<timeZone>US/Eastern</timeZone>
+				</timestamp>
+				<version />
+				<logLevel />
+				<message />
+				<loggerName />
+				<threadName />
+				<context />
+				<pattern>
+					<omitEmptyFields>true</omitEmptyFields>
+					<pattern>
+						{
+						"trace": {
+						"trace_id": "%mdc{X-B3-TraceId}",
+						"span_id": "%mdc{X-B3-SpanId}",
+						"parent_span_id": "%mdc{X-B3-ParentSpanId}",
+						"exportable": "%mdc{X-Span-Export}"
+						}
+						}
+					</pattern>
+				</pattern>
+				<mdc>
+					<excludeMdcKeyName>traceId</excludeMdcKeyName>
+					<excludeMdcKeyName>spanId</excludeMdcKeyName>
+					<excludeMdcKeyName>parentId</excludeMdcKeyName>
+					<excludeMdcKeyName>spanExportable</excludeMdcKeyName>
+					<excludeMdcKeyName>X-B3-TraceId</excludeMdcKeyName>
+					<excludeMdcKeyName>X-B3-SpanId</excludeMdcKeyName>
+					<excludeMdcKeyName>X-B3-ParentSpanId</excludeMdcKeyName>
+					<excludeMdcKeyName>X-Span-Export</excludeMdcKeyName>
+				</mdc>
+				<stackHash>
+					<fieldName>exception-hash</fieldName>
+				</stackHash>
+				<provider class="org.recap.CustomStackTraceJsonProvider">
+					<fieldName>stack_trace</fieldName>
+					<throwableConverter
+						class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+						<shortenedClassNameLength>short</shortenedClassNameLength>
+						<maxDepthPerThrowable>short</maxDepthPerThrowable>
+						<maxLength>short</maxLength>
+						<rootCauseFirst>true</rootCauseFirst>
+						<exclude>sun\.reflect\..*\.invoke.*</exclude>
+					</throwableConverter>
+				</provider>
+			</providers>
+		</encoder>
+	</appender>
+
+    <appender name="FILE_ROLLER_DATE_SIZE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/recap-vol/logs/phase4-scsb-ui/phase4-scsb-ui.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>/recap-vol/logs/phase4-scsb-ui/phase4-scsb-ui-%d{yyyyMMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <!-- or whenever the file size reaches 5MB -->
+            <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <charset>UTF-8</charset>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %d{yyyy-MM-dd HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} - %msg%n
+                </Pattern>
+            </layout>         
+        </encoder>
+    </appender>
+    
+	<root level="INFO">
+		<appender-ref ref="jsonConsoleAppender" />
+		<appender-ref ref="FILE_ROLLER_DATE_SIZE" />
+	</root>
+
+</configuration>
