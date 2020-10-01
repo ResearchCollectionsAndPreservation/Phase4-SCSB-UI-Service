@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ReCAP</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" type="text/css" th:href="@{../lib/Bootstrap/css/bootstrap.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{../lib/DataTables/css/dataTables.bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{../css/styles.css}"/>
+    <link rel="stylesheet" th:href="@{../css/collection.css}"/>
+    <script type="text/javascript" th:src="@{../lib/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{../lib/Bootstrap/js/bootstrap.js}"></script>
+    <script type="text/javascript" th:src="@{../lib/Bootstrap/js/bootstrapValidator.js}"></script>
+    <script type="text/javascript" th:src="@{../lib/DataTables/js/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{../lib/DataTables/js/dataTables.bootstrap.js}"></script>
+    <script type="text/javascript" th:src="@{../lib/Buttons/js/buttons.colVis.js}"></script>
+    <script type="text/javascript" th:src="@{../js/main.js}"></script>
+    <script type="text/javascript" th:src="@{../js/login.js}"></script>
+    <script type="text/javascript" th:src="@{../js/formvalidation.js}"></script>
+    <script type="text/javascript" th:async="true" th:src="@{../js/twitter-widgets.js}" charset="utf-8"></script>
+</head>
+<body class="login-page">
+<div class="login-content content-top" style="padding-bottom: 60px;position:relative;">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 padding-15">
+                <div class="col-sm-4">
+                    <div class="row recap-logo-outerwrapper margin-btm-10">
+                        <div class="recap-logo-container">
+                            <a href="http://recap.princeton.edu/"><img src="images/recap-logo.png" class="recap-logo"
+                                                                       alt="ReCAP"/></a>
+                            <h3>The Research Collections And <br/>Preservation Consortium</h3>
+                        </div>
+                    </div>
+                    <div class="twitter-block row">
+                        <div class="col-sm-12">
+                            <a class="twitter-timeline" data-height="350" href="https://twitter.com/recaplib">Tweets by
+                                recaplib</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 col-md-1 col-lg-2">
+                </div>
+                <div class="col-sm-6 col-md-7 col-lg-6">
+                    <!-- Login Section-->
+                    <div class="login-wrapper">
+                        <div hidden="true">
+                            <form id="logoutForm" name="logoutForm" action="#" th:action="@{/logout}" method="post" th:object="${userForm}">
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}" />
+                                <button id="logoutButton" name="logoutButton" type="submit" value="Logout" class="btn btn-default themed-button btn-primary">Ok</button>
+                            </form>
+                        </div>
+                        <form class="form-horizontal"  method="get" th:action="@{/login-scsb}" action="#" id="home_login"
+                              th:object="${userForm}" style="padding-bottom: 30px;">
+                            <h2 class="heading">Login</h2>
+
+                            <div class="form-group">
+                                <div class="col-md-3 text-right">
+                                    <label for="institution" class="margin-top-10">Institution</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="select-holder">
+                                        <select class="form-control themed-input themed-select" id="institution"
+                                                th:field="*{institution}"
+                                                th:onchange="'javascript:toggleInstitutionValidation()'">
+                                            <option value="">Select One</option>
+                                            <option value="PUL">Princeton</option>
+                                            <option value="CUL">Columbia</option>
+                                            <option value="NYPL">New York Public Library</option>
+                                            <option value="HTC">HTC</option>
+                                        </select>
+                                    </div>
+                                    <p id="institutionError" th:if="${#fields.hasErrors('institution')}"
+                                       class="label label-danger" th:errors="*{institution}"><span
+                                            id="errorMessageSpanId" th:text="${e.message}"></span></p>
+                                    <span id="institutionErrorId" style="color: red; display : none ;">Institution is required.</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-right"></div>
+                                <div class="col-md-9">
+                                    <div class="login-form-button-wrapper  margin-btm-10">
+                                        <button type="submit" id="submitBtn" class="btn btn-default themed-button">
+                                            Submit
+                                        </button>
+                                        <div id="emailBtn" data-toggle="modal" data-target="#emailModal" style="padding-left: 200px;margin-top: -35px;">
+                                            <a>Get in touch with us</a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal -->
+                                    <div id="emailModal" class="modal fade" role="dialog">
+                                        <div class="modal-dialog">
+
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Email</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Princeton users, Role administration, please contact : <a onclick="closeEmailDailog()" th:href="'mailto:'+${@environment.getProperty('scsb.mailTo.pul.roleAdmin')}" target="_top"><span th:inline="text">[[${@environment.getProperty('scsb.mailTo.pul.roleAdmin')}]]</span></a></p>
+                                                    <p>Princeton users, Technical support, please contact   : <a onclick="closeEmailDailog()" th:href="'mailto:'+${@environment.getProperty('scsb.mailTo.pul.technicalSupport')}" target="_top"><span th:inline="text">[[${@environment.getProperty('scsb.mailTo.pul.technicalSupport')}]]</span></a></p>
+                                                    <p>Columbia users, contact  : <a onclick="closeEmailDailog()" th:href="'mailto:'+${@environment.getProperty('scsb.mailTo.cul')}" target="_top"><span th:inline="text">[[${@environment.getProperty('scsb.mailTo.cul')}]]</span></a></p>
+                                                    <p>NYPL users, contact      : <a onclick="closeEmailDailog()" th:href="'mailto:'+${@environment.getProperty('scsb.mailTo.nypl')}" target="_top"><span th:inline="text">[[${@environment.getProperty('scsb.mailTo.nypl')}]]</span></a></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal" id="emailCloseButton">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="loginModal" class="modal fade create-request-details" tabindex="-2" role="dialog" aria-labelledby="loginLargeModalLabel" data-keyboard="false" data-backdrop="static">
+                                <div class="modal-dialog" role="document">
+
+                                    <div id="loginModalContent" class="modal-content">
+                                        <div class="modal-header bg-success">
+                                            <h2 class="modal-title text-center text-success" id="loginModalLabel">Login Error</h2>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <span  id="errorMsgs" name="errorMsgs" th:utext="*{errorMessage}"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" value="Logout" class="btn btn-default themed-button btn-primary" onclick="manualLogout()">Ok</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <!-- Login Section-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content-bottom margin-top-20 margin-btm-20" style="padding-bottom: 60px;">
+    <div class="container">
+        <div class="row">
+            <div class="recap-members-logos">
+                <div class="col-sm-9">
+                    <h3 class="text-center margin-btm-20">Members of ReCAP</h3>
+                    <div class="row">
+                        <div class="col-sm-5 margin-top-10 padding-right-50">
+                            <a href="http://www.columbia.edu/"><img alt="columbia university"
+                                                                    src="images/member-logo/columbia-logo.png"
+                                                                    class="member-columbia-univ-logo"/></a>
+                        </div>
+                        <div class="col-sm-4 margin-top-10 padding-right-50 padding-left-50">
+                            <a href="http://www.princeton.edu/main/"><img alt="princeton university"
+                                                                          src="images/member-logo/princeton-logo.png"
+                                                                          class="member-princeton-univ-logo"/></a>
+                        </div>
+
+                        <div class="col-sm-3 padding-left-50">
+                            <a href="https://www.nypl.org/"><img alt="Newyork Public Libraray"
+                                                                 src="images/member-logo/nypl-logo.png"
+                                                                 class="member-ny-public-logo"/></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <h3 class="margin-btm-0">ReCAP</h3>
+                    <ul class="border-style-left">
+                        <li><a href="https://recap.princeton.edu/" target="_blank">Home</a></li>
+                        <li><a href="https://recap.princeton.edu/facility-storage" target="_blank">Facility &amp;
+                            Storage</a></li>
+                        <li><a href="https://recap.princeton.edu/operations-statistics" target="_blank">Operations &amp;
+                            Statistics</a></li>
+                        <li><a href="https://recap.princeton.edu/collections-services" target="_blank">Collections &amp;
+                            Services</a></li>
+                        <li><a href="https://recap.princeton.edu/information-publications" target="_blank">Information
+                            &amp; Publications</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<footer id="footerForLoginPage" style="position:relative;bottom:0;width:100%;height:60px;top:20px;padding-top:15px;">
+    <div class="text-center container-fluid">
+        <p><span class="text-center">Created and maintained by HTC Global Services. E-mail: <a style="color:inherit;" th:href="'mailto:'+${@environment.getProperty('scsb.mailTo.htc')}" target="_top"><span th:inline="text">[[${@environment.getProperty('scsb.mailTo.htc')}]]</span></a></span></p>
+        </div>
+</footer>
+</html>

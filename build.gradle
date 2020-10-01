@@ -1,0 +1,129 @@
+buildscript {
+	ext {
+		springBootVersion = '2.3.1.RELEASE'
+		set('springCloudVersion', "Hoxton.SR5")
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id "org.sonarqube" version "2.8"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
+
+//added to accept systemproperties while executing gradlew test cmd
+test {
+	systemProperties = System.properties
+}
+
+bootJar {
+	archiveBaseName = 'Phase4-SCSB-UI'
+	archiveVersion = '0.0.1-SNAPSHOT'
+	layered()
+}
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	/*implementation('org.recap:phase4-scsb-common:1.0') {
+		version  {
+			branch = 'development'
+		}
+	}*/
+	// compile fileTree(dir: System.properties["dir"], include:  System.properties["commonjar"])
+	compile fileTree(dir: '/data/commonjar', include: '*1.2.jar')
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+	implementation 'org.json:json:20200518'
+	implementation 'com.google.code.gson:gson:2.8.6'
+
+	implementation('commons-beanutils:commons-beanutils:1.9.4')
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation("org.springframework.boot:spring-boot-starter-data-rest")
+	implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+	implementation('org.springframework.boot:spring-boot-starter-web-services')
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('org.springframework.security:spring-security-jwt')
+	implementation('org.springframework.security:spring-security-cas')
+	implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.6.RELEASE')
+	implementation('org.springframework.security.oauth:spring-security-oauth2:2.4.1.RELEASE')
+	implementation('org.springframework.security:spring-security-oauth2-client:5.3.2.RELEASE')
+	implementation('org.springframework.data:spring-data-solr:4.1.7.RELEASE')
+			{exclude module: 'solr-solrj'; exclude module: 'solr-data-commons'; exclude module: 'spring-data-jpa'}
+	implementation('org.codehaus.jettison:jettison:1.4.1')
+    implementation('org.springframework.data:spring-data-commons')
+	implementation('org.springframework.data:spring-data-jpa')
+	implementation('com.google.guava:guava:29.0-jre') {exclude module: "solr-solrj"}
+  	implementation('org.apache.solr:solr-solrj:8.5.1')
+	implementation('info.freelibrary:freelib-marc4j:2.6.12')
+	implementation(group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0')
+	implementation('io.springfox:springfox-swagger-ui:2.9.2')
+	implementation('io.springfox:springfox-swagger2:2.9.2')
+  //implementation('org.codehaus.jackson:jackson-mapper-asl:1.9.13')
+	implementation('org.apache.shiro:shiro-core:1.5.2')
+	implementation('javax.validation:validation-api:2.0.1.Final')
+	implementation('org.projectlombok:lombok:1.18.12')
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+	implementation 'org.springframework.amqp:spring-rabbit'
+	implementation 'net.logstash.logback:logstash-logback-encoder:6.4'
+	implementation 'com.google.code.gson:gson:2.8.0'
+	annotationProcessor('org.projectlombok:lombok:1.18.12')
+	testImplementation('org.projectlombok:lombok:1.18.12')
+	testAnnotationProcessor('org.projectlombok:lombok:1.18.12')
+	runtimeOnly('mysql:mysql-connector-java')
+	testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.7'
+	testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.7'
+	testCompile 'junit:junit:4.12'
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+jacocoTestReport {
+	group = "Reporting"
+	reports {
+		xml.enabled true
+		csv.enabled false
+		html.enabled = true
+		html.destination file ("${buildDir}/jacocoHtml")
+	}
+}
+
+task scsbUiJavadocs(type: Javadoc) {
+	source = sourceSets.main.java
+	classpath = configurations.compile
+	options.addStringOption('Xdoclint:none', '-quiet')
+	String home = System.getProperty("user.home");
+	destinationDir =  new File(home+"/scsb-javadocs/scsb-ui");
+
+}
+
+bootJar {
+	layered()
+}

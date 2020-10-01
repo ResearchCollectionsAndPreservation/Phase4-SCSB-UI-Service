@@ -1,0 +1,49 @@
+<div id="recapPageHeaderId" name="recapPageHeaderName" xmlns:th="http://www.w3.org/1999/xhtml">
+    <header class="">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="row">
+                        <div class="col-sm-6 ">
+                            <div class="row">
+                                <div class="dashboard_recap col-sm-4">
+                                    <a href="http://recap.princeton.edu/"><img th:src="@{../images/recap-logo.png}" class="" alt="ReCAP"/></a>
+                                    <h1 th:text="${@environment.getProperty('ui.diplay')}"></h1>
+                                </div>
+                                <div class="dashboard_recaptext col-sm-8">
+                                    The Research Collections And<br/>Preservation Consortium
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="header-info">
+                                <div class="row margin-top-15 text-right">
+                                    <div class="col-xs-12">
+                                        <div class="pull-right margin-left-30">
+                                            Welcome <span th:text="${session.userName}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row margin-top-15 text-right" style="margin-bottom: 15px;">
+                                    <div class="col-xs-12">
+                                        <div class="pull-right  margin-left-30">
+                                            <form action="#" th:action="@{/logout}" method="post">
+                                                <input type="hidden"
+                                                       th:name="${_csrf.parameterName}"
+                                                       th:value="${_csrf.token}" />
+                                                <button type="submit" value="Logout" class="btn logout-login logout" style="background-color: transparent;box-shadow: none;outline: none;color: #0c0c0c"><span></span>Logout</button>
+                                            </form>
+                                        </div>
+                                        <div class="pull-right" style="margin-top: 5px;">
+                                            <a href="https://htcrecap.atlassian.net/wiki/display/RTG/Search" class="" target="_blank"><span class="glyphicon glyphicon-question-sign"></span> Help</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
