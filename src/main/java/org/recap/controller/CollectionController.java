@@ -121,7 +121,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/displayRecords")
     public CollectionForm displayRecords(@RequestBody CollectionForm collectionForm) throws Exception {
-            return searchAndSetResults(collectionForm);
+        return searchAndSetResults(collectionForm);
     }
 
     /**
@@ -140,7 +140,7 @@ public class CollectionController extends AbstractController {
         //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         UserDetailsForm userDetailsForm = new UserDetailsForm(1,true,true,true);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
-         CollectionForm collectionFormN =populateCollectionForm(collectionForm, bibliographicMarcForm);
+        CollectionForm collectionFormN =populateCollectionForm(collectionForm, bibliographicMarcForm);
         collectionFormN.setAvailability("In Recap");
         collectionFormN.setBarcode(collectionForm.getItemBarcodes());
         collectionFormN.setCustomerCode("CU");
@@ -180,7 +180,7 @@ public class CollectionController extends AbstractController {
         }
         collectionForm.setAllowEdit(true);
         return collectionForm;
-       // return new ModelAndView("collection :: #itemDetailsSection", RecapConstants.COLLECTION_FORM, collectionForm);
+        // return new ModelAndView("collection :: #itemDetailsSection", RecapConstants.COLLECTION_FORM, collectionForm);
     }
 
     /**
@@ -227,7 +227,6 @@ public class CollectionController extends AbstractController {
                 collectionForm.setWarningMessage(warningMessage + " " + RecapConstants.WARNING_MESSAGE_DEACCESSION_REQUEST_BORROWED_ITEM);
             }
         }
-        collectionForm.setWarningMessage(RecapConstants.WARNING_MESSAGE_RECALL_BORROWED_ITEM);
         return collectionForm;
         //return new ModelAndView("collection :: #itemDetailsSection", RecapConstants.COLLECTION_FORM, collectionForm);
     }

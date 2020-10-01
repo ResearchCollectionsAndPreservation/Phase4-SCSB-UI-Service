@@ -1,10 +1,7 @@
 package org.recap.controller;
 
-import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -19,7 +16,6 @@ import org.recap.model.jpa.ItemEntity;
 import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.request.ItemRequestInformation;
 import org.recap.model.request.ItemResponseInformation;
-import org.recap.model.request.PopulateItem;
 import org.recap.model.request.ReplaceRequest;
 import org.recap.model.search.RequestForm;
 import org.recap.model.search.SearchResultRow;
@@ -290,7 +286,7 @@ public class RequestController extends RecapController {
      * @return the string
      * @throws JSONException the json exception
      */
-    
+
     @PostMapping("/populateItem")
     public String populateItem(@RequestBody RequestForm requestForm) throws JSONException {
         return requestService.populateItemForRequest(requestForm);
@@ -353,7 +349,7 @@ public class RequestController extends RecapController {
                     requestForm.setErrorMessage((String) errorMessage);
                     requestForm.setShowRequestErrorMsg(true);
                     return requestForm;
-                   // return new ModelAndView(RecapConstants.CREATE_REQUEST_SECTION, RecapConstants.REQUEST_FORM, requestForm);
+                    // return new ModelAndView(RecapConstants.CREATE_REQUEST_SECTION, RecapConstants.REQUEST_FORM, requestForm);
                 }
             }
 
