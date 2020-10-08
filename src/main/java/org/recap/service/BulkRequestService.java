@@ -77,17 +77,18 @@ public class BulkRequestService {
     private String scsbUrl;
 
 
-    public void processCreateBulkRequest(BulkRequestForm bulkRequestForm, HttpServletRequest request) {
+    public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm) {
         try {
             if (processPatronValidation(bulkRequestForm)){
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bulkRequestForm.getRequestingInstitution());
                 MultipartFile multipartFile = bulkRequestForm.getFile();
                 byte[] bytes = multipartFile.getBytes();
-                HttpSession session = request.getSession(false);
+                /*HttpSession session = request.getSession(false);
                 Integer userId = (Integer) session.getAttribute(RecapConstants.USER_ID);
-                Optional<UsersEntity> usersEntity = userDetailsRepository.findById(userId);
+                Optional<UsersEntity> usersEntity = userDetailsRepository.findById(userId);*/
                 BulkRequestItemEntity bulkRequestItemEntity = new BulkRequestItemEntity();
-                bulkRequestItemEntity.setCreatedBy(usersEntity.isPresent() ? usersEntity.get().getLoginId() : "");
+               /* bulkRequestItemEntity.setCreatedBy(usersEntity.isPresent() ? usersEntity.get().getLoginId() : "");*/
+                bulkRequestItemEntity.setCreatedBy("Dinakar");
                 bulkRequestItemEntity.setCreatedDate(new Date());
                 bulkRequestItemEntity.setLastUpdatedDate(new Date());
                 bulkRequestItemEntity.setEmailId(getEncryptedPatronEmailId(bulkRequestForm.getPatronEmailAddress()));
@@ -115,6 +116,7 @@ public class BulkRequestService {
         } catch (IOException e) {
             logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
+        return bulkRequestForm;
     }
 
     private Boolean processPatronValidation(BulkRequestForm bulkRequestForm) {
@@ -126,37 +128,39 @@ public class BulkRequestService {
         return responseEntity.getBody();
     }
 
-    public void processSearchRequest(BulkRequestForm bulkRequestForm) {
+    public BulkRequestForm processSearchRequest(BulkRequestForm bulkRequestForm) {
         try{
             bulkRequestForm.setPageNumber(0);
             bulkRequestForm.setPageSize(10);
             if (CollectionUtils.isNotEmpty(bulkRequestForm.getBulkSearchResultRows())){
                 bulkRequestForm.getBulkSearchResultRows().clear();
             }
-            getPaginatedSearchResults(bulkRequestForm);
+            bulkRequestForm = getPaginatedSearchResults(bulkRequestForm);
         }catch (Exception e){
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
+        return bulkRequestForm;
     }
 
 
-    public void processOnPageSizeChange(BulkRequestForm bulkRequestForm) {
+    public BulkRequestForm processOnPageSizeChange(BulkRequestForm bulkRequestForm) {
         try {
             bulkRequestForm.setPageNumber(getPageNumberOnPageSizeChange(bulkRequestForm));
-            getPaginatedSearchResults(bulkRequestForm);
+            bulkRequestForm = getPaginatedSearchResults(bulkRequestForm);
         } catch (ParseException e) {
             logger.error(RecapCommonConstants.LOG_ERROR,e);
         }
+        return bulkRequestForm;
     }
 
 
-    public void getPaginatedSearchResults(BulkRequestForm bulkRequestForm){
+    public BulkRequestForm getPaginatedSearchResults(BulkRequestForm bulkRequestForm){
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
-        buildBulkSearchResultRows(bulkRequestForm,bulkRequestItemEntities);
+       return buildBulkSearchResultRows(bulkRequestForm,bulkRequestItemEntities);
     }
 
 
-    private void buildBulkSearchResultRows(BulkRequestForm bulkRequestForm, Page<BulkRequestItemEntity> bulkRequestItemEntities) {
+    private BulkRequestForm buildBulkSearchResultRows(BulkRequestForm bulkRequestForm, Page<BulkRequestItemEntity> bulkRequestItemEntities) {
         if (bulkRequestItemEntities.getTotalElements() > 0) {
             List<BulkRequestItemEntity> bulkRequestItemEntityList = bulkRequestItemEntities.getContent();
             List<BulkSearchResultRow> bulkSearchResultRows = new ArrayList<>();
@@ -187,6 +191,7 @@ public class BulkRequestService {
             bulkRequestForm.setMessage("No Search Results Found");
         }
         bulkRequestForm.setShowResults(true);
+        return bulkRequestForm;
     }
 
 
@@ -201,9 +206,10 @@ public class BulkRequestService {
         return pageNumber;
     }
 
-    public void processDeliveryLocations(BulkRequestForm bulkRequestForm) {
+    public BulkRequestForm processDeliveryLocations(BulkRequestForm bulkRequestForm) {
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bulkRequestForm.getRequestingInstitution());
         bulkRequestForm.setDeliveryLocations(bulkCustomerCodeDetailsRepository.findByOwningInstitutionId(institutionEntity.getId()));
+        return bulkRequestForm;
     }
 
     private String getEncryptedPatronEmailId(String patronEmailAddress) {

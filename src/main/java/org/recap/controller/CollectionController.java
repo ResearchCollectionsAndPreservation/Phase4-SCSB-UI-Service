@@ -141,7 +141,7 @@ public class CollectionController extends AbstractController {
         UserDetailsForm userDetailsForm = new UserDetailsForm(1,true,true,true);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormN =populateCollectionForm(collectionForm, bibliographicMarcForm);
-        collectionFormN.setAvailability("In Recap");
+      /*  collectionFormN.setAvailability("In Recap");
         collectionFormN.setBarcode(collectionForm.getItemBarcodes());
         collectionFormN.setCustomerCode("CU");
         collectionFormN.setCollectionGroupDesignation(collectionForm.getCollectionGroupDesignation());
@@ -154,7 +154,7 @@ public class CollectionController extends AbstractController {
         customerCodeEntity1.setPwdDeliveryRestrictions("AC");
         customerCodeEntityList.add(customerCodeEntity);
         customerCodeEntityList.add(customerCodeEntity1);
-        collectionFormN.setDeliveryLocations(customerCodeEntityList);
+        collectionFormN.setDeliveryLocations(customerCodeEntityList);*/
         return collectionFormN;
     }
 
