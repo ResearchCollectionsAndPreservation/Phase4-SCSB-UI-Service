@@ -7,21 +7,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;import java.util.Map;
 
 @RefreshScope
 @RestController
+@RequestMapping("/ins")
 class MessageRestController {
     @Autowired
     PropertyUtil propertyUtil;
-    @GetMapping("/ins/{institutionCode}")
+    @GetMapping("/{institutionCode}")
     Map<String, Object> getValue(@PathVariable("institutionCode") String institutionCode) {
     JSONObject json  = propertyUtil.getPropertyByInstitution(institutionCode);
     Map<String, Object> response = json.toMap();
     return response;
 }
 
-    @GetMapping("/ins")
+    @GetMapping("/test")
    public String test() {
 
         return "Hello";
