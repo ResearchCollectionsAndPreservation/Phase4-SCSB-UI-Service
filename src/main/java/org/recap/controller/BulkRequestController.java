@@ -5,6 +5,7 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.request.DownloadReports;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.repository.jpa.BulkRequestDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -159,8 +160,8 @@ public class BulkRequestController extends AbstractController{
         return  bulkRequestService.processDeliveryLocations(bulkRequestForm);
     }
 
-    @GetMapping("/bulkRequest/downloadReports/{bulkRequestId}")
-    public void downloadReports(@PathVariable String bulkRequestId) throws Exception {
+    @GetMapping("/{bulkRequestId}")
+    public DownloadReports downloadReports(@PathVariable String bulkRequestId) throws Exception {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         BulkRequestItemEntity bulkRequestItemEntity = bulkRequestService.saveUpadatedRequestStatus(Integer.valueOf(bulkRequestId));
         String fileNameWithExtension = "Results_" + StringUtils.substringBefore(bulkRequestItemEntity.getBulkRequestFileName(), ".csv") + dateFormat.format(new Date()) + ".csv";
@@ -168,6 +169,12 @@ public class BulkRequestController extends AbstractController{
        // response.setContentLength(bulkRequestItemEntity.getBulkRequestFileData().length);
         //FileCopyUtils.copy(bulkRequestItemEntity.getBulkRequestFileData(), response.getOutputStream());
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
+        //return bulkRequestItemEntity.getBulkRequestFileData();
+        //return b.toString();
+        DownloadReports downloadReports = new DownloadReports();
+        downloadReports.setContent(bulkRequestItemEntity.getBulkRequestFileData());
+        downloadReports.setFileName(fileNameWithExtension);
+        return downloadReports;
     }
     
     private BulkRequestForm loadCreateRequestPage(BulkRequestForm bulkRequestForm) {
