@@ -219,6 +219,7 @@ public class ReportsUtil {
     public File exportIncompleteRecords(List<IncompleteReportResultsRow> incompleteReportResultsRows, String fileNameWithExtension) {
         File file = new File(fileNameWithExtension);
         CsvWriter csvOutput = null;
+
         if (CollectionUtils.isNotEmpty(incompleteReportResultsRows)){
             try (FileWriter fileWriter = new FileWriter(file)){
                 csvOutput = new CsvWriter(fileWriter, ',');

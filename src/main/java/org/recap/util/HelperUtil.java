@@ -132,11 +132,11 @@ public class HelperUtil {
         return headers;
     }
 
-    public static byte[] getFileContent(File csvFile, Model model, HttpServletResponse response, String fileNameWithExtension, String templateName) throws IOException {
+    public static byte[] getFileContent(File csvFile, String fileNameWithExtension, String templateName) throws IOException {
         byte[] fileContent = IOUtils.toByteArray(new FileInputStream(csvFile));
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameWithExtension + "\"");
-        response.setContentLength(fileContent.length);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, templateName);
+       // response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameWithExtension + "\"");
+        //response.setContentLength(fileContent.length);
+        //model.addAttribute(RecapCommonConstants.TEMPLATE, templateName);
         return fileContent;
     }
 

@@ -240,13 +240,11 @@ public class SearchRecordsController extends RecapController {
      * @throws Exception the exception
      */
     @PostMapping("/export")
-    public byte[] exportRecords(@RequestBody SearchRecordsRequest searchRecordsRequest, HttpServletResponse response,
-                                BindingResult result,
-                                Model model) throws Exception {
+    public byte[] exportRecords(@RequestBody SearchRecordsRequest searchRecordsRequest) throws Exception {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = "ExportRecords_" + dateFormat.format(new Date()) + ".csv";
         File csvFile = csvUtil.writeSearchResultsToCsv(searchRecordsRequest.getSearchResultRows(), fileNameWithExtension);
-        return HelperUtil.getFileContent(csvFile, model, response, fileNameWithExtension, RecapCommonConstants.SEARCH);
+        return HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.SEARCH);
     }
 
     /**
@@ -257,21 +255,12 @@ public class SearchRecordsController extends RecapController {
 
     @PostMapping("/pageChanges")
     public SearchRecordsResponse onPageSizeChange(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(getPageNumberOnPageSizeChange(searchRecordsRequest));
-        //int totalRecordsCount;
         Integer pageNumber = searchRecordsRequest.getPageNumber();
         searchRecordsRequest.setPageNumber(0);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-
-        //searchRecordsResponse.setPageNumber(getPageNumberOnPageSizeChange(searchRecordsRequest,searchRecordsResponse));
         if (searchRecordsResponse.getTotalPageCount() > 0 && pageNumber >= searchRecordsResponse.getTotalPageCount()) {
             pageNumber = searchRecordsResponse.getTotalPageCount() - 1;
         }
-        //searchRecordsResponse.setPageNumber(pageNumber);
-        //searchRecordsRequest.setPageNumber(getPageNumberOnPageSizeChange(searchRecordsResponse,searchRecordsRequest.getPageSize(),pageNumber));
-        //SearchRecordsResponse searchRecordsResponseN = searchRecordsPage(searchRecordsRequest);
-        //searchRecordsResponseN.setPageNumber(searchRecordsRequest.getPageNumber());
-        //return searchRecordsResponseN;
         searchRecordsRequest.setPageNumber(pageNumber);
         SearchRecordsResponse searchRecordsResponseNew = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponseNew.setPageNumber(pageNumber);

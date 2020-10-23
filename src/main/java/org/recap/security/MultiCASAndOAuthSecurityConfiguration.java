@@ -171,7 +171,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()./*antMatchers("/fonts/**").antMatchers("/images/**").antMatchers("/js/**")
-                .antMatchers("/css/**").antMatchers("/lib/**")*/antMatchers("/collection/**").antMatchers("/search/**").antMatchers("/request/**").antMatchers("/reports/**").antMatchers("/userRoles/**").antMatchers("/bulkRequest/**");
+                .antMatchers("/css/**").antMatchers("/lib/**")*/antMatchers("/collection/**").antMatchers("/search/**").antMatchers("/request/**").antMatchers("/reports/**").antMatchers("/userRoles/**").antMatchers("/bulkRequest/**").antMatchers("/roles/**");
     }
 
     /**
