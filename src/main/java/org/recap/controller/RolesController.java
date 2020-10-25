@@ -94,7 +94,7 @@ public class RolesController extends AbstractController {
      * @param rolesForm the roles form
      * @return the model and view
      */
-    @PostMapping("/loadCreateRole")
+    @PostMapping("/createRole")
     public RolesForm newRole(@RequestBody RolesForm rolesForm) {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
         if (!specialCharacterCheck) {
@@ -255,6 +255,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/previous")
     public RolesForm searchPrevious(@RequestBody RolesForm rolesForm) {
+        rolesForm.setPageNumber(rolesForm.getPageNumber()-1);
         return searchPage(rolesForm);
     }
 
@@ -266,6 +267,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/next")
     public RolesForm searchNext(@RequestBody RolesForm rolesForm) {
+        rolesForm.setPageNumber(rolesForm.getPageNumber()+1);
         return searchPage(rolesForm);
     }
 
@@ -291,7 +293,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/last")
     public RolesForm searchLast(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        rolesForm.setPageNumber(rolesForm.getTotalPageCount() - 1);
+        rolesForm.setPageNumber(rolesForm.getPageNumber() - 1);
         return setRolesForm(rolesForm);
     }
 
