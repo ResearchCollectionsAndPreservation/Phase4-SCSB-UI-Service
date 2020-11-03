@@ -75,6 +75,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/searchRoles")
     public RolesForm search(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
+        logger.info("searchRoles calling with the following payload:",rolesForm);
         return setRolesFormSearchResults(rolesForm);
     }
 
@@ -97,6 +98,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/createRole")
     public RolesForm newRole(@RequestBody RolesForm rolesForm) {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
+        logger.info("create Role calling with the following payload:",rolesForm);
         if (!specialCharacterCheck) {
             rolesForm.setErrorMessage(RecapConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
             rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(rolesForm.getNewPermissionNames()));
@@ -156,6 +158,7 @@ public class RolesController extends AbstractController {
                                     @RequestParam("roleName") String roleName,
                                     @RequestParam("roleDescription") String roleDescription,
                                     @RequestParam("editPermissionNames") String[] editPermissionNames) {
+        logger.info("edit Role calling:",roleName);
         RolesForm rolesForm = new RolesForm();
         //HttpSession session = request.getSession(false);
         rolesForm.setRoleId(roleId);
@@ -224,6 +227,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/delete")
     public RolesForm delete(@RequestBody RolesForm rolesForm) {
+        logger.info("deleting Role calling :",rolesForm);
         Optional<RoleEntity> roleEntity = rolesDetailsRepositorty.findById(rolesForm.getRoleId());
         if (roleEntity.isPresent()) {
             try {

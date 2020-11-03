@@ -1,6 +1,7 @@
 package org.recap.controller;
 
 import com.google.common.io.Files;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.recap.RecapCommonConstants;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.File;
+import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -251,22 +253,17 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/export")
     public DownloadReports exportIncompleteRecords(@RequestBody ReportsForm reportsForm) throws Exception {
+        DownloadReports downloadReports = new DownloadReports();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = RecapConstants.REPORTS_INCOMPLETE_EXPORT_FILE_NAME + reportsForm.getIncompleteRequestingInstitution() + "_" + dateFormat.format(new Date()) + ".csv";
         reportsForm.setExport(true);
         List<IncompleteReportResultsRow> incompleteReportResultsRows = reportsUtil.incompleteRecordsReportFieldsInformation(reportsForm);
-        //Test Code
         IncompleteReportResultsRow incompleteReportResultsRow = new IncompleteReportResultsRow();
-        incompleteReportResultsRow.setAuthor("Author");
-        incompleteReportResultsRow.setBarcode("12345A");
-        incompleteReportResultsRow.setCreatedDate(new Date().toString());
-        incompleteReportResultsRow.setCustomerCode("PUL");
-        incompleteReportResultsRow.setTitle("Dummy");
         incompleteReportResultsRows.add(incompleteReportResultsRow);
         File csvFile = reportsUtil.exportIncompleteRecords(incompleteReportResultsRows, fileNameWithExtension);
-        byte [] data = HelperUtil.getFileContent(csvFile,fileNameWithExtension, RecapCommonConstants.REPORTS);
-        DownloadReports downloadReports = new DownloadReports();
-        downloadReports.setContent(data);
+        byte[] fileContent = HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.REPORTS);
+        //byte[] fileContent = IOUtils.toByteArray(new FileInputStream(csvFile));
+        downloadReports.setContent(fileContent);
         downloadReports.setFileName(fileNameWithExtension);
         return downloadReports;
     }
@@ -287,15 +284,6 @@ public class ReportsController extends AbstractController {
 
     private ReportsForm getIncompleteRecords(ReportsForm reportsForm) throws Exception {
         List<IncompleteReportResultsRow> incompleteReportResultsRows = getReportsUtil().incompleteRecordsReportFieldsInformation(reportsForm);
-        // Test Code
-        IncompleteReportResultsRow incompleteReportResultsRow = new IncompleteReportResultsRow();
-        incompleteReportResultsRow.setAuthor("Author");
-        incompleteReportResultsRow.setBarcode("12345A");
-        incompleteReportResultsRow.setCreatedDate(new Date().toString());
-        incompleteReportResultsRow.setCustomerCode("PUL");
-        incompleteReportResultsRow.setTitle("Dummy");
-        incompleteReportResultsRows.add(incompleteReportResultsRow);
-        reportsForm.setIncompleteReportResultsRows(incompleteReportResultsRows);
         if (incompleteReportResultsRows.isEmpty()) {
             reportsForm.setShowIncompleteResults(false);
             reportsForm.setErrorMessage(RecapConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
@@ -352,20 +340,7 @@ public class ReportsController extends AbstractController {
 
     private ReportsForm daccessionItemResults(ReportsForm reportsForm) throws Exception {
         List<DeaccessionItemResultsRow> deaccessionItemResultsRowList = getReportsUtil().deaccessionReportFieldsInformation(reportsForm);
-       //Test Code
-        DeaccessionItemResultsRow deaccessionItemResultsRow = new DeaccessionItemResultsRow();
-        deaccessionItemResultsRow.setCgd("Test");
-        deaccessionItemResultsRow.setDeaccessionCreatedBy("Dinakar");
-        deaccessionItemResultsRow.setDeaccessionNotes("Testing");
-        deaccessionItemResultsRow.setDeaccessionOwnInst("PUL");
-        deaccessionItemResultsRow.setTitle("Dummy");
-        deaccessionItemResultsRow.setItemBarcode("1234A");
-        deaccessionItemResultsRow.setItemId(1);
-        deaccessionItemResultsRow.setDeaccessionDate(new Date().toString());
-        deaccessionItemResultsRowList.add(deaccessionItemResultsRow);
         reportsForm.setDeaccessionItemResultsRows(deaccessionItemResultsRowList);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
-        //return new ModelAndView(RecapConstants.REPORTS_VIEW_DEACCESSION_INFORMARION, RecapConstants.REPORTS_FORM, reportsForm);
         return reportsForm;
     }
 }

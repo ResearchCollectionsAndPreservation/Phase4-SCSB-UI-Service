@@ -133,11 +133,7 @@ public class HelperUtil {
     }
 
     public static byte[] getFileContent(File csvFile, String fileNameWithExtension, String templateName) throws IOException {
-        byte[] fileContent = IOUtils.toByteArray(new FileInputStream(csvFile));
-       // response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameWithExtension + "\"");
-        //response.setContentLength(fileContent.length);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, templateName);
-        return fileContent;
+        return IOUtils.toByteArray(new FileInputStream(csvFile));
     }
 
     public static void setCookieProperties(Cookie cookie) {

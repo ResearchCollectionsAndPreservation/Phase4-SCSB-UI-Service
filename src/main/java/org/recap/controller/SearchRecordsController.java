@@ -101,6 +101,7 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/search")
     public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest) {
+        logger.info("search records calling with payload:",searchRecordsRequest);
         SearchRecordsResponse searchRecordsResponse = searchUtil.requestSearchResults(searchRecordsRequest);
         return searchRecordsResponse;
         //SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
@@ -192,7 +193,6 @@ public class SearchRecordsController extends RecapController {
     /**
      * Clear all the input fields and the search result rows in the search UI page.
      *
-     * @param model the model
      * @return the model and view
      */
     @PostMapping("/newSearch")
@@ -233,9 +233,6 @@ public class SearchRecordsController extends RecapController {
      * Selected items in the search UI page will be exported to a csv file.
      *
      * @param searchRecordsRequest the search records request
-     * @param response             the response
-     * @param result               the result
-     * @param model                the model
      * @return the byte [ ]
      * @throws Exception the exception
      */
@@ -255,6 +252,7 @@ public class SearchRecordsController extends RecapController {
 
     @PostMapping("/pageChanges")
     public SearchRecordsResponse onPageSizeChange(@RequestBody SearchRecordsRequest searchRecordsRequest) {
+        logger.info("showEntries size changed calling with size:",searchRecordsRequest.getPageSize());
         Integer pageNumber = searchRecordsRequest.getPageNumber();
         searchRecordsRequest.setPageNumber(0);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
