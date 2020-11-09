@@ -1,9 +1,5 @@
 package org.recap.controller;
 
-import com.google.common.io.Files;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
@@ -18,17 +14,12 @@ import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.io.File;
-import java.io.FileInputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -172,7 +163,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/previous")
     public ReportsForm searchPrevious(@RequestBody ReportsForm reportsForm) throws Exception {
-        reportsForm.setPageNumber(reportsForm.getPageNumber()-1);
+        reportsForm.setPageNumber(reportsForm.getPageNumber() - 1);
         return search(reportsForm);
     }
 
@@ -187,7 +178,7 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/next")
     public ReportsForm searchNext(@RequestBody ReportsForm reportsForm) throws Exception {
-        reportsForm.setPageNumber(reportsForm.getPageNumber()+1);
+        reportsForm.setPageNumber(reportsForm.getPageNumber() + 1);
         return search(reportsForm);
     }
 
@@ -239,7 +230,7 @@ public class ReportsController extends AbstractController {
             instList.add(institutionEntity.getInstitutionCode());
         }
         reportsForm.setIncompleteShowByInst(instList);
-        return  reportsForm;
+        return reportsForm;
         //return new ModelAndView(RecapConstants.REPORTS_INCOMPLETE_SHOW_BY_VIEW, RecapConstants.REPORTS_FORM, reportsForm);
     }
 
@@ -290,6 +281,7 @@ public class ReportsController extends AbstractController {
         } else {
             reportsForm.setShowIncompleteResults(true);
             reportsForm.setShowIncompletePagination(true);
+            reportsForm.setIncompleteReportResultsRows(incompleteReportResultsRows);
         }
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
         //return new ModelAndView(RecapConstants.REPORTS_INCOMPLETE_RECORDS_VIEW, RecapConstants.REPORTS_FORM, reportsForm);
