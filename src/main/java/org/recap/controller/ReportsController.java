@@ -163,8 +163,13 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/previous")
     public ReportsForm searchPrevious(@RequestBody ReportsForm reportsForm) throws Exception {
-        reportsForm.setPageNumber(reportsForm.getPageNumber() - 1);
-        return search(reportsForm);
+        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+            reportsForm.setPageNumber(reportsForm.getIncompletePageNumber() - 1);
+            return getIncompleteRecords(reportsForm);
+        } else {
+            reportsForm.setPageNumber(reportsForm.getPageNumber() - 1);
+            return setReportData(reportsForm);
+        }
     }
 
 
@@ -178,8 +183,13 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/next")
     public ReportsForm searchNext(@RequestBody ReportsForm reportsForm) throws Exception {
-        reportsForm.setPageNumber(reportsForm.getPageNumber() + 1);
-        return search(reportsForm);
+        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+            reportsForm.setPageNumber(reportsForm.getIncompletePageNumber() + 1);
+            return getIncompleteRecords(reportsForm);
+        } else {
+            reportsForm.setPageNumber(reportsForm.getPageNumber() + 1);
+            return setReportData(reportsForm);
+        }
     }
 
 
@@ -269,8 +279,15 @@ public class ReportsController extends AbstractController {
      */
     @PostMapping("/incompleteReportPageSizeChange")
     public ReportsForm incompleteReportPageSizeChange(@RequestBody ReportsForm reportsForm) throws Exception {
-        reportsForm.setIncompletePageNumber(0);
-        return getIncompleteRecords(reportsForm);
+        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+            reportsForm.setIncompletePageNumber(0);
+            reportsForm.setIncompletePageNumber(reportsForm.getIncompleteTotalPageCount() - 1);
+            return getIncompleteRecords(reportsForm);
+        } else {
+            reportsForm.setIncompletePageNumber(0);
+            reportsForm.setPageNumber(reportsForm.getTotalPageCount() - 1);
+            return setReportData(reportsForm);
+        }
     }
 
     private ReportsForm getIncompleteRecords(ReportsForm reportsForm) throws Exception {
