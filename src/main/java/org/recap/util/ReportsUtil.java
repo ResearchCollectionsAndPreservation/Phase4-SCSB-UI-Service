@@ -48,7 +48,7 @@ public class ReportsUtil {
      * @param requestFromDate the request from date
      * @param requestToDate   the request to date
      */
-    public void populatePartnersCountForRequest(ReportsForm reportsForm, Date requestFromDate, Date requestToDate) {
+    public ReportsForm populatePartnersCountForRequest(ReportsForm reportsForm, Date requestFromDate, Date requestToDate) {
 
         //pul,cul and nypl private physical request counts
         reportsForm.setPhysicalPrivatePulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_PRIVATE),Arrays.asList(RecapConstants.CUL_INST_ID,RecapConstants.NYPL_INST_ID), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
@@ -83,6 +83,7 @@ public class ReportsUtil {
         reportsForm.setShowPartners(true);
         reportsForm.setShowReportResultsText(true);
         reportsForm.setShowNotePartners(true);
+        return  reportsForm;
     }
 
 
@@ -93,7 +94,7 @@ public class ReportsUtil {
      * @param requestFromDate the request from date
      * @param requestToDate   the request to date
      */
-    public void populateRequestTypeInformation(ReportsForm reportsForm, Date requestFromDate, Date requestToDate) {
+    public ReportsForm populateRequestTypeInformation(ReportsForm reportsForm, Date requestFromDate, Date requestToDate) {
 
         //pul,cul and nypl Retrieval request counts
         reportsForm.setRetrievalRequestPulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.PUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
@@ -115,6 +116,7 @@ public class ReportsUtil {
         reportsForm.setShowReportResultsText(true);
         reportsForm.setShowRequestTypeTable(true);
         reportsForm.setShowNoteRequestType(true);
+        return reportsForm;
     }
 
     /**
@@ -124,7 +126,7 @@ public class ReportsUtil {
      * @param reportsForm the reports form
      * @throws Exception the exception
      */
-    public void populateAccessionDeaccessionItemCounts(ReportsForm reportsForm) throws Exception {
+    public ReportsForm populateAccessionDeaccessionItemCounts(ReportsForm reportsForm) throws Exception {
         ReportsResponse reportsResponse = reportsServiceUtil.requestAccessionDeaccessionCounts(reportsForm);
         reportsForm.setAccessionPrivatePulCount(reportsResponse.getAccessionPrivatePulCount());
         reportsForm.setAccessionPrivateCulCount(reportsResponse.getAccessionPrivateCulCount());
@@ -151,6 +153,7 @@ public class ReportsUtil {
         reportsForm.setDeaccessionSharedNyplCount(reportsResponse.getDeaccessionSharedNyplCount());
 
         reportsForm.setShowAccessionDeaccessionTable(true);
+        return reportsForm;
     }
 
 

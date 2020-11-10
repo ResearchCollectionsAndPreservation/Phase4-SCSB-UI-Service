@@ -217,7 +217,7 @@ public class SearchRecordsController extends RecapController {
                                        Model model,
                                        HttpServletRequest request,
                                        RedirectAttributes redirectAttributes) {
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails( RecapConstants.REQUEST_PRIVILEGE);
         processRequest(searchRecordsRequest, userDetailsForm, redirectAttributes);
         if (StringUtils.isNotBlank(searchRecordsRequest.getErrorMessage())) {
             searchRecordsRequest.setShowResults(true);

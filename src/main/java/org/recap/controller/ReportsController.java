@@ -91,15 +91,15 @@ public class ReportsController extends AbstractController {
             Date fromDate = getFromDate(requestFromDate);
             Date toDate = getToDate(requestToDate);
             if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_PARTNERS)) {
-                reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
+                reportsForm = reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
             } else if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST_TYPE)) {
-                reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
+                reportsForm = reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
             }
         } else if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_ACCESSION_DEACCESSION)) {
-            reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
+            reportsForm = reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
 
         } else if ("CollectionGroupDesignation".equalsIgnoreCase(reportsForm.getRequestType())) {
-            reportsUtil.populateCGDItemCounts(reportsForm);
+            reportsForm = reportsUtil.populateCGDItemCounts(reportsForm);
         }
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
         //return new ModelAndView("reports", "reportsForm", reportsForm);

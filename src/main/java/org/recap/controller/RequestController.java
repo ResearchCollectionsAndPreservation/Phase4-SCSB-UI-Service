@@ -95,7 +95,7 @@ public class RequestController extends RecapController {
         HttpSession session = request.getSession(false);
         boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL);
         if (authenticated) {
-            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE);
+            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(RecapConstants.REQUEST_PRIVILEGE);
             RequestForm requestForm = getRequestService().setFormDetailsForRequest(model, request, userDetailsForm);
             model.addAttribute(RecapConstants.REQUEST_FORM, requestForm);
             model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
@@ -137,7 +137,7 @@ public class RequestController extends RecapController {
     @GetMapping("/goToSearchRequest")
     public RequestForm goToSearchRequest(RequestForm requestForm, String patronBarcodeInRequest,HttpServletRequest request) {
         try {
-            UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+            UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(RecapConstants.REQUEST_PRIVILEGE);
             requestForm.resetPageNumber();
             requestForm.setPatronBarcode(patronBarcodeInRequest);
             setFormValues(requestForm, userDetails);
