@@ -63,20 +63,20 @@ public class SearchUtil {
         searchRecordsRequest.setSelectAll(false);
 
         SearchRecordsResponse searchRecordsResponse = requestSearchResults(searchRecordsRequest);
-        searchRecordsRequest.setSearchResultRows(searchRecordsResponse.getSearchResultRows());
+       /* searchRecordsRequest.setSearchResultRows(searchRecordsResponse.getSearchResultRows());
         searchRecordsRequest.setTotalRecordsCount(searchRecordsResponse.getTotalRecordsCount());
         searchRecordsRequest.setTotalBibRecordsCount(searchRecordsResponse.getTotalBibRecordsCount());
         searchRecordsRequest.setTotalItemRecordsCount(searchRecordsResponse.getTotalItemRecordsCount());
         searchRecordsRequest.setTotalPageCount(searchRecordsResponse.getTotalPageCount());
         searchRecordsRequest.setShowTotalCount(searchRecordsResponse.isShowTotalCount());
-        searchRecordsRequest.setErrorMessage(searchRecordsResponse.getErrorMessage());
+        searchRecordsRequest.setErrorMessage(searchRecordsResponse.getErrorMessage());*/
 
-        if (CollectionUtils.isEmpty(searchRecordsRequest.getSearchResultRows())) {
-            searchRecordsRequest.setTotalRecordsCount(String.valueOf(0));
-            searchRecordsRequest.setTotalBibRecordsCount(String.valueOf(0));
-            searchRecordsRequest.setTotalItemRecordsCount(String.valueOf(0));
-            if (searchRecordsRequest.getErrorMessage() == null) {
-                searchRecordsRequest.setErrorMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
+        if (CollectionUtils.isEmpty(searchRecordsResponse.getSearchResultRows())) {
+            searchRecordsResponse.setTotalRecordsCount(String.valueOf(0));
+            searchRecordsResponse.setTotalBibRecordsCount(String.valueOf(0));
+            searchRecordsResponse.setTotalItemRecordsCount(String.valueOf(0));
+            if (searchRecordsResponse.getErrorMessage() == null) {
+                searchRecordsResponse.setErrorMessage(RecapCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
             }
         }
         return searchRecordsResponse;

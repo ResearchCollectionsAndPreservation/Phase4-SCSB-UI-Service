@@ -102,12 +102,8 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/search")
     public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("search records calling with payload:",searchRecordsRequest);
-        SearchRecordsResponse searchRecordsResponse = searchUtil.requestSearchResults(searchRecordsRequest);
+        SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         return searchRecordsResponse;
-        //SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        //Gson gon = new Gson();
-        //SearchRecordsResponse sr = gon.fromJson(json, SearchRecordsResponse.class);
-        //return sr;
     }
 
     /**
@@ -118,7 +114,7 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
+        searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
@@ -141,7 +137,7 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber()+1);
+        searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber()+1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
@@ -171,7 +167,7 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount()-1);
+        searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount()-1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
