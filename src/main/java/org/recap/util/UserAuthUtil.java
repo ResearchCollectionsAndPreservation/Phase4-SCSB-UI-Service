@@ -75,17 +75,16 @@ public class UserAuthUtil {
     /**
      * Gets logged-in user details.
      *
-     * @param session         the session
      * @param recapPermission the recap permission
      * @return the user details
      */
-    public UserDetailsForm getUserDetails(HttpSession session,String recapPermission)
+    public UserDetailsForm getUserDetails(String recapPermission)
     {
         UserDetailsForm userDetailsForm=new UserDetailsForm();
-        userDetailsForm.setSuperAdmin((Boolean)session.getAttribute(RecapConstants.SUPER_ADMIN_USER));
-        userDetailsForm.setRecapUser((Boolean)session.getAttribute(RecapConstants.RECAP_USER));
-        userDetailsForm.setLoginInstitutionId((Integer)session.getAttribute(RecapConstants.USER_INSTITUTION));
-        userDetailsForm.setRecapPermissionAllowed((Boolean) session.getAttribute(recapPermission));
+        userDetailsForm.setSuperAdmin(true);//userDetailsForm.setSuperAdmin((Boolean)session.getAttribute(RecapConstants.SUPER_ADMIN_USER));
+        userDetailsForm.setRecapUser(true);//userDetailsForm.setRecapUser((Boolean)session.getAttribute(RecapConstants.RECAP_USER));
+        userDetailsForm.setLoginInstitutionId(1);//userDetailsForm.setLoginInstitutionId((Integer)session.getAttribute(RecapConstants.USER_INSTITUTION));
+        userDetailsForm.setRecapPermissionAllowed(true);//userDetailsForm.setRecapPermissionAllowed((Boolean) session.getAttribute(recapPermission));
         return userDetailsForm;
     }
 

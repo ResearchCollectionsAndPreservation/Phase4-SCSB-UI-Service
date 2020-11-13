@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,16 +23,8 @@ import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +45,6 @@ public class RolesController extends AbstractController {
     private PermissionsDetailsRepository permissionsRepository;
 
 
-
     /**
      * Render the roles UI page for the scsb application.
      *
@@ -64,16 +54,15 @@ public class RolesController extends AbstractController {
      */
     @GetMapping("/roles")
     public String roles(Model model, HttpServletRequest request) {
-        HttpSession session=request.getSession(false);
+        HttpSession session = request.getSession(false);
         boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL);
-        if(authenticated)
-        {
+        if (authenticated) {
             RolesForm rolesForm = new RolesForm();
             model.addAttribute(RecapConstants.ROLES_FORM, rolesForm);
             model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
             return RecapConstants.VIEW_SEARCH_RECORDS;
-        }else{
-            return UserManagementService.unAuthorizedUser(session,"Roles",logger);
+        } else {
+            return UserManagementService.unAuthorizedUser(session, "Roles", logger);
         }
     }
 
@@ -81,63 +70,55 @@ public class RolesController extends AbstractController {
      * Gets role search results from scsb database and display them as rows in the roles UI page.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      */
     @PostMapping("/searchRoles")
-    public ModelAndView search(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                               Model model) {
+    public RolesForm search(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-        setRolesFormSearchResults(rolesForm);
-        return new ModelAndView(RecapConstants.VIEW_SEARCH_RECORDS, RecapConstants.ROLES_FORM, rolesForm);
+        logger.info("searchRoles calling with the following payload:",rolesForm);
+        return setRolesFormSearchResults(rolesForm);
     }
 
     /**
      * Populate permission names that are available in scsb to the permission names drop down.
      *
-     * @param model the model
      * @return the model and view
      */
-    @PostMapping("/populatePermissionName")
-    public ModelAndView populatePermissionNames(Model model) {
-        RolesForm rolesForm = getAllPermissionNames();
-        model.addAttribute(RecapConstants.ROLES_FORM, rolesForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-        return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+    @GetMapping("/populatePermissionName")
+    public RolesForm populatePermissionNames() {
+        return getAllPermissionNames();
     }
 
     /**
      * This is used to add a new role in scsb.
      *
      * @param rolesForm the roles form
-     * @param model     the model
-     * @param request   the request
      * @return the model and view
      */
-    @PostMapping("/loadCreateRole")
-    public ModelAndView newRole(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                                Model model, HttpServletRequest request) {
+    @PostMapping("/createRole")
+    public RolesForm newRole(@RequestBody RolesForm rolesForm) {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
-        if(!specialCharacterCheck){
+        logger.info("create Role calling with the following payload:",rolesForm);
+        if (!specialCharacterCheck) {
             rolesForm.setErrorMessage(RecapConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
             rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(rolesForm.getNewPermissionNames()));
-        }
-        else{
-            HttpSession session = request.getSession(false);
-            String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+        } else {
+            // HttpSession session = request.getSession(false);
+            // String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+            String username = "DinakarTest";
             RoleEntity roleEntity = saveNewRoleToDB(rolesForm, username);
-            if(null != roleEntity){
-                rolesForm.setMessage(rolesForm.getNewRoleName()+RecapConstants.ADDED_SUCCESSFULLY);
-            }else{
-                rolesForm.setErrorMessage(rolesForm.getNewRoleName()+RecapConstants.ALREADY_EXISTS);
+            if (null != roleEntity) {
+                rolesForm.setMessage(rolesForm.getNewRoleName() + RecapConstants.ADDED_SUCCESSFULLY);
+            } else {
+                rolesForm.setErrorMessage(rolesForm.getNewRoleName() + RecapConstants.ALREADY_EXISTS);
             }
             rolesForm.setNewRoleName("");
             rolesForm.setNewRoleDescription("");
         }
         rolesForm.setPermissionNameList(getAllPermissionNames().getPermissionNameList());
         rolesForm.setShowIntial(false);
-        return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
+        //return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
@@ -150,7 +131,7 @@ public class RolesController extends AbstractController {
      * @return the model and view
      */
     @GetMapping("/editRole")
-    public ModelAndView editRole(Integer roleId, String roleName, String roleDescription, String permissionName) {
+    public RolesForm editRole(Integer roleId, String roleName, String roleDescription, String permissionName) {
         String htmlUnescapePermissionName = HtmlUtils.htmlUnescape(permissionName);
         RolesForm rolesForm = getAllPermissionNames();
         rolesForm.setRoleId(roleId);
@@ -159,37 +140,39 @@ public class RolesController extends AbstractController {
         rolesForm.setEditPermissionNames(htmlUnescapePermissionName);
         rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(htmlUnescapePermissionName));
         rolesForm.setShowIntial(false);
-        return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
+        //return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
      * To save the edited role details in scsb.
      *
-     * @param roleId          the role id
-     * @param roleName        the role name
-     * @param roleDescription the role description
-     * @param request         the request
+     * @param roleId              the role id
+     * @param roleName            the role name
+     * @param roleDescription     the role description
+     * @param editPermissionNames the request
      * @return the model and view
      */
     @GetMapping("/saveEditedRole")
-    public ModelAndView saveEditedRole(@ModelAttribute("roleId") Integer roleId,
-                                       @ModelAttribute("roleName") String roleName,
-                                       @ModelAttribute("roleDescription") String roleDescription,
-                                      HttpServletRequest request) {
+    public RolesForm saveEditedRole(@RequestParam("roleId") Integer roleId,
+                                    @RequestParam("roleName") String roleName,
+                                    @RequestParam("roleDescription") String roleDescription,
+                                    @RequestParam("editPermissionNames") String[] editPermissionNames) {
+        logger.info("edit Role calling:",roleName);
         RolesForm rolesForm = new RolesForm();
-        HttpSession session = request.getSession(false);
+        //HttpSession session = request.getSession(false);
         rolesForm.setRoleId(roleId);
         rolesForm.setEditRoleName(roleName);
         rolesForm.setEditRoleDescription(roleDescription);
-        String[] editPermissionNames = request.getParameterValues("permissionNames[]");
+        //String[] editPermissionNames = request.getParameterValues("permissionNames[]");
         rolesForm.setEditPermissionName(Arrays.asList(editPermissionNames));
         Optional<RoleEntity> roleEntityByRoleId = rolesDetailsRepositorty.findById(roleId);
-        if(roleEntityByRoleId.isPresent()) {
+        if (roleEntityByRoleId.isPresent()) {
             roleEntityByRoleId.get().setId(roleId);
             roleEntityByRoleId.get().setRoleName(roleName);
             roleEntityByRoleId.get().setRoleDescription(roleDescription);
             roleEntityByRoleId.get().setLastUpdatedDate(new Date());
-            roleEntityByRoleId.get().setLastUpdatedBy(String.valueOf(session.getAttribute(RecapConstants.USER_NAME)));
+            roleEntityByRoleId.get().setLastUpdatedBy("DinakarTest");
             RoleEntity roleEntity = saveRoleEntity(roleEntityByRoleId.get(), Arrays.asList(editPermissionNames));
             if (null != roleEntity) {
                 rolesForm.setMessage(rolesForm.getEditRoleName() + RecapConstants.EDITED_AND_SAVED);
@@ -200,11 +183,12 @@ public class RolesController extends AbstractController {
         rolesForm.setPermissionNameList(getAllPermissionNames().getPermissionNameList());
         rolesForm.setSelectedPermissionNames(Arrays.asList(editPermissionNames));
         rolesForm.setShowIntial(false);
-        return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
+        //return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
-     *Provide information about the role which has been selected to delete in scsb.
+     * Provide information about the role which has been selected to delete in scsb.
      *
      * @param roleId          the role id
      * @param roleName        the role name
@@ -216,8 +200,8 @@ public class RolesController extends AbstractController {
      * @return the model and view
      */
     @GetMapping("/deleteRole")
-    public ModelAndView deleteRole(Integer roleId, String roleName, String roleDescription, String permissionName,
-                                   Integer pageSize,Integer pageNumber,Integer totalPageCount) {
+    public RolesForm deleteRole(Integer roleId, String roleName, String roleDescription, String permissionName,
+                                Integer pageSize, Integer pageNumber, Integer totalPageCount) {
         String htmlUnescapePermissionName = HtmlUtils.htmlUnescape(permissionName);
         RolesForm rolesForm = getAllPermissionNames();
         rolesForm.setAfterDelPageSize(pageSize);
@@ -232,19 +216,18 @@ public class RolesController extends AbstractController {
         rolesForm.setPageNumber(pageNumber);
         rolesForm.setTotalPageCount(totalPageCount);
         rolesForm.setShowIntial(false);
-        return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;//return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
      * To delete the role permanently in scsb.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      */
-    @GetMapping("/delete")
-    public ModelAndView delete(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                               Model model) {
+    @PostMapping("/delete")
+    public RolesForm delete(@RequestBody RolesForm rolesForm) {
+        logger.info("deleting Role calling :",rolesForm);
         Optional<RoleEntity> roleEntity = rolesDetailsRepositorty.findById(rolesForm.getRoleId());
         if (roleEntity.isPresent()) {
             try {
@@ -260,85 +243,76 @@ public class RolesController extends AbstractController {
             } catch (Exception e) {
                 logger.error(RecapCommonConstants.LOG_ERROR, "Role is Null");
             }
-         }
-        else {
+        } else {
             logger.error(RecapCommonConstants.LOG_ERROR, "e");
         }
         rolesForm.setShowResults(true);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-        return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
+        return rolesForm;//return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
-     *Gets previous page role search results from scsb database and display them as rows in the roles UI page.
+     * Gets previous page role search results from scsb database and display them as rows in the roles UI page.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      */
     @PostMapping("/previous")
-    public ModelAndView searchPrevious(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                                       Model model) {
-        return searchPage(model, rolesForm);
+    public RolesForm searchPrevious(@RequestBody RolesForm rolesForm) {
+        rolesForm.setPageNumber(rolesForm.getPageNumber()-1);
+        return searchPage(rolesForm);
     }
 
     /**
      * Gets next page role search results from scsb database and display them as rows in the roles UI page.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      */
     @PostMapping("/next")
-    public ModelAndView searchNext(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                                   Model model) {
-        return searchPage(model, rolesForm);
+    public RolesForm searchNext(@RequestBody RolesForm rolesForm) {
+        rolesForm.setPageNumber(rolesForm.getPageNumber()+1);
+        return searchPage(rolesForm);
     }
 
     /**
      * Gets first page role search results from scsb database and display them as rows in the roles UI page.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      */
     @PostMapping("/first")
-    public ModelAndView searchFirst(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                                    Model model) {
+    public RolesForm searchFirst(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
         rolesForm.resetPageNumber();
-        return setRolesForm(rolesForm, model);
+        return setRolesForm(rolesForm);
     }
 
     /**
      * Gets last page role search results from scsb database and display them as rows in the roles UI page.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      */
     @PostMapping("/last")
-    public ModelAndView searchLast(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                                   Model model) {
+    public RolesForm searchLast(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        rolesForm.setPageNumber(rolesForm.getTotalPageCount() - 1);
-        return setRolesForm(rolesForm, model);
+        rolesForm.setPageNumber(rolesForm.getPageNumber() - 1);
+        return setRolesForm(rolesForm);
     }
 
     /**
      * Based on the selected page size the roles will be displayed in the roles UI page.
      *
      * @param rolesForm the roles form
-     * @param model     the model
      * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping("/pageSizeChange")
-    public ModelAndView onPageSizeChange(@Valid @ModelAttribute("rolesForm") RolesForm rolesForm,
-                                         Model model) throws Exception {
+    public RolesForm onPageSizeChange(@RequestBody RolesForm rolesForm) throws Exception {
         rolesForm.setShowResults(true);
         rolesForm.setPageNumber(0);
-        return setRolesForm(rolesForm, model);
+        return setRolesForm(rolesForm);
     }
 
     /**
@@ -349,7 +323,7 @@ public class RolesController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/goBack")
-    public ModelAndView goBack(RolesForm rolesForm,Model model){
+    public ModelAndView goBack(RolesForm rolesForm, Model model) {
         rolesForm.setShowIntial(true);
         return new ModelAndView("roles", "rolesForm", rolesForm);
     }
@@ -359,14 +333,13 @@ public class RolesController extends AbstractController {
      *
      * @param rolesForm the roles form
      */
-    public void setRolesFormSearchResults(RolesForm rolesForm) {
+    public RolesForm setRolesFormSearchResults(RolesForm rolesForm) {
         List<RolesSearchResult> rolesSearchResults = new ArrayList<>();
         rolesForm.reset();
         if (rolesForm.getRoleName().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN) || rolesForm.getPermissionNames().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN)) {
-            if (rolesForm.getRoleName().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN)){
+            if (rolesForm.getRoleName().equalsIgnoreCase(RecapConstants.ROLES_SUPER_ADMIN)) {
                 rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
-            }
-            else{
+            } else {
                 rolesForm.setErrorMessage(RecapConstants.INVALID_PERMISSION);
             }
 
@@ -392,55 +365,55 @@ public class RolesController extends AbstractController {
             }
             rolesForm.setPageSize(10);
         } else if (!StringUtils.isEmpty(rolesForm.getPermissionNames()) && StringUtils.isEmpty(rolesForm.getRoleName())) {
-                if (isSpecialCharacterCheck(rolesForm.getPermissionNames())) {
-                    Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
-                    PermissionEntity pemissionEntity = permissionsRepository.findByPermissionName(rolesForm.getPermissionNames());
-                    getResultsForNonEmptyRolePermissionName(rolesForm, rolesSearchResults, pageable, pemissionEntity);
-                }
-            } else if (!StringUtils.isEmpty(rolesForm.getRoleName()) && !StringUtils.isEmpty(rolesForm.getPermissionNames())) {
-                if (isSpecialCharacterCheck(rolesForm.getPermissionNames())) {
-                    RoleEntity roleEntity = rolesDetailsRepositorty.findByRoleName(rolesForm.getRoleName());
-                    if (null != roleEntity) {
-                        boolean isExist = false;
-                        RolesSearchResult rolesSearchResult = new RolesSearchResult();
+            if (isSpecialCharacterCheck(rolesForm.getPermissionNames())) {
+                Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
+                PermissionEntity pemissionEntity = permissionsRepository.findByPermissionName(rolesForm.getPermissionNames());
+                getResultsForNonEmptyRolePermissionName(rolesForm, rolesSearchResults, pageable, pemissionEntity);
+            }
+        } else if (!StringUtils.isEmpty(rolesForm.getRoleName()) && !StringUtils.isEmpty(rolesForm.getPermissionNames())) {
+            if (isSpecialCharacterCheck(rolesForm.getPermissionNames())) {
+                RoleEntity roleEntity = rolesDetailsRepositorty.findByRoleName(rolesForm.getRoleName());
+                if (null != roleEntity) {
+                    boolean isExist = false;
+                    RolesSearchResult rolesSearchResult = new RolesSearchResult();
+                    for (PermissionEntity permissionEnt : roleEntity.getPermissions()) {
+                        if (rolesForm.getPermissionNames().equalsIgnoreCase(permissionEnt.getPermissionName())) {
+                            isExist = true;
+                        }
+                    }
+                    if (isExist) {
+                        StringBuilder allPermissions = new StringBuilder();
                         for (PermissionEntity permissionEnt : roleEntity.getPermissions()) {
-                            if (rolesForm.getPermissionNames().equalsIgnoreCase(permissionEnt.getPermissionName())) {
-                                isExist = true;
-                            }
+                            allPermissions.append(permissionEnt.getPermissionName());
+                            allPermissions.append(", ");
                         }
-                        if (isExist) {
-                            StringBuilder allPermissions = new StringBuilder();
-                            for (PermissionEntity permissionEnt : roleEntity.getPermissions()) {
-                                allPermissions.append(permissionEnt.getPermissionName());
-                                allPermissions.append(", ");
-                            }
-                            rolesForm.setTotalPageCount(1);
-                            rolesForm.setTotalRecordCount(String.valueOf(1));
-                            rolesForm.setPageSize(10);
-                            rolesSearchResult.setRoleId(roleEntity.getId());
-                            rolesSearchResult.setPermissionName(allPermissions.toString());
-                            rolesSearchResult.setRolesName(roleEntity.getRoleName());
-                            rolesSearchResult.setRolesDescription(roleEntity.getRoleDescription());
-                            rolesSearchResults.add(rolesSearchResult);
-                            rolesForm.setRolesSearchResults(rolesSearchResults);
-                        } else {
-                            rolesForm.setErrorMessage(RecapConstants.WRONG_PERMISSION);
-                        }
+                        rolesForm.setTotalPageCount(1);
+                        rolesForm.setTotalRecordCount(String.valueOf(1));
+                        rolesForm.setPageSize(10);
+                        rolesSearchResult.setRoleId(roleEntity.getId());
+                        rolesSearchResult.setPermissionName(allPermissions.toString());
+                        rolesSearchResult.setRolesName(roleEntity.getRoleName());
+                        rolesSearchResult.setRolesDescription(roleEntity.getRoleDescription());
+                        rolesSearchResults.add(rolesSearchResult);
+                        rolesForm.setRolesSearchResults(rolesSearchResults);
                     } else {
-                        rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
+                        rolesForm.setErrorMessage(RecapConstants.WRONG_PERMISSION);
                     }
                 } else {
                     rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
                 }
-            rolesForm.setPageSize(10);
-            } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
-                Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
-                Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.getRolesWithoutSuperAdmin(pageable);
-                List<RoleEntity> rolesEntityList = null;
-                searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
+            } else {
+                rolesForm.setErrorMessage(RecapConstants.INVALID_ROLE_NAME);
             }
-
+            rolesForm.setPageSize(10);
+        } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
+            Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
+            Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.getRolesWithoutSuperAdmin(pageable);
+            List<RoleEntity> rolesEntityList = null;
+            searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
         }
+        return rolesForm;
+    }
 
     private void getResultsForNonEmptyRolePermissionName(RolesForm rolesForm, List<RolesSearchResult> rolesSearchResults, Pageable pageable, PermissionEntity pemissionEntity) {
         if (pemissionEntity != null) {
@@ -466,12 +439,12 @@ public class RolesController extends AbstractController {
 
     private List<String> getSelectedPermissionNames(String permissionName) {
         List<String> permissionNames = new ArrayList<>();
-        if(!StringUtils.isEmpty(permissionName)){
+        if (!StringUtils.isEmpty(permissionName)) {
             StringTokenizer stringTokenizer = new StringTokenizer(permissionName, ",");
-            while(stringTokenizer.hasMoreTokens()){
+            while (stringTokenizer.hasMoreTokens()) {
                 String token = stringTokenizer.nextToken();
                 String trim = token.trim();
-                if(!StringUtils.isEmpty(trim)){
+                if (!StringUtils.isEmpty(trim)) {
                     permissionNames.add(trim);
                 }
             }
@@ -486,10 +459,10 @@ public class RolesController extends AbstractController {
      * @param roleEntity the role entity
      * @return the roles search result
      */
-    public RolesSearchResult getRolesSearchResult(RoleEntity roleEntity){
+    public RolesSearchResult getRolesSearchResult(RoleEntity roleEntity) {
         StringBuilder permission = new StringBuilder();
         RolesSearchResult rolesSearchResult = new RolesSearchResult();
-        for(PermissionEntity permissionEntity : roleEntity.getPermissions()){
+        for (PermissionEntity permissionEntity : roleEntity.getPermissions()) {
             permission.append(permissionEntity.getPermissionName());
             permission.append(", ");
         }
@@ -509,29 +482,27 @@ public class RolesController extends AbstractController {
     }
 
     /**
-     *This method is used to paginate the role search results.
+     * This method is used to paginate the role search results.
      *
      * @param rolesForm the roles form
      */
-    public void findByPagination(RolesForm rolesForm){
+    public RolesForm findByPagination(RolesForm rolesForm) {
         List<RolesSearchResult> rolesSearchResults = new ArrayList<>();
         Pageable pageable = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
         List<RoleEntity> rolesEntityList = null;
-        if(!StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())){
+        if (!StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.findByRoleName(pageable, rolesForm.getRoleName());
             searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
-        }
-        else if(StringUtils.isEmpty(rolesForm.getRoleName()) && !StringUtils.isEmpty(rolesForm.getPermissionNames())){
+        } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && !StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Pageable pageable1 = PageRequest.of(rolesForm.getPageNumber(), rolesForm.getPageSize());
             PermissionEntity permissionEntity = permissionsRepository.findByPermissionName(rolesForm.getPermissionNames());
             getResultsForNonEmptyRolePermissionName(rolesForm, rolesSearchResults, pageable1, permissionEntity);
 
-        }
-
-        else if(StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
+        } else if (StringUtils.isEmpty(rolesForm.getRoleName()) && StringUtils.isEmpty(rolesForm.getPermissionNames())) {
             Page<RoleEntity> rolesEntityListByPagination = rolesDetailsRepositorty.getRolesWithoutSuperAdmin(pageable);
             searchRolesEntity(rolesForm, rolesEntityList, rolesSearchResults, rolesEntityListByPagination);
         }
+        return rolesForm;
     }
 
     /**
@@ -541,7 +512,7 @@ public class RolesController extends AbstractController {
      * @param username  the username
      * @return the role entity
      */
-    public RoleEntity saveNewRoleToDB(RolesForm rolesForm, String username){
+    public RoleEntity saveNewRoleToDB(RolesForm rolesForm, String username) {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setRoleName(rolesForm.getNewRoleName().trim());
         roleEntity.setRoleDescription(rolesForm.getNewRoleDescription());
@@ -558,14 +529,14 @@ public class RolesController extends AbstractController {
         RoleEntity roleEntity = null;
         Set rolesSet = new HashSet();
         try {
-            for(String permissionName : permissionNameList){
+            for (String permissionName : permissionNameList) {
                 permissionEntity = permissionsRepository.findByPermissionName(permissionName);
                 rolesSet.add(permissionEntity);
             }
             roleEntity1.setPermissions(rolesSet);
             roleEntity = rolesDetailsRepositorty.save(roleEntity1);
         } catch (Exception e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
         return roleEntity;
     }
@@ -575,11 +546,11 @@ public class RolesController extends AbstractController {
         return Arrays.asList(splittedString);
     }
 
-    private RolesForm getAllPermissionNames(){
+    private RolesForm getAllPermissionNames() {
         RolesForm rolesForm = new RolesForm();
         List<String> permissionNameList = new ArrayList<>();
         List<PermissionEntity> permissionEntityList = permissionsRepository.findAll();
-        for(PermissionEntity permissionEntity : permissionEntityList){
+        for (PermissionEntity permissionEntity : permissionEntityList) {
             String permissionName = permissionEntity.getPermissionName();
             permissionNameList.add(permissionName);
         }
@@ -587,27 +558,26 @@ public class RolesController extends AbstractController {
         return rolesForm;
     }
 
-    private void searchRolesEntity(RolesForm rolesForm, List<RoleEntity>  rolesEntityList, List<RolesSearchResult> rolesSearchResults, Page<RoleEntity>  rolesEntityListByPagination) {
+    private void searchRolesEntity(RolesForm rolesForm, List<RoleEntity> rolesEntityList, List<RolesSearchResult> rolesSearchResults, Page<RoleEntity> rolesEntityListByPagination) {
         List<RoleEntity> rolesEntity = rolesEntityListByPagination.getContent();
         rolesForm.setTotalRecordCount(NumberFormat.getNumberInstance().format(rolesEntityListByPagination.getTotalElements()));
         rolesForm.setTotalPageCount(rolesEntityListByPagination.getTotalPages());
-        for(RoleEntity roleEntity : rolesEntity){
+        for (RoleEntity roleEntity : rolesEntity) {
             RolesSearchResult rolesSearchResult = getRolesSearchResult(roleEntity);
             rolesSearchResults.add(rolesSearchResult);
         }
         rolesForm.setRolesSearchResults(rolesSearchResults);
 
     }
-    private ModelAndView searchPage(Model model,RolesForm rolesForm) 
-    {
+
+    private RolesForm searchPage(RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        return setRolesForm(rolesForm, model);
+        return setRolesForm(rolesForm);
     }
 
-    private ModelAndView setRolesForm(RolesForm rolesForm, Model model)
-    {
+    private RolesForm setRolesForm(RolesForm rolesForm) {
         findByPagination(rolesForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-        return new ModelAndView(RecapConstants.VIEW_SEARCH_RECORDS, RecapConstants.ROLES_FORM, rolesForm);
+        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
+        return rolesForm;//return new ModelAndView(RecapConstants.VIEW_SEARCH_RECORDS, RecapConstants.ROLES_FORM, rolesForm);
     }
 }

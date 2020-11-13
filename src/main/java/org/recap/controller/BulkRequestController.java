@@ -9,21 +9,20 @@ import org.recap.model.request.DownloadReports;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.repository.jpa.BulkRequestDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.security.UserManagementService;
 import org.recap.service.BulkRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.MultipartConfigElement;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,8 +34,8 @@ import java.util.stream.Collectors;
  * Created by akulak on 19/9/17.
  */
 @RestController
-@RequestMapping("/bulkRequest")
 @CrossOrigin
+@RequestMapping("/bulkRequest")
 public class BulkRequestController extends AbstractController{
 
     private static final Logger logger = LoggerFactory.getLogger(BulkRequestController.class);
@@ -50,43 +49,34 @@ public class BulkRequestController extends AbstractController{
     @Autowired
     private BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
-    @GetMapping (path = "/bulkRequest")
-    public String bulkRequest(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL);
-        if (authenticated) {
-            BulkRequestForm bulkRequestForm = new BulkRequestForm();
-            loadCreateRequestPage(bulkRequestForm);
-            model.addAttribute(RecapConstants.BULK_REQUEST_FORM, bulkRequestForm);
-            model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
-            return RecapConstants.VIEW_SEARCH_RECORDS;
-        } else {
-            return UserManagementService.unAuthorizedUser(session, "BulkRequest", logger);
-        }
-    }
-
-    @PostMapping("/bulkRequest/loadSearchRequest")
-    public ModelAndView loadSearchRequest(Model model) {
-        BulkRequestForm bulkRequestForm = new BulkRequestForm();
-        loadSearchRequestPage(bulkRequestForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
-        return new ModelAndView(RecapConstants.BULK_REQUEST, RecapConstants.BULK_REQUEST_FORM, bulkRequestForm);
-    }
-
     @PostMapping("/loadCreateRequest")
     public BulkRequestForm loadCreateRequest(@RequestBody BulkRequestForm bulkRequestForm) {
        return  loadCreateRequestPage(bulkRequestForm);
     }
-
-    @PostMapping("/createBulkRequest")
-    public BulkRequestForm createRequest(@RequestBody BulkRequestForm bulkRequestForm) {
-        //loadCreateRequestPage(bulkRequestForm);
+   @PostMapping("/createBulkRequest")
+    //@RequestMapping (value=("/createBulkRequest"),consumes = MediaType.MULTIPART_FORM_DATA_VALUE, method=RequestMethod.POST)
+    public BulkRequestForm createRequest(@RequestParam("file") MultipartFile file,@RequestParam("deliveryLocation") String deliveryLocation
+            , @RequestParam("requestingInstitutionId") String requestingInstitutionId
+            , @RequestParam("patronBarcodeId") String patronBarcodeId
+            , @RequestParam("BulkRequestName") String BulkRequestName
+            , @RequestParam("choosenFile") String choosenFile
+            , @RequestParam("patronEmailId") String patronEmailId) {
+        //loadCreateRequestPage(bulkRequestForm);\
+        BulkRequestForm bulkRequestForm = new BulkRequestForm();
+        bulkRequestForm.setPatronEmailAddress(patronEmailId);
+        bulkRequestForm.setFileName(choosenFile);
+        bulkRequestForm.setDeliveryLocationInRequest(deliveryLocation);
+        bulkRequestForm.setBulkRequestName(BulkRequestName);
+        bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
+        bulkRequestForm.setRequestingInstituionHidden(requestingInstitutionId);
+        logger.info("createBulkRequest function --> Called");
         return bulkRequestService.processCreateBulkRequest(bulkRequestForm);
         //return bulkRequestForm;
     }
 
     @PostMapping("/searchRequest")
     public BulkRequestForm searchRequest(@RequestBody BulkRequestForm bulkRequestForm) {
+        logger.info("SearchRequest --> called");
         return bulkRequestService.processSearchRequest(bulkRequestForm);
         //return bulkRequestForm;
     }

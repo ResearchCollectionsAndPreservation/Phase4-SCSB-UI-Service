@@ -7,35 +7,18 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.CustomerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.search.BibliographicMarcForm;
-import org.recap.model.search.CollectionForm;
-import org.recap.model.search.SearchItemResultRow;
-import org.recap.model.search.SearchRecordsRequest;
-import org.recap.model.search.SearchRecordsResponse;
-import org.recap.model.search.SearchResultRow;
+import org.recap.model.search.*;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.security.UserManagementService;
 import org.recap.util.CollectionServiceUtil;
 import org.recap.util.MarcRecordViewUtil;
 import org.recap.util.SearchUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by rajeshbabuk on 12/10/16.
@@ -89,34 +72,10 @@ public class CollectionController extends AbstractController {
 
 
     /**
-     * Render the collection UI page for the scsb application.
-     *
-     * @param model   the model
-     * @param request the request
-     * @return the stringCreating filter chain:
-     */
-
-    @RequestMapping(path = "/collection")
-    public String collection(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL);
-        if (authenticated) {
-            CollectionForm collectionForm = new CollectionForm();
-            model.addAttribute(RecapConstants.COLLECTION_FORM, collectionForm);
-            model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.COLLECTION);
-            return RecapConstants.VIEW_SEARCH_RECORDS;
-        } else {
-            return UserManagementService.unAuthorizedUser(session, "Collection", logger);
-        }
-    }
-
-    /**
      * Perform search on solr based on the item barcodes and returns the results as rows to get displayed in the collection UI page.
      *
      * @param collectionForm the collection form
-     * @param result         the result
-     * @param model          the model
-     * @return the model and view
+     * @return CollectionForm
      * @throws Exception the exception
      */
     @PostMapping("/displayRecords")
@@ -128,48 +87,29 @@ public class CollectionController extends AbstractController {
      * Upon click on the title in the search result row in collection UI page, a popup box is opened with marc information as well as to perform collection updates.
      *
      * @param collectionForm the collection form
-     * @param result         the result
-     * @param model          the model
-     * @param request        the request
-     * @return the model and view
+     * @return CollectionForm
      * @throws Exception the exception
      */
     @PostMapping("/openMarcView")
     public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm) throws MarcException {
-
+        logger.info("openMarcView  called");
         //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-        UserDetailsForm userDetailsForm = new UserDetailsForm(1,true,true,true);
+        UserDetailsForm userDetailsForm = new UserDetailsForm(1, true, true, true);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
-        CollectionForm collectionFormN =populateCollectionForm(collectionForm, bibliographicMarcForm);
-      /*  collectionFormN.setAvailability("In Recap");
-        collectionFormN.setBarcode(collectionForm.getItemBarcodes());
-        collectionFormN.setCustomerCode("CU");
-        collectionFormN.setCollectionGroupDesignation(collectionForm.getCollectionGroupDesignation());
-        collectionFormN.setDeaccessionType("Permanent Withdrawal Direct (PWD)");
-        collectionFormN.setCollectionGroupDesignation(collectionForm.getMonographCollectionGroupDesignation());
-        List<CustomerCodeEntity> customerCodeEntityList = new ArrayList<>();
-        CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
-        customerCodeEntity.setPwdDeliveryRestrictions("ABC");
-        CustomerCodeEntity customerCodeEntity1 = new CustomerCodeEntity();
-        customerCodeEntity1.setPwdDeliveryRestrictions("AC");
-        customerCodeEntityList.add(customerCodeEntity);
-        customerCodeEntityList.add(customerCodeEntity1);
-        collectionFormN.setDeliveryLocations(customerCodeEntityList);*/
-        return collectionFormN;
+        CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
+        return collectionFormUpdated;
     }
 
     /**
      * To perform operations update cgd or deaccession for the selected item in the collection UI page.
      *
      * @param collectionForm the collection form
-     * @param result         the result
-     * @param model          the model
-     * @param request        the request
      * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping("/collectionUpdate")
     public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm) throws Exception {
+        logger.info("collectionUpdate  called");
         //HttpSession session = request.getSession(false);
         //String username = (String) session.getAttribute(RecapConstants.USER_NAME);
         collectionForm.setUsername("dinakartest");
@@ -180,20 +120,18 @@ public class CollectionController extends AbstractController {
         }
         collectionForm.setAllowEdit(true);
         return collectionForm;
-        // return new ModelAndView("collection :: #itemDetailsSection", RecapConstants.COLLECTION_FORM, collectionForm);
     }
 
     /**
      * This method is to check whether the item is cross instituion borrowed while performing collection update.
      *
      * @param collectionForm the collection form
-     * @param result         the result
-     * @param model          the model
      * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping("/checkCrossInstitutionBorrowed")
     public CollectionForm checkCrossInstitutionBorrowed(@RequestBody CollectionForm collectionForm) {
+        logger.info("checkCrossInstitutionBorrowed  called");
         String itemBarcode = collectionForm.getBarcode();
         String warningMessage = null;
         List<CustomerCodeEntity> deliveryLocations = marcRecordViewUtil.getDeliveryLocationsList(collectionForm.getCustomerCode());
@@ -228,7 +166,6 @@ public class CollectionController extends AbstractController {
             }
         }
         return collectionForm;
-        //return new ModelAndView("collection :: #itemDetailsSection", RecapConstants.COLLECTION_FORM, collectionForm);
     }
 
     private CollectionForm searchAndSetResults(CollectionForm collectionForm) throws Exception {

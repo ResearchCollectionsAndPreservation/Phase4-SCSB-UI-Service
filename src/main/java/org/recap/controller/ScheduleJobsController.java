@@ -59,36 +59,33 @@ public class ScheduleJobsController extends AbstractController {
     /**
      * Gets all the jobs information from scsb database and display them as rows in the jobs UI page.
      *
-     * @param model   the model
-     * @param request the request
      * @return the string
      */
     @GetMapping("/jobs")
-    public String displayJobs(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    public ScheduleJobsForm displayJobs() {
+        //HttpSession session = request.getSession(false);
         ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         if (userDetailsForm.isSuperAdmin()) {
             List<JobEntity> jobEntities = getJobDetailsRepository().findAll();
             scheduleJobsForm.setJobEntities(jobEntities);
         } else {
-            return UserManagementService.unAuthorizedUser(session, RecapCommonConstants.SEARCH, logger);
+          //  return UserManagementService.unAuthorizedUser(session, RecapCommonConstants.SEARCH, logger);
         }
-        model.addAttribute(RecapConstants.SCHEDULE_JOBS_FORM, scheduleJobsForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.SCHEDULE_JOBS);
-        return RecapConstants.VIEW_SEARCH_RECORDS;
+        //model.addAttribute(RecapConstants.SCHEDULE_JOBS_FORM, scheduleJobsForm);
+        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.SCHEDULE_JOBS);
+        //return RecapConstants.VIEW_SEARCH_RECORDS;
+        return scheduleJobsForm;
     }
 
     /**
      * Passes information to the scsb-batch-scheduler microservice about the job whether to be schedule or unschedule.
      *
      * @param scheduleJobsForm the schedule jobs form
-     * @param result           the result
-     * @param model            the model
      * @return the model and view
      */
     @PostMapping("/jobs")
-    public ScheduleJobsForm scheduleJob(ScheduleJobsForm scheduleJobsForm) {
+    public ScheduleJobsForm scheduleJob(@RequestBody ScheduleJobsForm scheduleJobsForm) {
 
         ScheduleJobResponse scheduleJobResponse = null;
         try {

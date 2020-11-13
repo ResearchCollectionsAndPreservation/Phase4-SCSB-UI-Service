@@ -3,6 +3,7 @@ package org.recap.controller;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
+import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
@@ -13,15 +14,11 @@ import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,8 +31,8 @@ import java.util.List;
  * Created by rajeshbabuk on 13/10/16.
  */
 @RestController
-@CrossOrigin
 @RequestMapping("/reports")
+@CrossOrigin
 public class ReportsController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
@@ -86,7 +83,7 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/submit")
-    public ReportsForm reportCounts(ReportsForm reportsForm) throws Exception {
+    public ReportsForm reportCounts(@RequestBody ReportsForm reportsForm) throws Exception {
         if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(RecapCommonConstants.SIMPLE_DATE_FORMAT_REPORTS);
             Date requestFromDate = simpleDateFormat.parse(reportsForm.getRequestFromDate());
@@ -94,15 +91,15 @@ public class ReportsController extends AbstractController {
             Date fromDate = getFromDate(requestFromDate);
             Date toDate = getToDate(requestToDate);
             if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_PARTNERS)) {
-                reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
+                reportsForm = reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
             } else if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST_TYPE)) {
-                reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
+                reportsForm = reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
             }
         } else if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_ACCESSION_DEACCESSION)) {
-            reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
+            reportsForm = reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
 
         } else if ("CollectionGroupDesignation".equalsIgnoreCase(reportsForm.getRequestType())) {
-            reportsUtil.populateCGDItemCounts(reportsForm);
+            reportsForm = reportsUtil.populateCGDItemCounts(reportsForm);
         }
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
         //return new ModelAndView("reports", "reportsForm", reportsForm);
@@ -112,13 +109,12 @@ public class ReportsController extends AbstractController {
     /**
      * Get the item count for collection group designation report.
      *
-     * @param reportsForm the reports form
-     *                    // * @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
     @GetMapping("/collectionGroupDesignation")
-    public ReportsForm cgdCounts(ReportsForm reportsForm) throws Exception {
+    public ReportsForm cgdCounts() throws Exception {
+        ReportsForm reportsForm = new ReportsForm();
         return reportsUtil.populateCGDItemCounts(reportsForm);
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
         //return new ModelAndView(RecapConstants.REPORTS_VIEW_CGD_TABLE, RecapConstants.REPORTS_FORM, reportsForm);
@@ -133,9 +129,8 @@ public class ReportsController extends AbstractController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping("/deaccessionInformation")
-    public ReportsForm deaccessionInformation(ReportsForm reportsForm) throws Exception {
-
+    @PostMapping("/deaccessionInformation")
+    public ReportsForm deaccessionInformation(@RequestBody ReportsForm reportsForm) throws Exception {
         return daccessionItemResults(reportsForm);
     }
 
@@ -148,7 +143,7 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/first")
-    public ReportsForm searchFirst(ReportsForm reportsForm) throws Exception {
+    public ReportsForm searchFirst(@RequestBody ReportsForm reportsForm) throws Exception {
         if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(0);
             return getIncompleteRecords(reportsForm);
@@ -167,8 +162,14 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/previous")
-    public ReportsForm searchPrevious(@Valid ReportsForm reportsForm) throws Exception {
-        return search(reportsForm);
+    public ReportsForm searchPrevious(@RequestBody ReportsForm reportsForm) throws Exception {
+        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+            reportsForm.setIncompletePageNumber(reportsForm.getIncompletePageNumber() - 1);
+            return getIncompleteRecords(reportsForm);
+        } else {
+            reportsForm.setPageNumber(reportsForm.getPageNumber() - 1);
+            return setReportData(reportsForm);
+        }
     }
 
 
@@ -181,8 +182,14 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/next")
-    public ReportsForm searchNext(@Valid ReportsForm reportsForm) throws Exception {
-        return search(reportsForm);
+    public ReportsForm searchNext(@RequestBody ReportsForm reportsForm) throws Exception {
+        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+            reportsForm.setIncompletePageNumber(reportsForm.getIncompletePageNumber() + 1);
+            return getIncompleteRecords(reportsForm);
+        } else {
+            reportsForm.setPageNumber(reportsForm.getPageNumber() + 1);
+            return setReportData(reportsForm);
+        }
     }
 
 
@@ -195,7 +202,7 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/last")
-    public ReportsForm searchLast(@Valid ReportsForm reportsForm) throws Exception {
+    public ReportsForm searchLast(@RequestBody ReportsForm reportsForm) throws Exception {
         if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
             reportsForm.setIncompletePageNumber(reportsForm.getIncompleteTotalPageCount() - 1);
             return getIncompleteRecords(reportsForm);
@@ -209,13 +216,11 @@ public class ReportsController extends AbstractController {
      * Get incomplete item results from scsb solr and display them as rows in the incomplete report UI page.
      *
      * @param reportsForm the reports form
-     * @param model       the model
      * @return the model and view
      * @throws Exception the exception
      */
     @PostMapping("/incompleteRecords")
-    public ReportsForm incompleteRecordsReport(ReportsForm reportsForm,
-                                               Model model) throws Exception {
+    public ReportsForm incompleteRecordsReport(@RequestBody ReportsForm reportsForm) throws Exception {
         reportsForm.setIncompletePageNumber(0);
         return getIncompleteRecords(reportsForm);
 
@@ -224,19 +229,19 @@ public class ReportsController extends AbstractController {
     /**
      * To generate institution drop down values in the incomplete report UI page.
      *
-     * @param request     the request
-     * @param reportsForm the reports form
      * @return the institution for incomplete report
      */
     @GetMapping("/getInstitutions")
-    public ModelAndView getInstitutionForIncompleteReport(HttpServletRequest request, ReportsForm reportsForm) {
+    public ReportsForm getInstitutionForIncompleteReport() {
+        ReportsForm reportsForm = new ReportsForm();
         List<String> instList = new ArrayList<>();
         List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
         for (InstitutionEntity institutionEntity : institutionCodeForSuperAdmin) {
             instList.add(institutionEntity.getInstitutionCode());
         }
         reportsForm.setIncompleteShowByInst(instList);
-        return new ModelAndView(RecapConstants.REPORTS_INCOMPLETE_SHOW_BY_VIEW, RecapConstants.REPORTS_FORM, reportsForm);
+        return reportsForm;
+        //return new ModelAndView(RecapConstants.REPORTS_INCOMPLETE_SHOW_BY_VIEW, RecapConstants.REPORTS_FORM, reportsForm);
     }
 
 
@@ -244,19 +249,24 @@ public class ReportsController extends AbstractController {
      * To export the incomplete report results to a csv file.
      *
      * @param reportsForm the reports form
-     * @param response    the response
-     * @param model       the model
      * @return the byte [ ]
      * @throws Exception the exception
      */
     @PostMapping("/export")
-    public byte[] exportIncompleteRecords(ReportsForm reportsForm, HttpServletResponse response, Model model) throws Exception {
+    public DownloadReports exportIncompleteRecords(@RequestBody ReportsForm reportsForm) throws Exception {
+        DownloadReports downloadReports = new DownloadReports();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = RecapConstants.REPORTS_INCOMPLETE_EXPORT_FILE_NAME + reportsForm.getIncompleteRequestingInstitution() + "_" + dateFormat.format(new Date()) + ".csv";
         reportsForm.setExport(true);
         List<IncompleteReportResultsRow> incompleteReportResultsRows = reportsUtil.incompleteRecordsReportFieldsInformation(reportsForm);
+        IncompleteReportResultsRow incompleteReportResultsRow = new IncompleteReportResultsRow();
+        incompleteReportResultsRows.add(incompleteReportResultsRow);
         File csvFile = reportsUtil.exportIncompleteRecords(incompleteReportResultsRows, fileNameWithExtension);
-        return HelperUtil.getFileContent(csvFile, model, response, fileNameWithExtension, RecapCommonConstants.REPORTS);
+        byte[] fileContent = HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.REPORTS);
+        //byte[] fileContent = IOUtils.toByteArray(new FileInputStream(csvFile));
+        downloadReports.setContent(fileContent);
+        downloadReports.setFileName(fileNameWithExtension);
+        return downloadReports;
     }
 
     /**
@@ -268,20 +278,25 @@ public class ReportsController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/incompleteReportPageSizeChange")
-    public ReportsForm incompleteReportPageSizeChange(ReportsForm reportsForm) throws Exception {
-        reportsForm.setIncompletePageNumber(0);
-        return getIncompleteRecords(reportsForm);
+    public ReportsForm incompleteReportPageSizeChange(@RequestBody ReportsForm reportsForm) throws Exception {
+        if ((RecapConstants.REPORTS_INCOMPLETE_RECORDS).equals(reportsForm.getRequestType())) {
+            reportsForm.setIncompletePageNumber(0);
+            return getIncompleteRecords(reportsForm);
+        } else {
+            reportsForm.setPageNumber(0);
+            return setReportData(reportsForm);
+        }
     }
 
     private ReportsForm getIncompleteRecords(ReportsForm reportsForm) throws Exception {
         List<IncompleteReportResultsRow> incompleteReportResultsRows = getReportsUtil().incompleteRecordsReportFieldsInformation(reportsForm);
-        reportsForm.setIncompleteReportResultsRows(incompleteReportResultsRows);
         if (incompleteReportResultsRows.isEmpty()) {
             reportsForm.setShowIncompleteResults(false);
             reportsForm.setErrorMessage(RecapConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
         } else {
             reportsForm.setShowIncompleteResults(true);
             reportsForm.setShowIncompletePagination(true);
+            reportsForm.setIncompleteReportResultsRows(incompleteReportResultsRows);
         }
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
         //return new ModelAndView(RecapConstants.REPORTS_INCOMPLETE_RECORDS_VIEW, RecapConstants.REPORTS_FORM, reportsForm);
@@ -333,8 +348,6 @@ public class ReportsController extends AbstractController {
     private ReportsForm daccessionItemResults(ReportsForm reportsForm) throws Exception {
         List<DeaccessionItemResultsRow> deaccessionItemResultsRowList = getReportsUtil().deaccessionReportFieldsInformation(reportsForm);
         reportsForm.setDeaccessionItemResultsRows(deaccessionItemResultsRowList);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
-        //return new ModelAndView(RecapConstants.REPORTS_VIEW_DEACCESSION_INFORMARION, RecapConstants.REPORTS_FORM, reportsForm);
         return reportsForm;
     }
 }

@@ -11,29 +11,18 @@ import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.security.UserManagementService;
 import org.recap.util.CsvUtil;
 import org.recap.util.HelperUtil;
 import org.recap.util.SearchUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.io.File;
 import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -73,40 +62,15 @@ public class SearchRecordsController extends RecapController {
     }
 
     /**
-     * Render the search UI page for the scsb application.
-     *
-     * @param model   the model
-     * @param request the request
-     * @return the string
-     */
-    @GetMapping("/search")
-    public String searchRecords(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
-        if (authenticated) {
-            SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-            model.addAttribute(RecapConstants.VIEW_SEARCH_RECORDS_REQUEST, searchRecordsRequest);
-            model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.SEARCH);
-            return RecapConstants.VIEW_SEARCH_RECORDS;
-        } else {
-            return UserManagementService.unAuthorizedUser(session, "Search", logger);
-        }
-
-    }
-
-    /**
      * Performs search on solr and returns the results as rows to get displayed in the search UI page.
      *
      * @return the model and view
      */
-    @PostMapping("/search")
+    @PostMapping("/searchResults")
     public SearchRecordsResponse search(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        SearchRecordsResponse searchRecordsResponse = searchUtil.requestSearchResults(searchRecordsRequest);
+        logger.info("search records Called");
+        SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         return searchRecordsResponse;
-        //SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        //Gson gon = new Gson();
-        //SearchRecordsResponse sr = gon.fromJson(json, SearchRecordsResponse.class);
-        //return sr;
     }
 
     /**
@@ -117,7 +81,8 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
+        logger.info("searchPrevious  Called");
+        searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
@@ -134,13 +99,12 @@ public class SearchRecordsController extends RecapController {
      * Performs search on solr and returns the next page results as rows to get displayed in the search UI page.
      *
      * @param searchRecordsRequest the search records request
-     * @param result               the result
-     * @param model                the model
      * @return the model and view
      */
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber()+1);
+        logger.info("searchNext  Called");
+        searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber() + 1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
@@ -150,12 +114,11 @@ public class SearchRecordsController extends RecapController {
      * Performs search on solr and returns the first page results as rows to get displayed in the search UI page.
      *
      * @param searchRecordsRequest the search records request
-     * @param result               the result
-     * @param model                the model
      * @return the model and view
      */
     @PostMapping("/first")
     public SearchRecordsResponse searchFirst(@RequestBody SearchRecordsRequest searchRecordsRequest) {
+        logger.info("searchFirst  Called");
         searchRecordsRequest.setPageNumber(0);
         return searchUtil.searchRecord(searchRecordsRequest);
     }
@@ -164,89 +127,31 @@ public class SearchRecordsController extends RecapController {
      * Performs search on solr and returns the last page results as rows to get displayed in the search UI page.
      *
      * @param searchRecordsRequest the search records request
-     * @param result               the result
-     * @param model                the model
      * @return the model and view
      */
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount()-1);
+        logger.info("searchLast  Called");
+        searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount() - 1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
-    }
-
-    @PostMapping("/clear")
-    public SearchRecordsRequest clear(SearchRecordsRequest searchRecordsRequest) {
-
-        searchRecordsRequest.setFieldValue("");
-        searchRecordsRequest.setOwningInstitutions(new ArrayList<>());
-        searchRecordsRequest.setCollectionGroupDesignations(new ArrayList<>());
-        searchRecordsRequest.setAvailability(new ArrayList<>());
-        searchRecordsRequest.setMaterialTypes(new ArrayList<>());
-        searchRecordsRequest.setUseRestrictions(new ArrayList<>());
-        searchRecordsRequest.setShowResults(false);
-        return searchRecordsRequest;
-    }
-
-    /**
-     * Clear all the input fields and the search result rows in the search UI page.
-     *
-     * @param model the model
-     * @return the model and view
-     */
-    @PostMapping("/newSearch")
-    public SearchRecordsRequest newSearch() {
-        SearchRecordsRequest searchRecordsRequest = new SearchRecordsRequest();
-        return searchRecordsRequest;
-    }
-
-    /**
-     * This method redirects to request UI page with the selected items information in the search results.
-     *
-     * @param searchRecordsRequest the search records request
-     * @param result               the result
-     * @param model                the model
-     * @param request              the request
-     * @param redirectAttributes   the redirect attributes
-     * @return the model and view
-     */
-    @PostMapping("/request")
-    public ModelAndView requestRecords(@Valid @ModelAttribute("searchRecordsRequest") SearchRecordsRequest searchRecordsRequest,
-                                       BindingResult result,
-                                       Model model,
-                                       HttpServletRequest request,
-                                       RedirectAttributes redirectAttributes) {
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-        processRequest(searchRecordsRequest, userDetailsForm, redirectAttributes);
-        if (StringUtils.isNotBlank(searchRecordsRequest.getErrorMessage())) {
-            searchRecordsRequest.setShowResults(true);
-            model.addAttribute("searchRecordsRequest", searchRecordsRequest);
-            model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.SEARCH);
-            return new ModelAndView("searchRecords");
-        }
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-        return new ModelAndView(new RedirectView("/request", true));
     }
 
     /**
      * Selected items in the search UI page will be exported to a csv file.
      *
      * @param searchRecordsRequest the search records request
-     * @param response             the response
-     * @param result               the result
-     * @param model                the model
      * @return the byte [ ]
      * @throws Exception the exception
      */
     @PostMapping("/export")
-    public byte[] exportRecords(@RequestBody SearchRecordsRequest searchRecordsRequest, HttpServletResponse response,
-                                BindingResult result,
-                                Model model) throws Exception {
+    public byte[] exportRecords(@RequestBody SearchRecordsRequest searchRecordsRequest) throws Exception {
+        logger.info("exportRecords  Called");
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = "ExportRecords_" + dateFormat.format(new Date()) + ".csv";
         File csvFile = csvUtil.writeSearchResultsToCsv(searchRecordsRequest.getSearchResultRows(), fileNameWithExtension);
-        return HelperUtil.getFileContent(csvFile, model, response, fileNameWithExtension, RecapCommonConstants.SEARCH);
+        return HelperUtil.getFileContent(csvFile, fileNameWithExtension, RecapCommonConstants.SEARCH);
     }
 
     /**
@@ -257,52 +162,17 @@ public class SearchRecordsController extends RecapController {
 
     @PostMapping("/pageChanges")
     public SearchRecordsResponse onPageSizeChange(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        //searchRecordsRequest.setPageNumber(getPageNumberOnPageSizeChange(searchRecordsRequest));
-        //int totalRecordsCount;
+        logger.info("showEntries size changed calling with size:", searchRecordsRequest.getPageSize());
         Integer pageNumber = searchRecordsRequest.getPageNumber();
         searchRecordsRequest.setPageNumber(0);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-
-        //searchRecordsResponse.setPageNumber(getPageNumberOnPageSizeChange(searchRecordsRequest,searchRecordsResponse));
         if (searchRecordsResponse.getTotalPageCount() > 0 && pageNumber >= searchRecordsResponse.getTotalPageCount()) {
             pageNumber = searchRecordsResponse.getTotalPageCount() - 1;
         }
-        //searchRecordsResponse.setPageNumber(pageNumber);
-        //searchRecordsRequest.setPageNumber(getPageNumberOnPageSizeChange(searchRecordsResponse,searchRecordsRequest.getPageSize(),pageNumber));
-        //SearchRecordsResponse searchRecordsResponseN = searchRecordsPage(searchRecordsRequest);
-        //searchRecordsResponseN.setPageNumber(searchRecordsRequest.getPageNumber());
-        //return searchRecordsResponseN;
         searchRecordsRequest.setPageNumber(pageNumber);
         SearchRecordsResponse searchRecordsResponseNew = searchRecordsPage(searchRecordsRequest);
         searchRecordsResponseNew.setPageNumber(pageNumber);
         return searchRecordsResponseNew;
-    }
-
-    /**
-     * To get the page number based on the total number of records in result set and the selected page size.
-     *
-     * @param searchRecordsRequest the search records request
-     * @return the integer
-     */
-    public Integer getPageNumberOnPageSizeChange(SearchRecordsRequest searchRecordsRequest, SearchRecordsResponse searchRecordsResponse) {
-        int totalRecordsCount;
-        Integer pageNumber = searchRecordsRequest.getPageNumber();
-        try {
-           /* if (isEmptyField(searchRecordsRequest)) {
-                totalRecordsCount = NumberFormat.getNumberInstance().parse(searchRecordsRequest.getTotalRecordsCount()).intValue();
-            } else if (isItemField(searchRecordsRequest)) {
-                totalRecordsCount = NumberFormat.getNumberInstance().parse(searchRecordsRequest.getTotalItemRecordsCount()).intValue();
-            } else {*/
-            totalRecordsCount = NumberFormat.getNumberInstance().parse(searchRecordsResponse.getTotalRecordsCount()).intValue();
-            // }
-            int totalPagesCount = (int) Math.ceil((double) totalRecordsCount / (double) searchRecordsRequest.getPageSize());
-            if (totalPagesCount > 0 && pageNumber >= totalPagesCount) {
-                pageNumber = totalPagesCount - 1;
-            }
-        } catch (ParseException e) {
-            logger.error(e.getMessage());
-        }
-        return pageNumber;
     }
 
     private boolean isEmptyField(SearchRecordsRequest searchRecordsRequest) {
@@ -394,7 +264,5 @@ public class SearchRecordsController extends RecapController {
 
     private SearchRecordsResponse searchRecordsPage(SearchRecordsRequest searchRecordsRequest) {
         return searchUtil.searchAndSetResults(searchRecordsRequest);
-        /*model.addAttribute( RecapCommonConstants.TEMPLATE,  RecapCommonConstants.SEARCH);
-        return new ModelAndView(RecapConstants.VIEW_SEARCH_RECORDS, RecapConstants.VIEW_SEARCH_RECORDS_REQUEST, searchRecordsRequest);*/
     }
 }

@@ -23,7 +23,6 @@ import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
-import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.util.SecurityUtil;
 import org.slf4j.Logger;
@@ -33,14 +32,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.NumberFormat;
 import java.util.*;
@@ -83,34 +79,9 @@ public class RequestController extends RecapController {
     }
 
     /**
-     * Render the request UI page for the scsb application.
-     *
-     * @param model   the model
-     * @param request the request
-     * @return the string
-     * @throws JSONException the json exception
-     */
-    @GetMapping("/request")
-    public String request(Model model, HttpServletRequest request) throws JSONException {
-        HttpSession session = request.getSession(false);
-        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL);
-        if (authenticated) {
-            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE);
-            RequestForm requestForm = getRequestService().setFormDetailsForRequest(model, request, userDetailsForm);
-            model.addAttribute(RecapConstants.REQUEST_FORM, requestForm);
-            model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-            return RecapConstants.VIEW_SEARCH_RECORDS;
-        } else {
-            return UserManagementService.unAuthorizedUser(session, "Request", logger);
-        }
-    }
-
-    /**
      * Get results from scsb database and display them as row based on the search conditions provided in the search request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
      * @return the model and view
      */
     @PostMapping("/searchRequests")
@@ -124,40 +95,10 @@ public class RequestController extends RecapController {
         return requestForm;
         //return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
     }
-
-    /**
-     * To know the request information of an item once the request is placed through the create request UI page.
-     *
-     * @param requestForm            the request form
-     * @param patronBarcodeInRequest the patron barcode in request
-     * @param result                 the result
-     * @param model                  the model
-     * @return the model and view
-     */
-    @GetMapping("/goToSearchRequest")
-    public RequestForm goToSearchRequest(RequestForm requestForm, String patronBarcodeInRequest,HttpServletRequest request) {
-        try {
-            UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-            requestForm.resetPageNumber();
-            requestForm.setPatronBarcode(patronBarcodeInRequest);
-            setFormValues(requestForm, userDetails);
-            requestForm.setStatus("");
-            requestForm = searchAndSetResults(requestForm);
-            //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-        } catch (Exception exception) {
-            logger.error(RecapCommonConstants.LOG_ERROR, exception);
-            logger.debug(exception.getMessage());
-        }
-        return requestForm;
-        //return new ModelAndView("request :: #requestContentId", RecapConstants.REQUEST_FORM, requestForm);
-    }
-
     /**
      * Get first page results from scsb database and display them as row in the search request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
      * @return the model and view
      */
     @PostMapping("/first")
@@ -171,27 +112,19 @@ public class RequestController extends RecapController {
      * Get last page results from scsb database and display them as row in the search request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
-     * @return the model and view
+     * @return RequestForm
      */
     @PostMapping("/last")
     public RequestForm searchLast(@RequestBody RequestForm requestForm) {
-        //disableRequestSearchInstitutionDropDown(requestForm);
         requestForm.setPageNumber(requestForm.getTotalPageCount() - 1);
         return searchAndSetResults(requestForm);
-       /* model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-        return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
-   */
     }
 
     /**
      * Get previous page results from scsb database and display them as rows in the search request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
-     * @return the model and view
+     * @return RequestForm
      */
     @PostMapping("/previous")
     public RequestForm searchPrevious(@RequestBody RequestForm requestForm) {
@@ -203,9 +136,7 @@ public class RequestController extends RecapController {
      * Get next page results from scsb database and display them as rows in the search request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
-     * @return the model and view
+     * @return the RequestForm
      */
     @PostMapping("/next")
     public RequestForm searchNext(@RequestBody RequestForm requestForm) {
@@ -217,72 +148,55 @@ public class RequestController extends RecapController {
      * Based on the selected page size value that many request search results will be displayed in the search request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
-     * @return the model and view
+     * @return RequestForm
      */
     @PostMapping("/requestPageSizeChange")
     public RequestForm onRequestPageSizeChange(@RequestBody RequestForm requestForm) {
-        //disableRequestSearchInstitutionDropDown(requestForm);
         requestForm.setPageNumber(getPageNumberOnPageSizeChange(requestForm));
         return searchAndSetResults(requestForm);
-        /*model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-        return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
-    */
     }
 
     /**
      * Populate default values to the request type and requesting institution drop downs in the create request UI page.
      *
-     * @param model   the model
-     * @param request the request
-     * @return the model and view
+     * @return the RequestForm
      */
     @PostMapping("/loadCreateRequest")
     public RequestForm loadCreateRequest() {
         UserDetailsForm userDetailsForm = new UserDetailsForm(1,true,true,true); //getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
-        return setRequestAttribute(requestForm);
+        return requestForm;//setRequestAttribute(requestForm);
     }
 
     /**
      * Retains patron's barcode , patron email address and requesting institution values in the create request UI page when request is going to be placed for the same patron.
      *
-     * @param model   the model
-     * @param request the request
-     * @return the model and view
+     * @return the RequestForm
      */
     @PostMapping("/loadCreateRequestForSamePatron")
     public RequestForm loadCreateRequestForSamePatron() {
         UserDetailsForm userDetailsForm = new UserDetailsForm(4,false,false,true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
         requestForm.setOnChange("true");
-        return setRequestAttribute(requestForm);
+        return requestForm;//setRequestAttribute(requestForm);
     }
 
     /**
      * Populate default values to the status and institution drop downs in search request UI page.
      *
-     * @param model   the model
-     * @param request the request
-     * @return the model and view
+     * @return the RequestForm
      */
     @PostMapping("/loadSearchRequest")
     public RequestForm loadSearchRequest() {
         UserDetailsForm userDetails = new UserDetailsForm(4,false,false,true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);
-        return setRequestAttribute(requestForm);
+        return requestForm;//setRequestAttribute(requestForm);
     }
-
-
     /**
      * Based on the given barcode, this method gets the item information from scsb database to display it in the create request UI page.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
-     * @param request     the request
      * @return the string
      * @throws JSONException the json exception
      */
@@ -295,9 +209,6 @@ public class RequestController extends RecapController {
      * This method passes information about the requesting item to the scsb-circ micro service to place a request in scsb.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
-     * @param request     the request
      * @return the model and view
      * @throws JSONException the json exception
      */
@@ -344,13 +255,10 @@ public class RequestController extends RecapController {
                     requestForm.setErrorMessage((String) noPermissionErrorMessage);
                     requestForm.setShowRequestErrorMsg(true);
                     return requestForm;
-                    //return new ModelAndView(RecapConstants.CREATE_REQUEST_SECTION, RecapConstants.REQUEST_FORM, requestForm);
                 } else if (errorMessage != null) {
                     requestForm.setErrorMessage((String) errorMessage);
                     requestForm.setShowRequestErrorMsg(true);
-                    return requestForm;
-                    // return new ModelAndView(RecapConstants.CREATE_REQUEST_SECTION, RecapConstants.REQUEST_FORM, requestForm);
-                }
+                    return requestForm;}
             }
 
             String requestItemUrl = getScsbUrl() + RecapConstants.REQUEST_ITEM_URL;
@@ -419,8 +327,6 @@ public class RequestController extends RecapController {
      * Cancel the request which is placed in scsb.
      *
      * @param requestForm the request form
-     * @param result      the result
-     * @param model       the model
      * @return the string
      */
     @PostMapping("/cancelRequest")
@@ -590,11 +496,7 @@ public class RequestController extends RecapController {
     }
 
     private RequestForm search(RequestForm requestForm) {
-        return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm));
-       /* model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-        return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
-    */
-    }
+        return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm)); }
 
     private void setBibData(RequestItemEntity requestItemEntity, SearchResultRow searchResultRow, List<SearchResultRow> searchResultRows) {
         ItemEntity itemEntity = requestItemEntity.getItemEntity();
