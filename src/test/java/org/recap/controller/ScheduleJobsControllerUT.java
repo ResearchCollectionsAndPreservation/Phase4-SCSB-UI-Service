@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
  */
 public class ScheduleJobsControllerUT extends BaseControllerUT {
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     String scsbUrl;
 
     @Mock

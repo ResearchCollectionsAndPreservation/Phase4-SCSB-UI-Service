@@ -89,7 +89,7 @@ public class CollectionServiceUtilUT extends BaseTestCase {
     @Mock
     private CustomerCodeDetailsRepository customerCodeDetailsRepository;
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     String scsbUrl;
 
     @Mock

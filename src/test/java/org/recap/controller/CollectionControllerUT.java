@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
  */
 public class CollectionControllerUT extends BaseControllerUT {
 
-    @Value("${scsb.shiro}")
+    @Value("${scsb.auth.url}")
     String scsbShiro;
 
     public String getScsbShiro() {

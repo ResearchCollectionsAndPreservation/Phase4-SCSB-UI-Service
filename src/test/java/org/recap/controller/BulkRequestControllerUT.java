@@ -56,7 +56,7 @@ public class BulkRequestControllerUT extends BaseTestCase {
     @Mock
     HttpSession session;
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
     @Autowired

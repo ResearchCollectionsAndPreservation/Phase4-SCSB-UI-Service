@@ -305,6 +305,9 @@ public class RecapConstants {
     public static final String SCSB_CIRC = "scsb_circ";
     public static final String SCSB_BATCH = "scsb_batch_scheduler";
 
+    public static final String AUTH_TYPE_OAUTH = "OAuth2";
+    public static final String AUTH_TYPE_CAS = "cas";
+
     private RecapConstants(){
         //Do nothing
     }

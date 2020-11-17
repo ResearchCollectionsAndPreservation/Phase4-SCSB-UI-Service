@@ -7,6 +7,7 @@ import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.ReportsForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,8 +25,11 @@ public class ReportsServiceUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchUtil.class);
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
+
+    @Autowired
+    private ReportsUtil reportsUtil;
 
     /**
      * This method will call scsb microservice to get the reports response for the accession/deaccession reports.
@@ -37,7 +41,7 @@ public class ReportsServiceUtil {
         ReportsRequest reportsRequest = new ReportsRequest();
         reportsRequest.setAccessionDeaccessionFromDate(reportsForm.getAccessionDeaccessionFromDate());
         reportsRequest.setAccessionDeaccessionToDate(reportsForm.getAccessionDeaccessionToDate());
-        reportsRequest.setOwningInstitutions(reportsForm.getOwningInstitutions());
+        reportsRequest.setOwningInstitutions(reportsUtil.getInstitutions());
         reportsRequest.setCollectionGroupDesignations(reportsForm.getCollectionGroupDesignations());
         return getReportsResponse(reportsRequest, RecapConstants.SCSB_REPORTS_ACCESSION_DEACCESSION_COUNTS_URL);
     }
@@ -50,7 +54,7 @@ public class ReportsServiceUtil {
      */
     public ReportsResponse requestCgdItemCounts(ReportsForm reportsForm) {
         ReportsRequest reportsRequest = new ReportsRequest();
-        reportsRequest.setOwningInstitutions(reportsForm.getOwningInstitutions());
+        reportsRequest.setOwningInstitutions(reportsUtil.getInstitutions());
         reportsRequest.setCollectionGroupDesignations(reportsForm.getCollectionGroupDesignations());
         ReportsResponse reportsResponse = new ReportsResponse();
         try {

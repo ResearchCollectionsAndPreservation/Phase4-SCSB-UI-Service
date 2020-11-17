@@ -79,7 +79,8 @@ public class HelperUtil {
      */
     public static String getLogoutUrl(String institutionCode) {
         String casLogoutUrl;
-        if (StringUtils.equals(institutionCode, RecapCommonConstants.NYPL)) {
+        String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, "auth.type");
+        if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
             casLogoutUrl = RecapConstants.VIEW_HOME; // Todo : Need to get the corresponding logout url from NYPL
         } else {
             String urlProperty = RecapConstants.CAS + institutionCode + RecapConstants.SERVICE_LOGOUT;

@@ -34,13 +34,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
-    @Value("${default.cas.url.prefix}")
+    @Value("${cas.default.url.prefix}")
     private String casUrlPrefix;
 
-    @Value("${default.cas.service.logout}")
+    @Value("${cas.default.service.logout}")
     private String casServiceLogout;
 
-    @Value("${app.service.logout.scsb}")
+    @Value("${scsb.app.service.logout}")
     private String appServiceLogout;
 
     @Autowired

@@ -128,10 +128,6 @@ public class ReportsForm {
      * Instantiates a new Reports form.
      */
     public ReportsForm() {
-        this.getOwningInstitutions().add("NYPL");
-        this.getOwningInstitutions().add("CUL");
-        this.getOwningInstitutions().add("PUL");
-
         this.getCollectionGroupDesignations().add("Shared");
         this.getCollectionGroupDesignations().add("Private");
         this.getCollectionGroupDesignations().add("Open");
