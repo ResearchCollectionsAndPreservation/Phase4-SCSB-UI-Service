@@ -23,7 +23,7 @@ public class SearchUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchUtil.class);
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
     /**

@@ -26,7 +26,7 @@ public class UserAuthUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAuthUtil.class);
 
-    @Value("${scsb.shiro}")
+    @Value("${scsb.auth.url}")
     private String scsbShiro;
 
     @Autowired

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class CASPropertyProvider {
 
-    @Value("${app.service.security}")
+    @Value("${scsb.app.service.security}")
     private String security;
 
-    @Value("${app.service.home}")
+    @Value("${scsb.app.service.home}")
     private String home;
 
     /**

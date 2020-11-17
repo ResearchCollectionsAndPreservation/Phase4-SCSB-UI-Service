@@ -121,10 +121,10 @@ public class RequestControllerUT extends BaseControllerUT {
     @Mock
     RestTemplate restTemplate;
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     String scsbUrl;
 
-    @Value("${scsb.shiro}")
+    @Value("${scsb.auth.url}")
     String scsbShiro;
 
     @Autowired

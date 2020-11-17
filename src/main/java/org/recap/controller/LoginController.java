@@ -8,6 +8,7 @@ import org.recap.model.usermanagement.LoginValidator;
 import org.recap.model.usermanagement.UserForm;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
+import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,8 @@ public class LoginController extends AbstractController {
     @Autowired
     private UserInstitutionCache userInstitutionCache;
 
+    @Autowired
+    private PropertyUtil propertyUtil;
 
     /**
      * Return either login or search view. Returns search view if user authenticated. If not it will return login view.
@@ -99,7 +102,8 @@ public class LoginController extends AbstractController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String username = auth.getName();
             String institutionFromRequest = userForm.getInstitution();
-            if (StringUtils.equals(institutionFromRequest, RecapCommonConstants.NYPL)) {
+            String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest, "auth.type");
+            if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
                 OAuth2Authentication oauth = (OAuth2Authentication) auth;
                 String tokenString = ((OAuth2AuthenticationDetails) oauth.getDetails()).getTokenValue();
                 OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenString);

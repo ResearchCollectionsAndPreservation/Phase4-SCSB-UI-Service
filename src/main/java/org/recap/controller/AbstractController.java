@@ -13,10 +13,10 @@ import org.springframework.web.client.RestTemplate;
 @Setter
 public class AbstractController {
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
-    @Value("${scsb.shiro}")
+    @Value("${scsb.auth.url}")
     private String scsbShiro;
 
     @Autowired

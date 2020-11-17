@@ -33,7 +33,7 @@ public class CollectionServiceUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(CollectionServiceUtil.class);
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
     @Autowired

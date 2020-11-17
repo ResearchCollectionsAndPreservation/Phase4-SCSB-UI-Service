@@ -71,7 +71,7 @@ public class LoginControllerUT extends BaseControllerUT{
     @Mock
     private RestTemplate restTemplate;
 
-    @Value("${scsb.shiro}")
+    @Value("${scsb.auth.url}")
     private String scsbShiro;
 
     @Mock

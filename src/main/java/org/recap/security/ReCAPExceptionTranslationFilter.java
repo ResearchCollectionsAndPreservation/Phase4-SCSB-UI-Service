@@ -5,6 +5,7 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.spring.PropertyValueProvider;
 import org.recap.util.HelperUtil;
+import org.recap.util.PropertyUtil;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
@@ -198,7 +199,8 @@ public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
         logger.debug("Calling Authentication entry point.");
         String institution = HelperUtil.getInstitutionFromRequest(request);
         if (StringUtils.isNotBlank(institution)) {
-            if(StringUtils.equals(institution, RecapCommonConstants.NYPL)) {
+            String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, "auth.type");
+            if(StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
             } else {
                 String urlProperty = RecapConstants.CAS + institution + RecapConstants.SERVICE_LOGIN;

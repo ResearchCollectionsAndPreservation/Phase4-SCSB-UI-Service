@@ -35,10 +35,10 @@ public class BulkRequestServiceUT extends BaseTestCase {
     @Mock
     RestTemplate restTemplate;
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     String scsbUrl;
 
-    @Value("${scsb.shiro}")
+    @Value("${scsb.auth.url}")
     String scsbShiro;
 
 

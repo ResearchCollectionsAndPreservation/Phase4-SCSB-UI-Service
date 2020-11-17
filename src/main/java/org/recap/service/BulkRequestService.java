@@ -73,7 +73,7 @@ public class BulkRequestService {
     @Autowired
     private SecurityUtil securityUtil;
 
-    @Value("${scsb.url}")
+    @Value("${scsb.gateway.url}")
     private String scsbUrl;
 
 

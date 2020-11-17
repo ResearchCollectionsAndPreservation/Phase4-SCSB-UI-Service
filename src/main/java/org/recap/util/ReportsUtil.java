@@ -4,10 +4,12 @@ import com.csvreader.CsvWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.slf4j.Logger;
@@ -21,12 +23,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by akulak on 21/12/16.
  */
 @Component
 public class ReportsUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReportsUtil.class);
 
     @Autowired
     private ReportsServiceUtil reportsServiceUtil;
@@ -37,8 +42,8 @@ public class ReportsUtil {
     @Autowired
     private ItemChangeLogDetailsRepository itemChangeLogDetailsRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportsUtil.class);
-
+    @Autowired
+    InstitutionDetailsRepository institutionDetailsRepository;
 
     /**
      * To get the item count for the physical and edd request report from the scsb database and
@@ -262,5 +267,13 @@ public class ReportsUtil {
         csvOutput.write("Accession Date");
         csvOutput.endRecord();
 
+    }
+
+    /**
+     * Get All institutions other than HTC
+     * @return
+     */
+    public List<String> getInstitutions() {
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
     }
 }
