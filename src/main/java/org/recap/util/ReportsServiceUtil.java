@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class ReportsServiceUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReportsServiceUtil.class);
 
     @Value("${scsb.gateway.url}")
     private String scsbUrl;

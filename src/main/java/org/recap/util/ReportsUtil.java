@@ -9,6 +9,7 @@ import org.recap.model.reports.ReportsResponse;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.model.reports.ReportsInstitutionForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemChangeLogDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
@@ -20,9 +21,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,41 +53,25 @@ public class ReportsUtil {
      * @param requestToDate   the request to date
      */
     public ReportsForm populatePartnersCountForRequest(ReportsForm reportsForm, Date requestFromDate, Date requestToDate) {
-
-        //pul,cul and nypl private physical request counts
-        reportsForm.setPhysicalPrivatePulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_PRIVATE),Arrays.asList(RecapConstants.CUL_INST_ID,RecapConstants.NYPL_INST_ID), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setPhysicalPrivateCulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.CUL_INST_ID), Arrays.asList(RecapConstants.CGD_PRIVATE), Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.NYPL_INST_ID),Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setPhysicalPrivateNyplCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.NYPL_INST_ID), Arrays.asList(RecapConstants.CGD_PRIVATE),Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.CUL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-
-        //pul,cul and nypl shared and open physical request counts -- to self
-        reportsForm.setPhysicalSharedPulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(RecapConstants.CUL_INST_ID,RecapConstants.NYPL_INST_ID),Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setPhysicalSharedCulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.CUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.NYPL_INST_ID),Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setPhysicalSharedNyplCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.NYPL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN),Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.CUL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-
-        //pul,cul and nypl shared and open physical request counts -- cross partner
-        reportsForm.setPhysicalPartnerSharedPulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate,Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN),Arrays.asList(RecapConstants.PUL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setPhysicalPartnerSharedCulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.CUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(RecapConstants.CUL_INST_ID),Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setPhysicalPartnerSharedNyplCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.NYPL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN),Arrays.asList(RecapConstants.NYPL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-
-        //pul,cul and nypl private edd request counts
-        reportsForm.setEddPrivatePulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_PRIVATE), Arrays.asList(RecapConstants.CUL_INST_ID,RecapConstants.NYPL_INST_ID),Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddPrivateCulCount( requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.CUL_INST_ID), Arrays.asList(RecapConstants.CGD_PRIVATE),Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.NYPL_INST_ID), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddPrivateNyplCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.NYPL_INST_ID),Arrays.asList(RecapConstants.CGD_PRIVATE),Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.CUL_INST_ID), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-
-        //pul,cul and nypl shared and open edd request counts -- to self
-        reportsForm.setEddSharedOpenPulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN),Arrays.asList(RecapConstants.CUL_INST_ID,RecapConstants.NYPL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddSharedOpenCulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.CUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN),Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.NYPL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddSharedOpenNyplCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.NYPL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN),Arrays.asList(RecapConstants.PUL_INST_ID,RecapConstants.CUL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-
-        //pul,cul and nypl shared and open for partners edd request counts-- cross partner
-        reportsForm.setEddPartnerSharedOpenPulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.PUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(RecapConstants.PUL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddPartnerSharedOpenCulCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.CUL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(RecapConstants.CUL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddPartnerSharedOpenNyplCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(RecapConstants.NYPL_INST_ID), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(RecapConstants.NYPL_INST_ID) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-
-        reportsForm.setShowPartners(true);
-        reportsForm.setShowReportResultsText(true);
-        reportsForm.setShowNotePartners(true);
-        return  reportsForm;
+        reportsForm.setReportsInstitutionFormList(new ArrayList<>());
+        List<InstitutionEntity> institutionEntities = getInstitutionEntities();
+        if (!institutionEntities.isEmpty()) {
+            for (InstitutionEntity institutionEntity : institutionEntities) {
+                ReportsInstitutionForm reportsInstitutionForm = new ReportsInstitutionForm();
+                reportsInstitutionForm.setInstitution(institutionEntity.getInstitutionCode());
+                reportsInstitutionForm.setPhysicalPrivateCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_PRIVATE), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setPhysicalSharedCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setPhysicalPartnerSharedCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(institutionEntity.getId()) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setEddPrivateCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_PRIVATE), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
+                reportsInstitutionForm.setEddSharedOpenCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), getOtherInstitutionIdsForPartner(institutionEntity.getId()), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
+                reportsInstitutionForm.setEddPartnerSharedOpenCount(requestItemDetailsRepository.getPhysicalAndEDDCounts(requestFromDate, requestToDate, Arrays.asList(institutionEntity.getId()), Arrays.asList(RecapConstants.CGD_SHARED, RecapConstants.CGD_OPEN), Arrays.asList(institutionEntity.getId()) ,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
+                reportsForm.getReportsInstitutionFormList().add(reportsInstitutionForm);
+            }
+            reportsForm.setShowPartners(true);
+            reportsForm.setShowReportResultsText(true);
+            reportsForm.setShowNotePartners(true);
+        }
+        return reportsForm;
     }
 
 
@@ -100,27 +83,23 @@ public class ReportsUtil {
      * @param requestToDate   the request to date
      */
     public ReportsForm populateRequestTypeInformation(ReportsForm reportsForm, Date requestFromDate, Date requestToDate) {
-
-        //pul,cul and nypl Retrieval request counts
-        reportsForm.setRetrievalRequestPulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.PUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setRetrievalRequestCulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.CUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-        reportsForm.setRetrievalRequestNyplCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.NYPL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
-
-        //pul,cul and nypl Recall request counts
-        reportsForm.setRecallRequestPulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.PUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RECALLED,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED,RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RECALL)));
-        reportsForm.setRecallRequestCulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.CUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RECALLED,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED,RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RECALL)));
-        reportsForm.setRecallRequestNyplCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.NYPL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RECALLED,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED,RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RECALL)));
-
-        //pul,cul and nypl Edd request counts
-        reportsForm.setEddRequestPulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.PUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddRequestCulCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.CUL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-        reportsForm.setEddRequestNyplCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,RecapConstants.NYPL_INST_ID,Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
-
-        reportsForm.setShowRecallTable(true);
-        reportsForm.setShowRetrievalTable(true);
-        reportsForm.setShowReportResultsText(true);
-        reportsForm.setShowRequestTypeTable(true);
-        reportsForm.setShowNoteRequestType(true);
+        reportsForm.setReportsInstitutionFormList(new ArrayList<>());
+        List<InstitutionEntity> institutionEntities = getInstitutionEntities();
+        if (!institutionEntities.isEmpty()) {
+            for (InstitutionEntity institutionEntity : institutionEntities) {
+                ReportsInstitutionForm reportsInstitutionForm = new ReportsInstitutionForm();
+                reportsInstitutionForm.setInstitution(institutionEntity.getInstitutionCode());
+                reportsInstitutionForm.setRetrievalRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate, institutionEntity.getId(), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED,RecapCommonConstants.REQUEST_STATUS_INITIAL_LOAD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RETRIEVAL)));
+                reportsInstitutionForm.setRecallRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate,institutionEntity.getId(), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_RECALLED,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED,RecapCommonConstants.REQUEST_STATUS_RETRIEVAL_ORDER_PLACED),Arrays.asList(RecapCommonConstants.REQUEST_TYPE_RECALL)));
+                reportsInstitutionForm.setEddRequestCount(requestItemDetailsRepository.getEDDRecallRetrievalRequestCounts(requestFromDate, requestToDate, institutionEntity.getId(), Arrays.asList(RecapCommonConstants.REQUEST_STATUS_EDD,RecapCommonConstants.REQUEST_STATUS_REFILED,RecapCommonConstants.REQUEST_STATUS_CANCELED),Arrays.asList(RecapCommonConstants.EDD)));
+                reportsForm.getReportsInstitutionFormList().add(reportsInstitutionForm);
+            }
+            reportsForm.setShowRecallTable(true);
+            reportsForm.setShowRetrievalTable(true);
+            reportsForm.setShowReportResultsText(true);
+            reportsForm.setShowRequestTypeTable(true);
+            reportsForm.setShowNoteRequestType(true);
+        }
         return reportsForm;
     }
 
@@ -133,30 +112,7 @@ public class ReportsUtil {
      */
     public ReportsForm populateAccessionDeaccessionItemCounts(ReportsForm reportsForm) throws Exception {
         ReportsResponse reportsResponse = reportsServiceUtil.requestAccessionDeaccessionCounts(reportsForm);
-        reportsForm.setAccessionPrivatePulCount(reportsResponse.getAccessionPrivatePulCount());
-        reportsForm.setAccessionPrivateCulCount(reportsResponse.getAccessionPrivateCulCount());
-        reportsForm.setAccessionPrivateNyplCount(reportsResponse.getAccessionPrivateNyplCount());
-
-        reportsForm.setAccessionOpenPulCount(reportsResponse.getAccessionOpenPulCount());
-        reportsForm.setAccessionOpenCulCount(reportsResponse.getAccessionOpenCulCount());
-        reportsForm.setAccessionOpenNyplCount(reportsResponse.getAccessionOpenNyplCount());
-
-        reportsForm.setAccessionSharedPulCount(reportsResponse.getAccessionSharedPulCount());
-        reportsForm.setAccessionSharedCulCount(reportsResponse.getAccessionSharedCulCount());
-        reportsForm.setAccessionSharedNyplCount(reportsResponse.getAccessionSharedNyplCount());
-
-        reportsForm.setDeaccessionPrivatePulCount(reportsResponse.getDeaccessionPrivatePulCount());
-        reportsForm.setDeaccessionPrivateCulCount(reportsResponse.getDeaccessionPrivateCulCount());
-        reportsForm.setDeaccessionPrivateNyplCount(reportsResponse.getDeaccessionPrivateNyplCount());
-
-        reportsForm.setDeaccessionOpenPulCount(reportsResponse.getDeaccessionOpenPulCount());
-        reportsForm.setDeaccessionOpenCulCount(reportsResponse.getDeaccessionOpenCulCount());
-        reportsForm.setDeaccessionOpenNyplCount(reportsResponse.getDeaccessionOpenNyplCount());
-
-        reportsForm.setDeaccessionSharedPulCount(reportsResponse.getDeaccessionSharedPulCount());
-        reportsForm.setDeaccessionSharedCulCount(reportsResponse.getDeaccessionSharedCulCount());
-        reportsForm.setDeaccessionSharedNyplCount(reportsResponse.getDeaccessionSharedNyplCount());
-
+        reportsForm.setReportsInstitutionFormList(reportsResponse.getReportsInstitutionFormList());
         reportsForm.setShowAccessionDeaccessionTable(true);
         return reportsForm;
     }
@@ -171,17 +127,7 @@ public class ReportsUtil {
      */
     public ReportsForm populateCGDItemCounts(ReportsForm reportsForm) throws Exception {
         ReportsResponse reportsResponse = reportsServiceUtil.requestCgdItemCounts(reportsForm);
-        reportsForm.setOpenPulCgdCount(reportsResponse.getOpenPulCgdCount());
-        reportsForm.setSharedPulCgdCount(reportsResponse.getSharedPulCgdCount());
-        reportsForm.setPrivatePulCgdCount(reportsResponse.getPrivatePulCgdCount());
-
-        reportsForm.setOpenCulCgdCount(reportsResponse.getOpenCulCgdCount());
-        reportsForm.setSharedCulCgdCount(reportsResponse.getSharedCulCgdCount());
-        reportsForm.setPrivateCulCgdCount(reportsResponse.getPrivateCulCgdCount());
-
-        reportsForm.setOpenNyplCgdCount(reportsResponse.getOpenNyplCgdCount());
-        reportsForm.setSharedNyplCgdCount(reportsResponse.getSharedNyplCgdCount());
-        reportsForm.setPrivateNyplCgdCount(reportsResponse.getPrivateNyplCgdCount());
+        reportsForm.setReportsInstitutionFormList(reportsResponse.getReportsInstitutionFormList());
         return reportsForm;
     }
 
@@ -275,5 +221,32 @@ public class ReportsUtil {
      */
     public List<String> getInstitutions() {
         return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
+    }
+
+    /**
+     * Get All institutions Entities other than HTC
+     * @return
+     */
+    public List<InstitutionEntity> getInstitutionEntities() {
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
+    }
+
+    /**
+     * Returns Institution Ids
+     * @return
+     */
+    private List<Integer> getInstitutionIds() {
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns other partner institution Ids for an institution
+     * @param partnerInstitutionId
+     * @return
+     */
+    private List<Integer> getOtherInstitutionIdsForPartner(Integer partnerInstitutionId) {
+        List<Integer> institutionsIds = new ArrayList<>(getInstitutionIds());
+        institutionsIds.remove(partnerInstitutionId);
+        return institutionsIds;
     }
 }
