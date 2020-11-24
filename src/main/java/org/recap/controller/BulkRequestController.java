@@ -13,16 +13,11 @@ import org.recap.service.BulkRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 
-import javax.servlet.MultipartConfigElement;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,26 +31,24 @@ import java.util.stream.Collectors;
 @RestController
 @CrossOrigin
 @RequestMapping("/bulkRequest")
-public class BulkRequestController extends AbstractController{
+public class BulkRequestController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(BulkRequestController.class);
-
-    @Autowired
-    private BulkRequestService bulkRequestService;
-
     @Autowired
     InstitutionDetailsRepository institutionDetailsRepository;
-
+    @Autowired
+    private BulkRequestService bulkRequestService;
     @Autowired
     private BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
     @PostMapping("/loadCreateRequest")
     public BulkRequestForm loadCreateRequest(@RequestBody BulkRequestForm bulkRequestForm) {
-       return  loadCreateRequestPage(bulkRequestForm);
+        return loadCreateRequestPage(bulkRequestForm);
     }
-   @PostMapping("/createBulkRequest")
+
+    @PostMapping("/createBulkRequest")
     //@RequestMapping (value=("/createBulkRequest"),consumes = MediaType.MULTIPART_FORM_DATA_VALUE, method=RequestMethod.POST)
-    public BulkRequestForm createRequest(@RequestParam("file") MultipartFile file,@RequestParam("deliveryLocation") String deliveryLocation
+    public BulkRequestForm createRequest(@RequestParam("file") MultipartFile file, @RequestParam("deliveryLocation") String deliveryLocation
             , @RequestParam("requestingInstitutionId") String requestingInstitutionId
             , @RequestParam("patronBarcodeId") String patronBarcodeId
             , @RequestParam("BulkRequestName") String BulkRequestName
@@ -68,7 +61,7 @@ public class BulkRequestController extends AbstractController{
         bulkRequestForm.setDeliveryLocationInRequest(deliveryLocation);
         bulkRequestForm.setBulkRequestName(BulkRequestName);
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
-        bulkRequestForm.setRequestingInstituionHidden(requestingInstitutionId);
+        bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
         logger.info("createBulkRequest function --> Called");
         return bulkRequestService.processCreateBulkRequest(bulkRequestForm);
         //return bulkRequestForm;
@@ -100,9 +93,9 @@ public class BulkRequestController extends AbstractController{
     }
 
     @PostMapping("/previous")
-    public BulkRequestForm searchPrevious( @RequestBody BulkRequestForm bulkRequestForm) {
+    public BulkRequestForm searchPrevious(@RequestBody BulkRequestForm bulkRequestForm) {
 
-        bulkRequestForm.setPageNumber(bulkRequestForm.getPageNumber() -1);
+        bulkRequestForm.setPageNumber(bulkRequestForm.getPageNumber() - 1);
         return bulkRequestService.getPaginatedSearchResults(bulkRequestForm);
         //return bulkRequestForm;
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
@@ -120,7 +113,7 @@ public class BulkRequestController extends AbstractController{
 
     @PostMapping("/last")
     public BulkRequestForm searchLast(@RequestBody BulkRequestForm bulkRequestForm) {
-        bulkRequestForm.setPageNumber(bulkRequestForm.getTotalPageCount() -1);
+        bulkRequestForm.setPageNumber(bulkRequestForm.getTotalPageCount() - 1);
         return bulkRequestService.getPaginatedSearchResults(bulkRequestForm);
 
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
@@ -128,7 +121,7 @@ public class BulkRequestController extends AbstractController{
     }
 
     @GetMapping("/bulkRequest/goToSearchRequest")
-    public ModelAndView searchRequestByPatronBarcode(String patronBarcodeInRequest,Model model) {
+    public ModelAndView searchRequestByPatronBarcode(String patronBarcodeInRequest, Model model) {
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
         bulkRequestForm.setPatronBarcodeSearch(patronBarcodeInRequest);
         bulkRequestService.processSearchRequest(bulkRequestForm);
@@ -138,7 +131,7 @@ public class BulkRequestController extends AbstractController{
     }
 
     @PostMapping("/bulkRequest/loadCreateRequestForSamePatron")
-    public ModelAndView loadCreateRequestForSamePatron(@Valid @ModelAttribute("bulkRequestForm") BulkRequestForm bulkRequestForm,Model model) {
+    public ModelAndView loadCreateRequestForSamePatron(@Valid @ModelAttribute("bulkRequestForm") BulkRequestForm bulkRequestForm, Model model) {
         loadCreateRequestPage(bulkRequestForm);
         bulkRequestForm.setSubmitted(false);
         bulkRequestForm.setRequestingInstitution(bulkRequestForm.getRequestingInstituionHidden());
@@ -146,8 +139,8 @@ public class BulkRequestController extends AbstractController{
     }
 
     @PostMapping("/populateDeliveryLocations")
-    public BulkRequestForm populateDeliveryLocations(@RequestBody BulkRequestForm bulkRequestForm){
-        return  bulkRequestService.processDeliveryLocations(bulkRequestForm);
+    public BulkRequestForm populateDeliveryLocations(@RequestBody BulkRequestForm bulkRequestForm) {
+        return bulkRequestService.processDeliveryLocations(bulkRequestForm);
     }
 
     @GetMapping("/{bulkRequestId}")
@@ -156,7 +149,7 @@ public class BulkRequestController extends AbstractController{
         BulkRequestItemEntity bulkRequestItemEntity = bulkRequestService.saveUpadatedRequestStatus(Integer.valueOf(bulkRequestId));
         String fileNameWithExtension = "Results_" + StringUtils.substringBefore(bulkRequestItemEntity.getBulkRequestFileName(), ".csv") + dateFormat.format(new Date()) + ".csv";
         //response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameWithExtension + "\"");
-       // response.setContentLength(bulkRequestItemEntity.getBulkRequestFileData().length);
+        // response.setContentLength(bulkRequestItemEntity.getBulkRequestFileData().length);
         //FileCopyUtils.copy(bulkRequestItemEntity.getBulkRequestFileData(), response.getOutputStream());
         //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
         //return bulkRequestItemEntity.getBulkRequestFileData();
@@ -166,7 +159,7 @@ public class BulkRequestController extends AbstractController{
         downloadReports.setFileName(fileNameWithExtension);
         return downloadReports;
     }
-    
+
     private BulkRequestForm loadCreateRequestPage(BulkRequestForm bulkRequestForm) {
         bulkRequestForm.setRequestingInstitutions(getInstitutions());
         return bulkRequestForm;
@@ -179,7 +172,8 @@ public class BulkRequestController extends AbstractController{
     private List<String> getInstitutions() {
         return institutionDetailsRepository.getInstitutionCodeForSuperAdmin().stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
     }
-    private ModelAndView processBulkRequest (BulkRequestForm bulkRequestForm, Model model) {
+
+    private ModelAndView processBulkRequest(BulkRequestForm bulkRequestForm, Model model) {
         bulkRequestService.processDeliveryLocations(bulkRequestForm);
         model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
         return new ModelAndView(RecapConstants.BULK_REQUEST, RecapConstants.BULK_REQUEST_FORM, bulkRequestForm);
