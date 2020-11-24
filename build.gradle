@@ -41,13 +41,7 @@ repositories {
 
 
 dependencies {
-	/*implementation('org.recap:phase4-scsb-common:1.0') {
-		version  {
-			branch = 'development'
-		}
-	}*/
-	// compile fileTree(dir: System.properties["dir"], include:  System.properties["commonjar"])
-	compile fileTree(dir: '/data/commonjar', include: '*1.2.jar')
+	compile fileTree(dir: '/data/commonjar', include: '*1.3.jar')
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
