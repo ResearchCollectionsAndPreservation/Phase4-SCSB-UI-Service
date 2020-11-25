@@ -32,8 +32,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -93,7 +96,32 @@ public class RequestController extends RecapController {
             logger.debug(exception.getMessage());
         }
         return requestForm;
-        //return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
+    }
+    /**
+     *To know the request information of an item once the request is placed through the create request UI page.
+     *
+     * @param requestForm            the request form
+     * @return the model and view
+     */
+    @PostMapping("/goToSearchRequest")
+    public RequestForm goToSearchRequest(@RequestBody RequestForm requestForm) {
+        try {
+            //UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+            UserDetailsForm userDetails = new UserDetailsForm();
+            userDetails.setRecapUser(true);
+            userDetails.setRecapUser(true);
+            userDetails.setSuperAdmin(true);
+            userDetails.setLoginInstitutionId(1);
+            requestForm.resetPageNumber();
+            //requestForm.setPatronBarcode(patronBarcodeInRequest);
+            setFormValues(requestForm, userDetails);
+            requestForm.setStatus("");
+            requestForm = searchAndSetResults(requestForm);
+        } catch (Exception exception) {
+            logger.error(RecapCommonConstants.LOG_ERROR, exception);
+            logger.debug(exception.getMessage());
+        }
+        return  requestForm;//return new ModelAndView("request :: #requestContentId", RecapConstants.REQUEST_FORM, requestForm);
     }
     /**
      * Get first page results from scsb database and display them as row in the search request UI page.
@@ -480,7 +508,7 @@ public class RequestController extends RecapController {
         return requestService.getRefreshedStatus(request);
     }
 
-    private void setFormValuesToDisableSearchInstitution(@Valid @ModelAttribute("requestForm") RequestForm requestForm, UserDetailsForm userDetails, List<String> institutionList) {
+    private RequestForm setFormValuesToDisableSearchInstitution(@Valid @ModelAttribute("requestForm") RequestForm requestForm, UserDetailsForm userDetails, List<String> institutionList) {
         Optional<InstitutionEntity> institutionEntity = getInstitutionDetailsRepository().findById(userDetails.getLoginInstitutionId());
         if (userDetails.isSuperAdmin() || userDetails.isRecapUser() || ((institutionEntity.isPresent()) && (institutionEntity.get().getInstitutionCode().equalsIgnoreCase("HTC")))) {
             getRequestService().getInstitutionForSuperAdmin(institutionList);
@@ -493,6 +521,7 @@ public class RequestController extends RecapController {
                 requestForm.setSearchInstitutionHdn(institutionEntity.get().getInstitutionCode());
             }
         }
+        return  requestForm;
     }
 
     private RequestForm search(RequestForm requestForm) {
@@ -514,13 +543,12 @@ public class RequestController extends RecapController {
         return requestForm;
     }
 
-    private void setFormValues(RequestForm requestForm, UserDetailsForm userDetails) {
+    private RequestForm setFormValues(RequestForm requestForm, UserDetailsForm userDetails) {
         List<String> requestStatuses = new ArrayList<>();
         List<String> institutionList = new ArrayList<>();
         getRequestService().findAllRequestStatusExceptProcessing(requestStatuses);
         requestForm.setRequestStatuses(requestStatuses);
-        setFormValuesToDisableSearchInstitution(requestForm, userDetails, institutionList);
-
+         return setFormValuesToDisableSearchInstitution(requestForm, userDetails, institutionList);
     }
 
     private RequestForm setSearch(RequestForm requestForm) {
