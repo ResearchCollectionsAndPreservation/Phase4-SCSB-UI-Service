@@ -479,15 +479,15 @@ public class RequestService {
      * based on the logged in user it populates value to the requesting institution drop down.
      *
      * @param userDetailsForm the user details form
-     * @param model           the model
      * @return the defaults to create request
      */
     public RequestForm setDefaultsToCreateRequest(UserDetailsForm userDetailsForm) {
         RequestForm requestForm = new RequestForm();
         Boolean addOnlyRecall = false;
         Boolean addAllRequestType = false;
-       // Object availability = true;((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY);
-     /*   if (availability != null){
+        Object availability = true;
+       //((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY);
+        /*if (availability != null){
             HashSet<String> str = (HashSet<String>) availability;
             for (String itemAvailability : str){
                 if(RecapCommonConstants.NOT_AVAILABLE.equalsIgnoreCase(itemAvailability)){

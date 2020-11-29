@@ -7,7 +7,12 @@ import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.CustomerCodeEntity;
 import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.search.*;
+import org.recap.model.search.BibliographicMarcForm;
+import org.recap.model.search.CollectionForm;
+import org.recap.model.search.SearchItemResultRow;
+import org.recap.model.search.SearchRecordsRequest;
+import org.recap.model.search.SearchRecordsResponse;
+import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.util.CollectionServiceUtil;
@@ -16,9 +21,18 @@ import org.recap.util.SearchUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by rajeshbabuk on 12/10/16.
@@ -269,7 +283,7 @@ public class CollectionController extends AbstractController {
         collectionForm.setCustomerCode(bibliographicMarcForm.getCustomerCode());
         collectionForm.setDeaccessionType(bibliographicMarcForm.getDeaccessionType());
         collectionForm.setDeaccessionNotes(bibliographicMarcForm.getDeaccessionNotes());
-        collectionForm.setDeliveryLocations(bibliographicMarcForm.getDeliveryLocations());
+        //collectionForm.setDeliveryLocations(bibliographicMarcForm.getDeliveryLocations());
         collectionForm.setDeliveryLocation(bibliographicMarcForm.getDeliveryLocation());
         collectionForm.setShared(bibliographicMarcForm.isShared());
         collectionForm.setSubmitted(bibliographicMarcForm.isSubmitted());

@@ -32,17 +32,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by rajeshbabuk on 13/10/16.
@@ -97,10 +107,11 @@ public class RequestController extends RecapController {
         }
         return requestForm;
     }
+
     /**
-     *To know the request information of an item once the request is placed through the create request UI page.
+     * To know the request information of an item once the request is placed through the create request UI page.
      *
-     * @param requestForm            the request form
+     * @param requestForm the request form
      * @return the model and view
      */
     @PostMapping("/goToSearchRequest")
@@ -121,8 +132,9 @@ public class RequestController extends RecapController {
             logger.error(RecapCommonConstants.LOG_ERROR, exception);
             logger.debug(exception.getMessage());
         }
-        return  requestForm;//return new ModelAndView("request :: #requestContentId", RecapConstants.REQUEST_FORM, requestForm);
+        return requestForm;//return new ModelAndView("request :: #requestContentId", RecapConstants.REQUEST_FORM, requestForm);
     }
+
     /**
      * Get first page results from scsb database and display them as row in the search request UI page.
      *
@@ -156,7 +168,7 @@ public class RequestController extends RecapController {
      */
     @PostMapping("/previous")
     public RequestForm searchPrevious(@RequestBody RequestForm requestForm) {
-        requestForm.setPageNumber(requestForm.getPageNumber()-1);
+        requestForm.setPageNumber(requestForm.getPageNumber() - 1);
         return search(requestForm);
     }
 
@@ -168,7 +180,7 @@ public class RequestController extends RecapController {
      */
     @PostMapping("/next")
     public RequestForm searchNext(@RequestBody RequestForm requestForm) {
-        requestForm.setPageNumber(requestForm.getPageNumber()+1);
+        requestForm.setPageNumber(requestForm.getPageNumber() + 1);
         return search(requestForm);
     }
 
@@ -191,7 +203,7 @@ public class RequestController extends RecapController {
      */
     @PostMapping("/loadCreateRequest")
     public RequestForm loadCreateRequest() {
-        UserDetailsForm userDetailsForm = new UserDetailsForm(1,true,true,true); //getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+        UserDetailsForm userDetailsForm = new UserDetailsForm(1, true, true, true); //getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
         return requestForm;//setRequestAttribute(requestForm);
     }
@@ -203,7 +215,7 @@ public class RequestController extends RecapController {
      */
     @PostMapping("/loadCreateRequestForSamePatron")
     public RequestForm loadCreateRequestForSamePatron() {
-        UserDetailsForm userDetailsForm = new UserDetailsForm(4,false,false,true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+        UserDetailsForm userDetailsForm = new UserDetailsForm(4, false, false, true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
         requestForm.setOnChange("true");
         return requestForm;//setRequestAttribute(requestForm);
@@ -216,11 +228,12 @@ public class RequestController extends RecapController {
      */
     @PostMapping("/loadSearchRequest")
     public RequestForm loadSearchRequest() {
-        UserDetailsForm userDetails = new UserDetailsForm(4,false,false,true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+        UserDetailsForm userDetails = new UserDetailsForm(1, true, true, true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);
         return requestForm;//setRequestAttribute(requestForm);
     }
+
     /**
      * Based on the given barcode, this method gets the item information from scsb database to display it in the create request UI page.
      *
@@ -233,6 +246,7 @@ public class RequestController extends RecapController {
     public String populateItem(@RequestBody RequestForm requestForm) throws JSONException {
         return requestService.populateItemForRequest(requestForm);
     }
+
     /**
      * This method passes information about the requesting item to the scsb-circ micro service to place a request in scsb.
      *
@@ -286,7 +300,8 @@ public class RequestController extends RecapController {
                 } else if (errorMessage != null) {
                     requestForm.setErrorMessage((String) errorMessage);
                     requestForm.setShowRequestErrorMsg(true);
-                    return requestForm;}
+                    return requestForm;
+                }
             }
 
             String requestItemUrl = getScsbUrl() + RecapConstants.REQUEST_ITEM_URL;
@@ -521,11 +536,12 @@ public class RequestController extends RecapController {
                 requestForm.setSearchInstitutionHdn(institutionEntity.get().getInstitutionCode());
             }
         }
-        return  requestForm;
+        return requestForm;
     }
 
     private RequestForm search(RequestForm requestForm) {
-        return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm)); }
+        return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm));
+    }
 
     private void setBibData(RequestItemEntity requestItemEntity, SearchResultRow searchResultRow, List<SearchResultRow> searchResultRows) {
         ItemEntity itemEntity = requestItemEntity.getItemEntity();
@@ -548,7 +564,7 @@ public class RequestController extends RecapController {
         List<String> institutionList = new ArrayList<>();
         getRequestService().findAllRequestStatusExceptProcessing(requestStatuses);
         requestForm.setRequestStatuses(requestStatuses);
-         return setFormValuesToDisableSearchInstitution(requestForm, userDetails, institutionList);
+        return setFormValuesToDisableSearchInstitution(requestForm, userDetails, institutionList);
     }
 
     private RequestForm setSearch(RequestForm requestForm) {
