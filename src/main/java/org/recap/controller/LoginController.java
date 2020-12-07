@@ -4,39 +4,49 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.usermanagement.LoginValidator;
 import org.recap.model.usermanagement.UserForm;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
 /**
- * Created by dharmendrag on 25/11/16.
+ * Created by dharmendrag on 02/12/20.
  */
-@Controller
+@RestController
+@CrossOrigin
+@RequestMapping("/login")
 public class LoginController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -44,6 +54,12 @@ public class LoginController extends AbstractController {
     private LoginValidator loginValidator=new LoginValidator();
 
     private static final String redirectSearch = "redirect:/search";
+
+    @Value("${htc.auth.service.login}")
+    private String defaultServiceUrl;
+
+    @Autowired
+    private InstitutionDetailsRepository institutionDetailsRepository;
 
     @Autowired
     private TokenStore tokenStore;
@@ -134,6 +150,34 @@ public class LoginController extends AbstractController {
             return RecapConstants.VIEW_LOGIN;
         }
         return redirectSearch;
+    }
+
+    /**
+     *
+     * @return InstitutionsList
+     */
+    @GetMapping("/institutions")
+    public List<String> loadInstitutions() {
+        List<String> instList = new ArrayList<>();
+        List<InstitutionEntity> institutionCodeForSuperAdmin = institutionDetailsRepository.getInstitutionCodeForSuperAdmin();
+        for (InstitutionEntity institutionEntity : institutionCodeForSuperAdmin) {
+            instList.add(institutionEntity.getInstitutionCode());
+        }
+        return instList;
+    }
+
+    /**
+     *
+     * @param institutionName
+     * @return auth.service.login url
+     */
+    @GetMapping("/serviceUrl")
+    public char[] loadInstitutions(@RequestParam String institutionName) {
+        try {
+            return institutionName.equalsIgnoreCase("HTC") ? defaultServiceUrl.toCharArray() : propertyUtil.getPropertyByInstitutionAndKey(institutionName, "auth.service.login").toCharArray();
+        } catch (Exception e) {
+            return "service login url not found".toCharArray();
+        }
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {
@@ -268,5 +312,4 @@ public class LoginController extends AbstractController {
         session.setAttribute(RecapConstants.USER_AUTH, resultMap);
         setValuesInSession(session, resultMap);
     }
-
 }

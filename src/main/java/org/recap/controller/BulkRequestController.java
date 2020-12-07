@@ -14,7 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -47,15 +55,14 @@ public class BulkRequestController extends AbstractController {
     }
 
     @PostMapping("/createBulkRequest")
-    //@RequestMapping (value=("/createBulkRequest"),consumes = MediaType.MULTIPART_FORM_DATA_VALUE, method=RequestMethod.POST)
     public BulkRequestForm createRequest(@RequestParam("file") MultipartFile file, @RequestParam("deliveryLocation") String deliveryLocation
             , @RequestParam("requestingInstitutionId") String requestingInstitutionId
             , @RequestParam("patronBarcodeId") String patronBarcodeId
             , @RequestParam("BulkRequestName") String BulkRequestName
             , @RequestParam("choosenFile") String choosenFile
             , @RequestParam("patronEmailId") String patronEmailId) {
-        //loadCreateRequestPage(bulkRequestForm);\
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
+        bulkRequestForm.setFile(file);
         bulkRequestForm.setPatronEmailAddress(patronEmailId);
         bulkRequestForm.setFileName(choosenFile);
         bulkRequestForm.setDeliveryLocationInRequest(deliveryLocation);
@@ -64,7 +71,6 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
         logger.info("createBulkRequest function --> Called");
         return bulkRequestService.processCreateBulkRequest(bulkRequestForm);
-        //return bulkRequestForm;
     }
 
     @PostMapping("/searchRequest")

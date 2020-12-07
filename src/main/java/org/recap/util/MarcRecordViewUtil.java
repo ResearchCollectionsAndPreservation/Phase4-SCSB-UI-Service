@@ -177,6 +177,9 @@ public class MarcRecordViewUtil {
             if (CollectionUtils.isNotEmpty(customerCodeEntities)) {
                 deliveryLocations.addAll(customerCodeEntities);
             }
+            for (CustomerCodeEntity deliveryLocation:deliveryLocations) {
+                deliveryLocation.setDeliveryRestrictionEntityList(new ArrayList<>());
+            }
             Collections.sort(deliveryLocations);
         }
         return deliveryLocations;

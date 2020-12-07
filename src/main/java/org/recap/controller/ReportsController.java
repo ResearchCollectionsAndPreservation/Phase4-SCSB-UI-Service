@@ -15,7 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -101,8 +106,6 @@ public class ReportsController extends AbstractController {
         } else if ("CollectionGroupDesignation".equalsIgnoreCase(reportsForm.getRequestType())) {
             reportsForm = reportsUtil.populateCGDItemCounts(reportsForm);
         }
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
-        //return new ModelAndView("reports", "reportsForm", reportsForm);
         return reportsForm;
     }
 
@@ -116,9 +119,6 @@ public class ReportsController extends AbstractController {
     public ReportsForm cgdCounts() throws Exception {
         ReportsForm reportsForm = new ReportsForm();
         return reportsUtil.populateCGDItemCounts(reportsForm);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
-        //return new ModelAndView(RecapConstants.REPORTS_VIEW_CGD_TABLE, RecapConstants.REPORTS_FORM, reportsForm);
-
     }
 
     /**
