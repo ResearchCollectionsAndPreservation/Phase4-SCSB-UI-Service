@@ -29,6 +29,9 @@ public class CustomerCodeEntity extends CustomerCodeAbstractEntity implements Co
     @Column(name = "RECAP_DELIVERY_RESTRICTIONS")
     private String recapDeliveryRestrictions;
 
+    @Column(name = "CIRC_DESK_LOCATION")
+    private String pickupLocation;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "cross_partner_mapping_t", joinColumns = {
             @JoinColumn(name = "CUSTOMER_CODE_ID", referencedColumnName = "CUSTOMER_CODE_ID")},
