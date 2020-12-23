@@ -6,6 +6,7 @@ import org.recap.RecapConstants;
 import org.recap.spring.PropertyValueProvider;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
@@ -203,8 +204,8 @@ public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
             if(StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
             } else {
-                String urlProperty = RecapConstants.CAS + institution + RecapConstants.SERVICE_LOGIN;
-                String url = HelperUtil.getBean(PropertyValueProvider.class).getProperty(urlProperty);
+                String urlProperty =  "auth"+ RecapConstants.SERVICE_LOGIN;
+                String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution,urlProperty);
 
                 //Calling cas entry point based on institution type.
                 CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();

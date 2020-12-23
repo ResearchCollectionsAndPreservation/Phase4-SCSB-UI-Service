@@ -1,21 +1,33 @@
 package org.recap;
 
 import brave.sampler.Sampler;
+import com.google.common.collect.Lists;
+import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.recap.filter.XSSFilter;
+import org.recap.security.SessionFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-//import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-//import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * The type Main.
@@ -44,6 +56,7 @@ public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
+
     /**
      * Servlet container factory embedded servlet container factory.
      *
@@ -67,22 +80,23 @@ public class Main {
      *
      * @return the filter registration bean
      */
-  /*  @Bean
+    @Bean
     public FilterRegistrationBean getFilterRegisteredBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         Set<String> urlPatterns = new HashSet<>();
         urlPatterns.add("/*");
+        urlPatterns.add("/*/**");
         filterRegistrationBean.setUrlPatterns(urlPatterns);
         filterRegistrationBean.setFilter(new SessionFilter());
         return filterRegistrationBean;
-    }*/
+    }
 
     /**
      * Gets xss filter registered bean.
      *
      * @return the xss filter registered bean
      */
-  /*  @Bean
+    @Bean
     public FilterRegistrationBean getXSSFilterRegisteredBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         Set<String> urlPatterns = new HashSet<>();
@@ -92,7 +106,7 @@ public class Main {
         filterRegistrationBean.setUrlPatterns(urlPatterns);
         filterRegistrationBean.setFilter(new XSSFilter());
         return filterRegistrationBean;
-    }*/
+    }
 
     /**
      * Container customizer embedded servlet container customizer.
@@ -100,7 +114,7 @@ public class Main {
      * @return the embedded servlet container customizer
      */
 
-    /*@Bean
+    @Bean
     public WebServerFactoryCustomizer containerCustomizer() {
         return new WebServerFactoryCustomizer() {
             @Override
@@ -111,19 +125,33 @@ public class Main {
                 }
             }
         };
-    }*/
+    }
+
     @Bean
     public Sampler defaultSampler() {
         return Sampler.ALWAYS_SAMPLE;
     }
 
-   /* private static class ContextSecurityCustomizer implements TomcatContextCustomizer {
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Lists.newArrayList("*"));
+        configuration.setAllowedMethods(Lists.newArrayList("GET", "POST", "OPTIONS"));
+        configuration.setAllowCredentials(true);
+        //configuration.setAllowedHeaders(Lists.newArrayList("x-xsrf-token", "XSRF-TOKEN"));
+        //configuration.setMaxAge(10l);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**/**", configuration);
+        return source;
+    }
+
+    private static class ContextSecurityCustomizer implements TomcatContextCustomizer {
         @Override
         public void customize(Context context) {
             SecurityConstraint constraint = new SecurityConstraint();
             SecurityCollection securityCollection = new SecurityCollection();
             securityCollection.setName("restricted_methods");
-            securityCollection.addPattern("/*");
+            securityCollection.addPattern("/*/**");
             securityCollection.addMethod(HttpMethod.OPTIONS.toString());
             securityCollection.addMethod(HttpMethod.HEAD.toString());
             securityCollection.addMethod(HttpMethod.PUT.toString());
@@ -134,6 +162,5 @@ public class Main {
             constraint.setAuthConstraint(true);
             context.addConstraint(constraint);
         }
-    }*/
-
+    }
 }

@@ -10,6 +10,7 @@ import org.recap.RecapConstants;
 import org.recap.security.ReCAPCas20ServiceTicketValidator;
 import org.recap.spring.PropertyValueProvider;
 import org.recap.util.HelperUtil;
+import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -152,8 +153,8 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             String institution = (String)((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(RecapConstants.RECAP_INSTITUTION_CODE);
 
-            String urlProperty = RecapConstants.CAS + institution + RecapConstants.URL_PREFIX;
-            String casServerUrl = HelperUtil.getBean(PropertyValueProvider.class).getProperty(urlProperty);
+            String urlProperty = "auth" + RecapConstants.URL_PREFIX;
+            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution,urlProperty);
 
             ReCAPCas20ServiceTicketValidator ticketValidator = (ReCAPCas20ServiceTicketValidator) this.ticketValidator;
             ticketValidator.setCasServerUrlPrefix(casServerUrl);
