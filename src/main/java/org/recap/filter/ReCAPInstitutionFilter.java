@@ -31,13 +31,13 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
         String requestedSessionId = request.getSession().getId();
 
         String requestURI = request.getRequestURI();
-        if(StringUtils.equals(requestURI, "/home")) {
-
+        if (StringUtils.equals(requestURI, "/api/logout")) {
             Cookie[] cookies = request.getCookies();
-            cookiesOuter: for(Cookie cookie : cookies) {
-                if(StringUtils.equals(cookie.getName(), RecapConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
-                    for(Cookie innerCookies : cookies) {
-                        if(StringUtils.equals(innerCookies.getName(), RecapConstants.LOGGED_IN_INSTITUTION)) {
+            cookiesOuter:
+            for (Cookie cookie : cookies) {
+                if (StringUtils.equals(cookie.getName(), RecapConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
+                    for (Cookie innerCookies : cookies) {
+                        if (StringUtils.equals(innerCookies.getName(), RecapConstants.LOGGED_IN_INSTITUTION)) {
                             institutionCode = innerCookies.getValue();
                             cookie.setValue(null);
                             cookie.setMaxAge(0);
@@ -53,13 +53,13 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
                 }
             }
 
-            if(StringUtils.isNotBlank(institutionCode)) {
+            if (StringUtils.isNotBlank(institutionCode)) {
                 userInstitutionCache.removeSessionId(requestedSessionId);
                 String logoutUrl = HelperUtil.getLogoutUrl(institutionCode);
                 try {
                     response.sendRedirect(logoutUrl);
                 } catch (IOException e) {
-                  log.error("Error While Redirect",e);
+                    log.error("Error While Redirect", e);
                 }
             } else {
 
@@ -68,7 +68,7 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
             }
 
         } else {
-            if(StringUtils.isNotBlank(institutionCode)) {
+            if (StringUtils.isNotBlank(institutionCode)) {
                 userInstitutionCache.addRequestSessionId(requestedSessionId, institutionCode);
             }
 
@@ -78,7 +78,7 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
 
     private void forwardChaining(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, UserInstitutionCache userInstitutionCache, String requestedSessionId) throws IOException, ServletException {
         String institutionCode = userInstitutionCache.getInstitutionForRequestSessionId(requestedSessionId);
-        if(StringUtils.isNotBlank(institutionCode)) {
+        if (StringUtils.isNotBlank(institutionCode)) {
             request.setAttribute(RecapConstants.RECAP_INSTITUTION_CODE, institutionCode);
         }
         filterChain.doFilter(request, response);

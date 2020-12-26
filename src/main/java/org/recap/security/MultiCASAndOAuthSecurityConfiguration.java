@@ -58,7 +58,6 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
 
         LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint = new LoginUrlAuthenticationEntryPoint(sso.getLoginPath());
         ReCAPExceptionTranslationFilter reCAPExceptionTranslationFilter = new ReCAPExceptionTranslationFilter(casPropertyProvider, loginUrlAuthenticationEntryPoint);
-        http.cors();
         http.addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
                 .addFilterAfter(new ReCAPInstitutionFilter(), CsrfCookieGeneratorFilter.class)
                 .addFilterAfter(reCAPExceptionTranslationFilter, ExceptionTranslationFilter.class)
@@ -68,11 +67,11 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
 
-        http.authorizeRequests().antMatchers("/", "/home/**", "/actuator", "/actuator/prometheus").permitAll()
+        http.authorizeRequests().antMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
                 .antMatchers("*").authenticated().anyRequest().authenticated();
 
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
-        httpSecuritySessionManagementConfigurer.invalidSessionUrl("/home");
+        httpSecuritySessionManagementConfigurer.invalidSessionUrl("http://localhost:9088/home");
 
         http.logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
@@ -170,8 +169,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()./*antMatchers("/fonts/**").antMatchers("/images/**").antMatchers("/js/**")
-                .antMatchers("/css/**").antMatchers("/lib/**")*/antMatchers("/loginCheck").antMatchers("/institutions").antMatchers("/login/**").antMatchers("/collection/**").antMatchers("/search/**").antMatchers("/request/**").antMatchers("/reports/**").antMatchers("/userRoles/**").antMatchers("/bulkRequest/**").antMatchers("/roles/**").antMatchers("/jobs/**").antMatchers("/openMarcRecord/**").antMatchers("/admin/**").antMatchers("/home/**");
+        web.ignoring().antMatchers("/collection/**").antMatchers("/search/**").antMatchers("/request/**").antMatchers("/reports/**").antMatchers("/userRoles/**").antMatchers("/bulkRequest/**").antMatchers("/roles/**").antMatchers("/jobs/**").antMatchers("/openMarcRecord/**").antMatchers("/admin/**").antMatchers("/api/**");
     }
 
     /**

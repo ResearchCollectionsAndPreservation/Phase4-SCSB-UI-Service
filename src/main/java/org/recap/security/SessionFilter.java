@@ -47,6 +47,9 @@ public class SessionFilter implements Filter{
             if(null != authentication && !HelperUtil.isAnonymousUser(authentication)) {
                 HttpServletRequest request = (HttpServletRequest) req;
                 HttpServletResponse response = (HttpServletResponse) res;
+                Cookie cookieUserName = new Cookie("username", authentication.getName());
+                HelperUtil.setCookieProperties(cookieUserName);
+                response.addCookie(cookieUserName);
                 Cookie cookie = new Cookie(RecapConstants.IS_USER_AUTHENTICATED, "Y");
                 HelperUtil.setCookieProperties(cookie);
                 response.addCookie(cookie);
