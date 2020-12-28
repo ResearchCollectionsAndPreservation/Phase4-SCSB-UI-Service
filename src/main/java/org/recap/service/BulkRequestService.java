@@ -77,18 +77,17 @@ public class BulkRequestService {
     private String scsbUrl;
 
 
-    public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm) {
+    public BulkRequestForm processCreateBulkRequest(BulkRequestForm bulkRequestForm,HttpServletRequest request) {
         try {
             if (processPatronValidation(bulkRequestForm)){
                 InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(bulkRequestForm.getRequestingInstitution());
                 MultipartFile multipartFile = bulkRequestForm.getFile();
                 byte[] bytes = multipartFile.getBytes();
-                /*HttpSession session = request.getSession(false);
+                HttpSession session = request.getSession(false);
                 Integer userId = (Integer) session.getAttribute(RecapConstants.USER_ID);
-                Optional<UsersEntity> usersEntity = userDetailsRepository.findById(userId);*/
+                Optional<UsersEntity> usersEntity = userDetailsRepository.findById(userId);
                 BulkRequestItemEntity bulkRequestItemEntity = new BulkRequestItemEntity();
-               /* bulkRequestItemEntity.setCreatedBy(usersEntity.isPresent() ? usersEntity.get().getLoginId() : "");*/
-                bulkRequestItemEntity.setCreatedBy("Dinakar");
+                bulkRequestItemEntity.setCreatedBy(usersEntity.isPresent() ? usersEntity.get().getLoginId() : "");
                 bulkRequestItemEntity.setCreatedDate(new Date());
                 bulkRequestItemEntity.setLastUpdatedDate(new Date());
                 bulkRequestItemEntity.setEmailId(getEncryptedPatronEmailId(bulkRequestForm.getPatronEmailAddress()));

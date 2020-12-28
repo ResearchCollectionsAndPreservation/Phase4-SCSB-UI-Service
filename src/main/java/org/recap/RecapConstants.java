@@ -83,8 +83,8 @@ public class RecapConstants {
     public static final String DEACCESSION_ERROR_REQUEST_CANCEL = "The active request associated with the item has been cancelled.";
 
     //Request
-    public static final String REQUEST_FORM="requestForm";
-    public static final String CREATE_REQUEST_SECTION="request :: #createRequestSection";
+    public static final String REQUEST_FORM = "requestForm";
+    public static final String CREATE_REQUEST_SECTION = "request :: #createRequestSection";
 
     public static final String REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED = "User is not permitted to request private item(s) from other partners";
     public static final String REQUEST_ERROR_USER_NOT_PERMITTED = "User is not permitted to request item(s)";
@@ -115,8 +115,8 @@ public class RecapConstants {
     public static final String NOT_AVAILABLE_ERROR_MESSAGE = "notAvailableErrorMessage";
     public static final String NO_PERMISSION_ERROR_MESSAGE = "noPermissionErrorMessage";
 
-    public static final String USER_ROLES_SEARCH ="userRolesSearch";
-    public static final Integer CGD_PRIVATE=3;
+    public static final String USER_ROLES_SEARCH = "userRolesSearch";
+    public static final Integer CGD_PRIVATE = 3;
 
     public static final String REJECTION_REPORT = "Rejection";
     public static final String SUBMIT_COLLECTION_REPORT = "Submit_Collection_Report";
@@ -128,9 +128,9 @@ public class RecapConstants {
     public static final String MULTIPLE_BARCODES = "multipleBarcodes";
 
     //Reports
-    public static final String REPORTS_FORM="reportsForm";
-    public static final String REPORTS_VIEW_DEACCESSION_INFORMARION ="reports :: #deaccessionInformation";
-    public static final String REPORTS_VIEW_CGD_TABLE ="reports :: #cgdTable";
+    public static final String REPORTS_FORM = "reportsForm";
+    public static final String REPORTS_VIEW_DEACCESSION_INFORMARION = "reports :: #deaccessionInformation";
+    public static final String REPORTS_VIEW_CGD_TABLE = "reports :: #cgdTable";
     public static final Integer PUL_INST_ID = 1;
     public static final Integer CUL_INST_ID = 2;
     public static final Integer NYPL_INST_ID = 3;
@@ -145,42 +145,42 @@ public class RecapConstants {
     public static final String SCSB_REPORTS_CGD_ITEM_COUNTS_URL = "reportsService/cgdItemCounts";
     public static final String SCSB_REPORTS_DEACCESSION_RESULTS_URL = "reportsService/deaccessionResults";
 
-    public static final String SCSB_SHIRO_AUTHENTICATE_URL="userAuth/authService";
-    public static final String SCSB_SHIRO_SEARCH_URL="auth/search";
-    public static final String SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL="auth/touchExistingSession";
-    public static final String SCSB_SHIRO_REQUEST_URL="auth/request";
-    public static final String SCSB_SHIRO_COLLECTION_URL="auth/collection";
+    public static final String SCSB_SHIRO_AUTHENTICATE_URL = "userAuth/authService";
+    public static final String SCSB_SHIRO_SEARCH_URL = "auth/search";
+    public static final String SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL = "auth/touchExistingSession";
+    public static final String SCSB_SHIRO_REQUEST_URL = "auth/request";
+    public static final String SCSB_SHIRO_COLLECTION_URL = "auth/collection";
     //Monitoring and Logging
-    public static final String SCSB_SHIRO_MONITORING_URL="auth/monitoring";
-    public static final String SCSB_SHIRO_LOGGING_URL="auth/logging";
-    public static final String SCSB_SHIRO_REPORT_URL="auth/reports";
-    public static final String SCSB_SHIRO_USER_ROLE_URL="auth/userRoles";
-    public static final String SCSB_SHIRO_ROLE_URL="auth/roles";
-    public static final String SCSB_SHIRO_LOGOUT_URL="userAuth/logout";
-    public static final String SCSB_SHIRO_UI_VALUES="authentication/permissions";
-    public static final String LOG_USER_NOT_VALID=": User not valid :";
-    public static final String LOG_USER_LOGOUT_SUCCUSS="User logout succussfully";
-    public static final String PERMISSIONS_MAP ="PERMISSIONS_MAP";
-    public static final String LOGOUT="logout";
-
+    public static final String SCSB_SHIRO_MONITORING_URL = "auth/monitoring";
+    public static final String SCSB_SHIRO_LOGGING_URL = "auth/logging";
+    public static final String SCSB_SHIRO_REPORT_URL = "auth/reports";
+    public static final String SCSB_SHIRO_USER_ROLE_URL = "auth/userRoles";
+    public static final String SCSB_SHIRO_ROLE_URL = "auth/roles";
+    public static final String SCSB_SHIRO_LOGOUT_URL = "userAuth/logout";
+    public static final String SCSB_SHIRO_UI_VALUES = "authentication/permissions";
+    public static final String LOG_USER_NOT_VALID = ": User not valid :";
+    public static final String LOG_USER_LOGOUT_SUCCUSS = "User logout succussfully";
+    public static final String PERMISSIONS_MAP = "PERMISSIONS_MAP";
+    public static final String LOGOUT = "logout";
     public static final String IS_USER_AUTHENTICATED = "isAuthenticated";
     public static final String HTC = "HTC";
+    public static final String AUTH = "auth";
 
-    public static final String USER_ISAUTHENTICATED ="true";
+    public static final String USER_ISAUTHENTICATED = "true";
 
-    public static final String USER_ID="id";
+    public static final String USER_ID = "id";
 
-    public static final String USER_INSTITUTION="userInstitution";
+    public static final String USER_INSTITUTION = "userInstitution";
 
-    public static final String REQUEST_PRIVILEGE="isRequestAllowed";
+    public static final String REQUEST_PRIVILEGE = "isRequestAllowed";
 
-    public static final String COLLECTION_PRIVILEGE="isCollectionAllowed";
+    public static final String COLLECTION_PRIVILEGE = "isCollectionAllowed";
 
-    public static final String REPORTS_PRIVILEGE="isReportAllowed";
+    public static final String REPORTS_PRIVILEGE = "isReportAllowed";
 
     public static final String SEARCH_PRIVILEGE = "isSearchAllowed";
 
-    public static final String USER_ROLE_PRIVILEGE="isUserRoleAllowed";
+    public static final String USER_ROLE_PRIVILEGE = "isUserRoleAllowed";
 
     //ROLES
     public static final String ROLES = "roles";
@@ -229,64 +229,64 @@ public class RecapConstants {
     public static final String WARNING_MESSAGE_DEACCESSION_REQUEST_BORROWED_ITEM = "Deaccessioning the item will cancel the request.";
 
     //UserRoleController
-    public static final String VIEW_LOGIN="login";
-    public static final String VIEW_HOME="/";
-    public static final String VIEW_REQUEST_RESULT_TABLE="userRolesSearch :: #request-result-table";
-    public static final String USER_ROLE_FORM="userRoleForm";
+    public static final String VIEW_LOGIN = "login";
+    public static final String VIEW_HOME = "/";
+    public static final String VIEW_REQUEST_RESULT_TABLE = "userRolesSearch :: #request-result-table";
+    public static final String USER_ROLE_FORM = "userRoleForm";
 
     //View
-    public static final String VIEW_SEARCH_RECORDS="searchRecords";
-    public static final String VIEW_SEARCH_RECORDS_REQUEST="searchRecordsRequest";
-    public static final String VIEW_SEARCH_REQUESTS_SECTION="request :: #searchRequestsSection";
-    public static final String VIEW_SCHEDULE_JOB_SECTION="scheduleJobs :: #scheduleJobs";
+    public static final String VIEW_SEARCH_RECORDS = "searchRecords";
+    public static final String VIEW_SEARCH_RECORDS_REQUEST = "searchRecordsRequest";
+    public static final String VIEW_SEARCH_REQUESTS_SECTION = "request :: #searchRequestsSection";
+    public static final String VIEW_SCHEDULE_JOB_SECTION = "scheduleJobs :: #scheduleJobs";
 
     public static final String USERS_TAB_CLICKED = "Users Tab Clicked";
 
     //Incomplete Record Reports
     public static final String SCSB_REPORTS_INCOMPLETE_RESULTS_URL = "reportsService/incompleteRecords";
-    public static final String REPORTS_INCOMPLETE_RECORDS="IncompleteRecordsReport";
-    public static final String REPORTS_INCOMPLETE_RECORDS_NOT_FOUND="No Records Found";
-    public static final String REPORTS_INCOMPLETE_RECORDS_VIEW="reports :: #IncompleteReporttableview";
-    public static final String REPORTS_INCOMPLETE_SHOW_BY_VIEW="reports :: #incompleteShowBy";
-    public static final String REPORTS_INCOMPLETE_EXPORT_FILE_NAME="ExportIncompleteRecords_";
+    public static final String REPORTS_INCOMPLETE_RECORDS = "IncompleteRecordsReport";
+    public static final String REPORTS_INCOMPLETE_RECORDS_NOT_FOUND = "No Records Found";
+    public static final String REPORTS_INCOMPLETE_RECORDS_VIEW = "reports :: #IncompleteReporttableview";
+    public static final String REPORTS_INCOMPLETE_SHOW_BY_VIEW = "reports :: #incompleteShowBy";
+    public static final String REPORTS_INCOMPLETE_EXPORT_FILE_NAME = "ExportIncompleteRecords_";
 
     //UserManagementService
-    public static final String USER_AUTH="user_auth";
-    public static final String ROLE_ID="roleId";
-    public static final String USER_TOKEN="token";
-    public static final String REQUEST_ALL_PRIVILEGE="isRequestAllAllowed";
-    public static final String REQUEST_ITEM_PRIVILEGE="isRequestItemAllowed";
-    public static final String BARCODE_RESTRICTED_PRIVILEGE="isBarcodeRestricted";
-    public static final String DEACCESSION_PRIVILEGE="isDeaccessionAllowed";
-    public static final String SUPER_ADMIN_USER="isSuperAdmin";
-    public static final String RECAP_USER ="isRecapUser";
-    public static final String USER_AUTH_ERRORMSG="authErrorMsg";
-    public static final String USER_NAME="userName";
-    public static final String ROLE_FOR_SUPER_ADMIN="isRoleAllowed";
-    public static final String TOKEN_SPLITER=":";
+    public static final String USER_AUTH = "user_auth";
+    public static final String ROLE_ID = "roleId";
+    public static final String USER_TOKEN = "token";
+    public static final String REQUEST_ALL_PRIVILEGE = "isRequestAllAllowed";
+    public static final String REQUEST_ITEM_PRIVILEGE = "isRequestItemAllowed";
+    public static final String BARCODE_RESTRICTED_PRIVILEGE = "isBarcodeRestricted";
+    public static final String DEACCESSION_PRIVILEGE = "isDeaccessionAllowed";
+    public static final String SUPER_ADMIN_USER = "isSuperAdmin";
+    public static final String RECAP_USER = "isRecapUser";
+    public static final String USER_AUTH_ERRORMSG = "authErrorMsg";
+    public static final String USER_NAME = "userName";
+    public static final String ROLE_FOR_SUPER_ADMIN = "isRoleAllowed";
+    public static final String TOKEN_SPLITER = ":";
 
-    public static final String OCLC_NUMBER_PATTERN="[^0-9]";
+    public static final String OCLC_NUMBER_PATTERN = "[^0-9]";
 
     public static final String TOKEN = "token";
-    public static final String ERROR_CODE_ERROR_MESSAGE= "error.code.exception";
+    public static final String ERROR_CODE_ERROR_MESSAGE = "error.code.exception";
 
-    public static final String LOGGED_IN_INSTITUTION= "loggedInInstitution";
+    public static final String LOGGED_IN_INSTITUTION = "loggedInInstitution";
 
     public static final String SCHEDULE_JOBS = "scheduleJobs";
     public static final String SCHEDULE_JOBS_FORM = "scheduleJobsForm";
-    public static final String UNSCHEDULE= "Unschedule";
-    public static final String UNSCHEDULED= "Unscheduled";
-    public static final String SCHEDULED= "Scheduled";
+    public static final String UNSCHEDULE = "Unschedule";
+    public static final String UNSCHEDULED = "Unscheduled";
+    public static final String SCHEDULED = "Scheduled";
 
-    public static final String REQUESTED_ITEM_AVAILABILITY="requestedItemAvailabilty";
+    public static final String REQUESTED_ITEM_AVAILABILITY = "requestedItemAvailabilty";
 
     public static final String BULK_REQUEST_FORM = "bulkRequestForm";
-    public static final String BULK_REQUEST= "bulkRequest";
-    public static final String BULK_CREATE_REQUEST_SECTION="bulkRequest";
-    public static final String BULK_SEARCH_REQUEST_SECTION="bulkRequest::#searchRequestsSection";
+    public static final String BULK_REQUEST = "bulkRequest";
+    public static final String BULK_CREATE_REQUEST_SECTION = "bulkRequest";
+    public static final String BULK_SEARCH_REQUEST_SECTION = "bulkRequest::#searchRequestsSection";
     public static final String IN_PROCESS = "IN PROCESS";
 
-    public static final String SCSB_SHIRO_BULK_REQUEST_URL="auth/bulkRequest";
+    public static final String SCSB_SHIRO_BULK_REQUEST_URL = "auth/bulkRequest";
 
     public static final String EXCEPTION = "EXCEPTION";
     public static final String REQUESTS_PLACED_ON_SCH = "REQUESTS PLACED ON SCH";
@@ -308,7 +308,8 @@ public class RecapConstants {
     public static final String AUTH_TYPE_OAUTH = "OAuth2";
     public static final String AUTH_TYPE_CAS = "cas";
 
-    private RecapConstants(){
+
+    private RecapConstants() {
         //Do nothing
     }
 }

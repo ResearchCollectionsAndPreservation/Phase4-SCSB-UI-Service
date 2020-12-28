@@ -83,7 +83,7 @@ public class HelperUtil {
         if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
             casLogoutUrl = "http://localhost:9088/home"; // Todo : Need to get the corresponding logout url from NYPL
         } else {
-            String urlProperty = "cas" + RecapConstants.SERVICE_LOGOUT;
+            String urlProperty = RecapConstants.AUTH + RecapConstants.SERVICE_LOGOUT;
             PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
             String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode,urlProperty);
             String redirectUri = propertyValueProvider.getProperty("scsb.app"+RecapConstants.REDIRECT_URI);

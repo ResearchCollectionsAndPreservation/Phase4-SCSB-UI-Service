@@ -13,8 +13,6 @@ import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(allowCredentials="true",allowedHeaders = "*")
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class HomeController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
@@ -62,20 +60,20 @@ public class HomeController extends AbstractController {
      * @return InstitutionsList
      */
     @GetMapping("/institutions")
-    public Map<String,String> loadInstitutions() {
-
-        Map<String,String> instList = new HashMap<>();
+    public Map<String, String> loadInstitutions() {
+        Map<String, String> instList = new HashMap<>();
         List<InstitutionEntity> InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
-            instList.put(institutionEntity.getInstitutionCode(),institutionEntity.getInstitutionName());
+            if (institutionEntity.getInstitutionCode().equalsIgnoreCase(RecapConstants.HTC))
+                instList.put(institutionEntity.getInstitutionCode(), RecapConstants.HTC);
+            else
+                instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
         return instList;
     }
 
     /**
      *
-     * @param request
-     * @return
      */
     @GetMapping(value = "/loginCheck")
     public boolean login(HttpServletRequest request) {
@@ -89,11 +87,9 @@ public class HomeController extends AbstractController {
 
     /**
      *
-     * @param request
-     * @return
      */
     @GetMapping("/logout")
-    public boolean logoutUser(HttpServletRequest request,HttpServletResponse response){
+    public boolean logoutUser(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Subject Logged out");
         String institutionCode = HelperUtil.getInstitutionFromRequest(request);
         String requestedSessionId = request.getSession().getId();
