@@ -99,6 +99,7 @@ public class AdminController {
                     Element eElement = (Element) node;
                     institutionEntity.setInstitutionCode(eElement.getElementsByTagName("InstitutionCode").item(0).getTextContent());
                     institutionEntity.setInstitutionName(eElement.getElementsByTagName("InstitutionName").item(0).getTextContent());
+                    institutionEntity.setIls_protocol(eElement.getElementsByTagName("ils_protocol").item(0).getTextContent());
                     institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
                 }
             }
@@ -208,6 +209,7 @@ public class AdminController {
                 Element eElement = (Element) node;
                 institutionEntity.setInstitutionCode(eElement.getElementsByTagName("InstitutionCode").item(0).getTextContent());
                 institutionEntity.setInstitutionName(eElement.getElementsByTagName("InstitutionName").item(0).getTextContent());
+                institutionEntity.setIls_protocol(eElement.getElementsByTagName("ils_protocol").item(0).getTextContent());
                 institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
                 try {
                     institutionDetailsRepository.save(institutionEntity);
