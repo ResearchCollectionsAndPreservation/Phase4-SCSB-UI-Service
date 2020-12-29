@@ -33,6 +33,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableOAuth2Sso
 public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Value("${scsb.ui.url}")
+    private String uiUrl;
 
     @Value("${cas.default.url.prefix}")
     private String casUrlPrefix;
@@ -71,7 +73,7 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
                 .antMatchers("*").authenticated().anyRequest().authenticated();
 
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
-        httpSecuritySessionManagementConfigurer.invalidSessionUrl("http://localhost:9088/home");
+        httpSecuritySessionManagementConfigurer.invalidSessionUrl(uiUrl+"home");
 
         http.logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");

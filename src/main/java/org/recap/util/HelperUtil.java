@@ -14,11 +14,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.ui.Model;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +30,6 @@ public class HelperUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(HelperUtil.class);
 
-
     /**
      * Gets attribute value from request.
      *
@@ -40,7 +37,7 @@ public class HelperUtil {
      * @param key     the key
      * @return the attribute value of the given key
      */
-    
+
     public static String getAttributeValueFromRequest(HttpServletRequest request, String key) {
         return (String) request.getAttribute(key);
     }
@@ -79,15 +76,15 @@ public class HelperUtil {
      */
     public static String getLogoutUrl(String institutionCode) {
         String casLogoutUrl;
+        PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
         String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, "auth.type");
         if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
-            casLogoutUrl = "http://localhost:9088/home"; // Todo : Need to get the corresponding logout url from NYPL
+            casLogoutUrl = propertyValueProvider.getProperty(RecapConstants.SCSB_UI_URL) + "home"; // Todo : Need to get the corresponding logout url from NYPL
         } else {
             String urlProperty = RecapConstants.AUTH + RecapConstants.SERVICE_LOGOUT;
-            PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
-            String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode,urlProperty);
-            String redirectUri = propertyValueProvider.getProperty("scsb.app"+RecapConstants.REDIRECT_URI);
-            casLogoutUrl = "http://localhost:9088/home";
+            String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, urlProperty);
+            String redirectUri = propertyValueProvider.getProperty(RecapConstants.LOGOUT_REDIRECT_URI);
+            casLogoutUrl = url + "" + redirectUri;
         }
         return casLogoutUrl;
     }
