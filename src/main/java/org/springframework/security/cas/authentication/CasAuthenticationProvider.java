@@ -148,7 +148,7 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             String institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(RecapConstants.RECAP_INSTITUTION_CODE);
 
-            String urlProperty = RecapConstants.AUTH + RecapConstants.URL_PREFIX;
+            String urlProperty = RecapConstants.AUTH + RecapConstants.SERVICE_PREFIX;
             String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, urlProperty);
 
             ReCAPCas20ServiceTicketValidator ticketValidator = (ReCAPCas20ServiceTicketValidator) this.ticketValidator;

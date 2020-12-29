@@ -13,6 +13,7 @@ import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,8 @@ import java.util.Map;
 public class HomeController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
-
+    @Value("${scsb.app.logout.redirect.uri}")
+    private String test;
     @Autowired
     private ReportsUtil reportsUtil;
 
