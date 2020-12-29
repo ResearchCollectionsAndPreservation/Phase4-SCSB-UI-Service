@@ -8,7 +8,6 @@ import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.recap.RecapConstants;
 import org.recap.security.ReCAPCas20ServiceTicketValidator;
-import org.recap.spring.PropertyValueProvider;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,9 +28,9 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -49,14 +48,12 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
 
     // ~ Instance fields
     // ================================================================================================
-
-    private AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService;
-
     private final UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
     /**
      * The Messages.
      */
     protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+    private AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService;
     private StatelessTicketCache statelessTicketCache = new NullStatelessTicketCache();
     private String key;
     private TicketValidator ticketValidator;
@@ -96,8 +93,7 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
             if (this.key.hashCode() == ((CasAuthenticationToken) authentication)
                     .getKeyHash()) {
                 return authentication;
-            }
-            else {
+            } else {
                 throw new BadCredentialsException(
                         messages.getMessage("CasAuthenticationProvider.incorrectKey",
                                 "The presented CasAuthenticationToken does not contain the expected key"));
@@ -144,21 +140,20 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
     /**
      * Authenticate the CAS users. CAS URL will be decided based on the user institution.
      *
-     * @param authentication
      * @return CasAuthenticationToken
      */
     private CasAuthenticationToken authenticateNow(final Authentication authentication)
             throws AuthenticationException {
         try {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-            String institution = (String)((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(RecapConstants.RECAP_INSTITUTION_CODE);
+            String institution = (String) ((ServletRequestAttributes) requestAttributes).getRequest().getAttribute(RecapConstants.RECAP_INSTITUTION_CODE);
 
-            String urlProperty = "auth" + RecapConstants.URL_PREFIX;
-            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution,urlProperty);
+            String urlProperty = RecapConstants.AUTH + RecapConstants.URL_PREFIX;
+            String casServerUrl = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution, urlProperty);
 
             ReCAPCas20ServiceTicketValidator ticketValidator = (ReCAPCas20ServiceTicketValidator) this.ticketValidator;
             ticketValidator.setCasServerUrlPrefix(casServerUrl);
-            ticketValidator.setProxyRetriever(new Cas20ProxyRetriever(casServerUrl, "UTF-8",ticketValidator.getURLConnectionFactory()));
+            ticketValidator.setProxyRetriever(new Cas20ProxyRetriever(casServerUrl, "UTF-8", ticketValidator.getURLConnectionFactory()));
 
             final Assertion assertion = this.ticketValidator.validate(authentication
                     .getCredentials().toString(), getServiceUrl(authentication));
@@ -168,8 +163,7 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
                     authentication.getCredentials(),
                     authoritiesMapper.mapAuthorities(userDetails.getAuthorities()),
                     userDetails, assertion);
-        }
-        catch (final TicketValidationException e) {
+        } catch (final TicketValidationException e) {
             throw new BadCredentialsException(e.getMessage(), e);
         }
     }
@@ -179,25 +173,19 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
      * {@link ServiceAuthenticationDetails}, then
      * {@link ServiceAuthenticationDetails#getServiceUrl()} is used. Otherwise, the
      * {@link ServiceProperties#getService()} is used.
-     *
-     * @param authentication
-     * @return
      */
     private String getServiceUrl(Authentication authentication) {
         String serviceUrl;
         if (authentication.getDetails() instanceof ServiceAuthenticationDetails) {
             serviceUrl = ((ServiceAuthenticationDetails) authentication.getDetails())
                     .getServiceUrl();
-        }
-        else if (serviceProperties == null) {
+        } else if (serviceProperties == null) {
             throw new IllegalStateException(
                     "serviceProperties cannot be null unless Authentication.getDetails() implements ServiceAuthenticationDetails.");
-        }
-        else if (serviceProperties.getService() == null) {
+        } else if (serviceProperties.getService() == null) {
             throw new IllegalStateException(
                     "serviceProperties.getService() cannot be null unless Authentication.getDetails() implements ServiceAuthenticationDetails.");
-        }
-        else {
+        } else {
             serviceUrl = serviceProperties.getService();
         }
         if (logger.isDebugEnabled()) {
@@ -281,19 +269,6 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
     }
 
     /**
-     * Gets ticket validator.
-     *
-     * @return the ticket validator
-     */
-    protected TicketValidator getTicketValidator() {
-        return ticketValidator;
-    }
-
-    public void setMessageSource(final MessageSource messageSource) {
-        this.messages = new MessageSourceAccessor(messageSource);
-    }
-
-    /**
      * Sets stateless ticket cache.
      *
      * @param statelessTicketCache the stateless ticket cache
@@ -303,12 +278,25 @@ public class CasAuthenticationProvider implements AuthenticationProvider,
     }
 
     /**
+     * Gets ticket validator.
+     *
+     * @return the ticket validator
+     */
+    protected TicketValidator getTicketValidator() {
+        return ticketValidator;
+    }
+
+    /**
      * Sets ticket validator.
      *
      * @param ticketValidator the ticket validator
      */
     public void setTicketValidator(final TicketValidator ticketValidator) {
         this.ticketValidator = ticketValidator;
+    }
+
+    public void setMessageSource(final MessageSource messageSource) {
+        this.messages = new MessageSourceAccessor(messageSource);
     }
 
     /**

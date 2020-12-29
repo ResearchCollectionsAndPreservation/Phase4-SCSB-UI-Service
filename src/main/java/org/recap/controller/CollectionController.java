@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -105,7 +106,7 @@ public class CollectionController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/openMarcView")
-    public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm) throws MarcException {
+    public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws MarcException {
         logger.info("openMarcView  called");
         //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         UserDetailsForm userDetailsForm = new UserDetailsForm(1, true, true, true);

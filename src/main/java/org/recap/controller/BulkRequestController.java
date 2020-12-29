@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * Created by akulak on 19/9/17.
  */
 @RestController
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/bulkRequest")
 public class BulkRequestController extends AbstractController {
 
@@ -60,7 +61,7 @@ public class BulkRequestController extends AbstractController {
             , @RequestParam("patronBarcodeId") String patronBarcodeId
             , @RequestParam("BulkRequestName") String BulkRequestName
             , @RequestParam("choosenFile") String choosenFile
-            , @RequestParam("patronEmailId") String patronEmailId) {
+            , @RequestParam("patronEmailId") String patronEmailId, HttpServletRequest request) {
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
         bulkRequestForm.setFile(file);
         bulkRequestForm.setPatronEmailAddress(patronEmailId);
@@ -69,8 +70,8 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setBulkRequestName(BulkRequestName);
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
-        logger.info("createBulkRequest function --> Called");
-        return bulkRequestService.processCreateBulkRequest(bulkRequestForm);
+        logger.info("createBulkRequest --> Called");
+        return bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
     }
 
     @PostMapping("/searchRequest")

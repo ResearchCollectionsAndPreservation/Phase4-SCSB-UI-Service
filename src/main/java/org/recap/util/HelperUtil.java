@@ -81,13 +81,13 @@ public class HelperUtil {
         String casLogoutUrl;
         String authType = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode, "auth.type");
         if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
-            casLogoutUrl = RecapConstants.VIEW_HOME; // Todo : Need to get the corresponding logout url from NYPL
+            casLogoutUrl = "http://localhost:9088/home"; // Todo : Need to get the corresponding logout url from NYPL
         } else {
-            String urlProperty = RecapConstants.CAS + institutionCode + RecapConstants.SERVICE_LOGOUT;
+            String urlProperty = RecapConstants.AUTH + RecapConstants.SERVICE_LOGOUT;
             PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
-            String url = propertyValueProvider.getProperty(urlProperty);
-            String redirectUri = propertyValueProvider.getProperty(RecapConstants.REDIRECT_URI);
-            casLogoutUrl = url + redirectUri;
+            String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institutionCode,urlProperty);
+            String redirectUri = propertyValueProvider.getProperty("scsb.app"+RecapConstants.REDIRECT_URI);
+            casLogoutUrl = "http://localhost:9088/home";
         }
         return casLogoutUrl;
     }

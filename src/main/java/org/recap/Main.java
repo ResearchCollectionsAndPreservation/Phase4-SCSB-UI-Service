@@ -85,7 +85,6 @@ public class Main {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         Set<String> urlPatterns = new HashSet<>();
         urlPatterns.add("/*");
-        urlPatterns.add("/*/**");
         filterRegistrationBean.setUrlPatterns(urlPatterns);
         filterRegistrationBean.setFilter(new SessionFilter());
         return filterRegistrationBean;
@@ -100,9 +99,7 @@ public class Main {
     public FilterRegistrationBean getXSSFilterRegisteredBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         Set<String> urlPatterns = new HashSet<>();
-        urlPatterns.add("/request");
-        urlPatterns.add("/roles#");
-        urlPatterns.add("/userRoles#");
+        urlPatterns.add("/*");
         filterRegistrationBean.setUrlPatterns(urlPatterns);
         filterRegistrationBean.setFilter(new XSSFilter());
         return filterRegistrationBean;
@@ -138,8 +135,6 @@ public class Main {
         configuration.setAllowedOrigins(Lists.newArrayList("*"));
         configuration.setAllowedMethods(Lists.newArrayList("GET", "POST", "OPTIONS"));
         configuration.setAllowCredentials(true);
-        //configuration.setAllowedHeaders(Lists.newArrayList("x-xsrf-token", "XSRF-TOKEN"));
-        //configuration.setMaxAge(10l);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**/**", configuration);
         return source;

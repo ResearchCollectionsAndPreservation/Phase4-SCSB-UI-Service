@@ -204,7 +204,7 @@ public class ReCAPExceptionTranslationFilter extends GenericFilterBean {
             if(StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
                 this.authenticationEntryPoint.commence(request,response,reason);
             } else {
-                String urlProperty =  "auth"+ RecapConstants.SERVICE_LOGIN;
+                String urlProperty =  RecapConstants.AUTH + RecapConstants.SERVICE_LOGIN;
                 String url = HelperUtil.getBean(PropertyUtil.class).getPropertyByInstitutionAndKey(institution,urlProperty);
 
                 //Calling cas entry point based on institution type.

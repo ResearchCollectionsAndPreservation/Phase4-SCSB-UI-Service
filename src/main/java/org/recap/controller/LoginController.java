@@ -56,34 +56,12 @@ public class LoginController extends AbstractController {
     private PropertyUtil propertyUtil;
 
     /**
-     * Return either login or search view. Returns search view if user authenticated. If not it will return login view.
      *
-     * @param request  the request
-     * @param model    the model
-     * @param userForm the user form
-     * @return the string
+     * @return
      */
-    @GetMapping(value = "/")
-    public String loginScreen(HttpServletRequest request, Model model, @ModelAttribute UserForm userForm) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
-            return redirectSearch;
-        }
-        logger.debug("Login Screen called");
-        return RecapConstants.VIEW_LOGIN;
-    }
-
-    /**
-     * Return home view.
-     *
-     * @param request  the request
-     * @param model    the model
-     * @param userForm the user form
-     * @return the string
-     */
-    @GetMapping(value = "/home")
-    public String home(HttpServletRequest request, Model model, @ModelAttribute UserForm userForm) {
-        return RecapConstants.VIEW_LOGIN;
+    @GetMapping("/home")
+    public String home(HttpServletRequest request){
+        return "redirect:" + uiUrl + "home";
     }
 
     /**
@@ -94,11 +72,10 @@ public class LoginController extends AbstractController {
      */
     @GetMapping(value = "/login-scsb")
     public String login(HttpServletRequest request) {
-        String username;
         HttpSession session = processSessionFixation(request);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            username = auth.getName();
+            String username = auth.getName();
             String institutionFromRequest = request.getParameter("institution");
             String authType = propertyUtil.getPropertyByInstitutionAndKey(institutionFromRequest, "auth.type");
             if (StringUtils.equals(authType, RecapConstants.AUTH_TYPE_OAUTH)) {
@@ -126,7 +103,7 @@ public class LoginController extends AbstractController {
             logger.error("Exception occurred in authentication : " + exception.getLocalizedMessage());
             return "redirect:" + uiUrl + "home";
         }
-        return "redirect:" + uiUrl + "search?username=" + username;
+        return "redirect:" + uiUrl + "search";
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {

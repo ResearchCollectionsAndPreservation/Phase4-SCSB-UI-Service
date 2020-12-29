@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 /**
- * Created by hemalathas on 22/6/16.
+ * @author dinakar on 24/12/20
  */
 public interface InstitutionDetailsRepository extends BaseRepository<InstitutionEntity> {
 
@@ -33,4 +33,12 @@ public interface InstitutionDetailsRepository extends BaseRepository<Institution
      */
     @Query(value="select inst from InstitutionEntity inst where inst.institutionCode not in ('HTC')")
     List<InstitutionEntity> getInstitutionCodeForSuperAdmin();
+
+    /**
+     * To get the list of institution entities for home page.
+     *
+     * @return the institutions
+     */
+    @Query(value="select inst from InstitutionEntity inst")
+    List<InstitutionEntity> getInstitutionCodes();
 }
