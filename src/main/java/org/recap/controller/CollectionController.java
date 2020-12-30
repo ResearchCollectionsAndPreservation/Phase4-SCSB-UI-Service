@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -123,11 +124,11 @@ public class CollectionController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/collectionUpdate")
-    public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm) throws Exception {
+    public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm,HttpServletRequest request) throws Exception {
         logger.info("collectionUpdate  called");
-        //HttpSession session = request.getSession(false);
-        //String username = (String) session.getAttribute(RecapConstants.USER_NAME);
-        collectionForm.setUsername("dinakartest");
+        HttpSession session = request.getSession(false);
+        String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+        collectionForm.setUsername(username);
         if (RecapCommonConstants.UPDATE_CGD.equalsIgnoreCase(collectionForm.getCollectionAction())) {
             getCollectionServiceUtil().updateCGDForItem(collectionForm);
         } else if (RecapCommonConstants.DEACCESSION.equalsIgnoreCase(collectionForm.getCollectionAction())) {

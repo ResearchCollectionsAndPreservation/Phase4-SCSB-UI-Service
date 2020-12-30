@@ -100,7 +100,7 @@ public class AdminController {
                     institutionEntity.setInstitutionCode(eElement.getElementsByTagName("InstitutionCode").item(0).getTextContent());
                     institutionEntity.setInstitutionName(eElement.getElementsByTagName("InstitutionName").item(0).getTextContent());
                     institutionEntity.setIlsProtocol(eElement.getElementsByTagName("IlsProtocol").item(0).getTextContent());
-                    institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
+                    //institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
                 }
             }
             institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionEntity.getInstitutionCode());
@@ -210,7 +210,7 @@ public class AdminController {
                 institutionEntity.setInstitutionCode(eElement.getElementsByTagName("InstitutionCode").item(0).getTextContent());
                 institutionEntity.setInstitutionName(eElement.getElementsByTagName("InstitutionName").item(0).getTextContent());
                 institutionEntity.setIlsProtocol(eElement.getElementsByTagName("IlsProtocol").item(0).getTextContent());
-                institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
+                //institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
                 try {
                     institutionDetailsRepository.save(institutionEntity);
                     fileuploadResponse.put("Institution Added Status", "Successed");
