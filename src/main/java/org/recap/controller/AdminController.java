@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ public class AdminController {
 
     @PostMapping("/upload")
     public Map<String, String> uploadFile(@RequestParam("file") MultipartFile file) {
-        fileuploadResponse= new LinkedHashMap<>();
+        fileuploadResponse = new LinkedHashMap<>();
         try {
             fileuploadResponse = loadInitialData(file);
             String content = new String(file.getBytes());
@@ -100,7 +99,6 @@ public class AdminController {
                     institutionEntity.setInstitutionCode(eElement.getElementsByTagName("InstitutionCode").item(0).getTextContent());
                     institutionEntity.setInstitutionName(eElement.getElementsByTagName("InstitutionName").item(0).getTextContent());
                     institutionEntity.setIlsProtocol(eElement.getElementsByTagName("IlsProtocol").item(0).getTextContent());
-                    //institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
                 }
             }
             institutionEntity = institutionDetailsRepository.findByInstitutionCode(institutionEntity.getInstitutionCode());
@@ -140,7 +138,7 @@ public class AdminController {
             FileUploadEntity fileUpload = new FileUploadEntity();
             fileUpload.setNewInstitutionname(institutionEntity.getInstitutionName());
             fileUpload.setOnBoardxmlfile(multipartFile.getBytes());
-            fileUpload.setInstType(institutionEntity.getProtocol());
+            fileUpload.setInstType(institutionEntity.getIlsProtocol());
             fileUpload.setOnBoardstatus("PENDING");
             fileUpload.setOnBoardcomments("");
             fileUpload.setCreatedBy("");
@@ -210,7 +208,6 @@ public class AdminController {
                 institutionEntity.setInstitutionCode(eElement.getElementsByTagName("InstitutionCode").item(0).getTextContent());
                 institutionEntity.setInstitutionName(eElement.getElementsByTagName("InstitutionName").item(0).getTextContent());
                 institutionEntity.setIlsProtocol(eElement.getElementsByTagName("IlsProtocol").item(0).getTextContent());
-                //institutionEntity.setProtocol(eElement.getElementsByTagName("protocol").item(0).getTextContent());
                 try {
                     institutionDetailsRepository.save(institutionEntity);
                     fileuploadResponse.put("Institution Added Status", "Successed");
