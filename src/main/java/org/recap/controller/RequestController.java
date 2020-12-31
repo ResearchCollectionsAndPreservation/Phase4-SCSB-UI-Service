@@ -44,6 +44,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ import java.util.Optional;
 @RestController
 @Getter
 @Setter
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/request")
 public class RequestController extends RecapController {
 
@@ -115,14 +116,14 @@ public class RequestController extends RecapController {
      * @return the model and view
      */
     @PostMapping("/goToSearchRequest")
-    public RequestForm goToSearchRequest(@RequestBody RequestForm requestForm) {
+    public RequestForm goToSearchRequest(@RequestBody RequestForm requestForm, HttpServletRequest request) {
         try {
-            //UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-            UserDetailsForm userDetails = new UserDetailsForm();
+            UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+     /*       UserDetailsForm userDetails = new UserDetailsForm();
             userDetails.setRecapUser(true);
             userDetails.setRecapUser(true);
             userDetails.setSuperAdmin(true);
-            userDetails.setLoginInstitutionId(1);
+            userDetails.setLoginInstitutionId(1);*/
             requestForm.resetPageNumber();
             //requestForm.setPatronBarcode(patronBarcodeInRequest);
             setFormValues(requestForm, userDetails);
@@ -226,9 +227,9 @@ public class RequestController extends RecapController {
      *
      * @return the RequestForm
      */
-    @PostMapping("/loadSearchRequest")
-    public RequestForm loadSearchRequest() {
-        UserDetailsForm userDetails = new UserDetailsForm(1, true, true, true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+    @GetMapping("/loadSearchRequest")
+    public RequestForm loadSearchRequest(HttpServletRequest request) {
+        UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);
         return requestForm;//setRequestAttribute(requestForm);
@@ -243,8 +244,8 @@ public class RequestController extends RecapController {
      */
 
     @PostMapping("/populateItem")
-    public String populateItem(@RequestBody RequestForm requestForm) throws JSONException {
-        return requestService.populateItemForRequest(requestForm);
+    public String populateItem(@RequestBody RequestForm requestForm, HttpServletRequest request) throws JSONException {
+        return requestService.populateItemForRequest(requestForm, request);
     }
 
     /**
@@ -255,12 +256,12 @@ public class RequestController extends RecapController {
      * @throws JSONException the json exception
      */
     @PostMapping("/createRequest")
-    public RequestForm createRequest(@RequestBody RequestForm requestForm) throws JSONException {
+    public RequestForm createRequest(@RequestBody RequestForm requestForm, HttpServletRequest request) throws JSONException {
 
         try {
-            ///HttpSession session = request.getSession(false);
-            String username = "dinakartest";//(String) session.getAttribute(RecapConstants.USER_NAME);
-            String stringJson = populateItem(requestForm);
+            HttpSession session = request.getSession(false);
+            String username = (String) session.getAttribute(RecapConstants.USER_NAME);
+            String stringJson = populateItem(requestForm, request);
             if (stringJson != null) {
                 JSONObject responseJsonObject = new JSONObject(stringJson);
                 Object errorMessage = responseJsonObject.has(RecapConstants.ERROR_MESSAGE) ? responseJsonObject.get(RecapConstants.ERROR_MESSAGE) : null;

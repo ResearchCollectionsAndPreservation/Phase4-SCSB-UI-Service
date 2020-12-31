@@ -109,7 +109,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         usersEntity.setUserRole(roleEntityList);
         usersEntity.setUserDescription(userRoleForm.getUserDescription());
         String networkLoginId = userRoleForm.getNetworkLoginId();
-        if(institutionEntity.isPresent()) {
+        if (institutionEntity.isPresent()) {
             Integer institutionId = institutionEntity.get().getId();
             UsersEntity byLoginIdAndInstitutionEntity = userDetailsRepository.findByLoginIdAndInstitutionId(networkLoginId, institutionId);
             if (byLoginIdAndInstitutionEntity == null) {
@@ -124,7 +124,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public UsersEntity saveEditedUserToDB(Integer userId, String networkLoginId, String userDescription, Integer institutionId, List<Integer> roleIds, String userEmailId,UserRoleForm userRoleForm) {
+    public UsersEntity saveEditedUserToDB(Integer userId, String networkLoginId, String userDescription, Integer institutionId, List<Integer> roleIds, String userEmailId, UserRoleForm userRoleForm) {
         UsersEntity usersEntity = new UsersEntity();
         UsersEntity savedUsersEntity = null;
         Optional<UsersEntity> checkUserId = userDetailsRepository.findById(userId);
@@ -144,6 +144,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 institutionEntity1.setId(institutionEntity.get().getId());
                 institutionEntity1.setInstitutionCode(institutionEntity.get().getInstitutionCode());
                 institutionEntity1.setInstitutionName(institutionEntity.get().getInstitutionName());
+                institutionEntity1.setIlsProtocol(institutionEntity.get().getIlsProtocol());
                 usersEntity.setInstitutionEntity(institutionEntity1);
             }
             List<RoleEntity> roleEntityList = rolesDetailsRepositorty.findByIdIn(roleIds);
@@ -151,7 +152,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 usersEntity.setUserRole(roleEntityList);
             }
             Optional<UsersEntity> byUserIdUserEntity = userDetailsRepository.findById(userId);
-            if(byUserIdUserEntity.isPresent()) {
+            if (byUserIdUserEntity.isPresent()) {
                 if (byUserIdUserEntity.get().getInstitutionId().equals(institutionId)) {
                     savedUsersEntity = userDetailsRepository.saveAndFlush(usersEntity);
                     userRoleForm.setMessage(networkLoginId + RecapConstants.EDITED_SUCCESSFULLY);
@@ -173,9 +174,9 @@ public class UserRoleServiceImpl implements UserRoleService {
     public List<Object> getRoles(Integer superAdminRole, boolean superAdmin) {
         List<Object> rolesList = new ArrayList<>();
         List<RoleEntity> roleEntities = null;
-        if (superAdmin){
+        if (superAdmin) {
             roleEntities = rolesDetailsRepositorty.findAll();
-        }else {
+        } else {
             roleEntities = rolesDetailsRepositorty.findAllExceptReSubmitRole();
         }
         for (RoleEntity roleEntity : roleEntities) {
@@ -184,7 +185,7 @@ public class UserRoleServiceImpl implements UserRoleService {
                 role[0] = roleEntity.getId();
                 role[1] = roleEntity.getRoleName();
                 role[2] = roleEntity.getRoleDescription();
-                List<String> permissionNames=new ArrayList<>();
+                List<String> permissionNames = new ArrayList<>();
                 for (PermissionEntity permissionEntity : roleEntity.getPermissions()) {
                     permissionNames.add(permissionEntity.getPermissionName());
                 }
@@ -209,6 +210,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         }
         return institutions;
     }
+
     private Pageable getPageable(UserRoleForm userRoleForm) {
         return PageRequest.of(userRoleForm.getPageNumber(), userRoleForm.getPageSize(), Sort.Direction.ASC, RecapConstants.USER_ID);
     }

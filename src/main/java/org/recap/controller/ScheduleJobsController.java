@@ -16,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -34,7 +34,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/jobs")
-@CrossOrigin
+@CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
 public class ScheduleJobsController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleJobsController.class);
@@ -62,19 +62,18 @@ public class ScheduleJobsController extends AbstractController {
      * @return the string
      */
     @GetMapping("/jobs")
-    public ScheduleJobsForm displayJobs() {
-        //HttpSession session = request.getSession(false);
+    public ScheduleJobsForm displayJobs(HttpServletRequest request) {
+        String errorMessage = null;
+        HttpSession session = request.getSession(false);
         ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();
-        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         if (userDetailsForm.isSuperAdmin()) {
             List<JobEntity> jobEntities = getJobDetailsRepository().findAll();
             scheduleJobsForm.setJobEntities(jobEntities);
         } else {
-          //  return UserManagementService.unAuthorizedUser(session, RecapCommonConstants.SEARCH, logger);
+            errorMessage = UserManagementService.unAuthorizedUser(session, RecapCommonConstants.SEARCH, logger);
+            scheduleJobsForm.setErrorMessage(errorMessage);
         }
-        //model.addAttribute(RecapConstants.SCHEDULE_JOBS_FORM, scheduleJobsForm);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.SCHEDULE_JOBS);
-        //return RecapConstants.VIEW_SEARCH_RECORDS;
         return scheduleJobsForm;
     }
 
@@ -121,7 +120,5 @@ public class ScheduleJobsController extends AbstractController {
             scheduleJobsForm.setErrorMessage(e.getMessage());
         }
         return scheduleJobsForm;
-       /* model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.SCHEDULE_JOBS);
-        return new ModelAndView(RecapConstants.VIEW_SCHEDULE_JOB_SECTION, RecapConstants.SCHEDULE_JOBS_FORM, scheduleJobsForm);
-    */}
+    }
 }
