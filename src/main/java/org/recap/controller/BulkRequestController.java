@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,12 +57,12 @@ public class BulkRequestController extends AbstractController {
     }
 
     @PostMapping("/createBulkRequest")
-    public BulkRequestForm createRequest(@RequestParam("file") MultipartFile file, @RequestParam("deliveryLocation") String deliveryLocation
+    public String createRequest(@RequestParam("file") MultipartFile file, @RequestParam("deliveryLocation") String deliveryLocation
             , @RequestParam("requestingInstitutionId") String requestingInstitutionId
             , @RequestParam("patronBarcodeId") String patronBarcodeId
             , @RequestParam("BulkRequestName") String BulkRequestName
             , @RequestParam("choosenFile") String choosenFile
-            , @RequestParam("patronEmailId") String patronEmailId, HttpServletRequest request) {
+            , @RequestParam("patronEmailId") String patronEmailId, HttpServletRequest request, HttpServletResponse response) {
         BulkRequestForm bulkRequestForm = new BulkRequestForm();
         bulkRequestForm.setFile(file);
         bulkRequestForm.setPatronEmailAddress(patronEmailId);
@@ -71,7 +72,8 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
         logger.info("createBulkRequest --> Called");
-        return bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
+        BulkRequestForm res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
+        return (res.getErrorMessage() == null) ? "OK" : res.getErrorMessage();
     }
 
     @PostMapping("/searchRequest")
