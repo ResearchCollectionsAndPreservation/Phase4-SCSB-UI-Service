@@ -15,13 +15,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +34,7 @@ import java.util.Optional;
  * Created by dharmendrag on 23/12/16.
  */
 @RestController
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/userRoles")
 public class UserRoleController extends AbstractController {
 
@@ -74,19 +77,19 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/searchUsers")
-    public UserRoleForm searchUserRole(@RequestBody UserRoleForm userRoleForm) {
+    public UserRoleForm searchUserRole(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
         logger.info("Users - Search button Clicked");
-        // HttpSession session = request.getSession();
-        // boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
-       if (true) { //if(authenticated)
-           logger.info("Users Tab Clicked");
-           try {
-               userRoleForm = priorSearch(userRoleForm);
-               userRoleForm.setShowPagination(true);
-           } catch (Exception e) {
-               logger.error(RecapCommonConstants.LOG_ERROR, e);
-           }
-       }
+        HttpSession session = request.getSession();
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        if (authenticated) {
+            logger.info("Users Tab Clicked");
+            try {
+                userRoleForm = priorSearch(userRoleForm, request);
+                userRoleForm.setShowPagination(true);
+            } catch (Exception e) {
+                logger.error(RecapCommonConstants.LOG_ERROR, e);
+            }
+        }
         return userRoleForm;
     }
 
@@ -101,19 +104,19 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @GetMapping("/delete")
-    public UserRoleForm deleteUser(@RequestParam("userId") Integer userId, @RequestParam("networkLoginId") String networkLoginId, @RequestParam("pageNumber") Integer pageNumber, @RequestParam("totalPageCount") Integer totalPageCount, @RequestParam("pageSize") Integer pageSize) {
+    public UserRoleForm deleteUser(@RequestParam("userId") Integer userId, @RequestParam("networkLoginId") String networkLoginId, @RequestParam("pageNumber") Integer pageNumber, @RequestParam("totalPageCount") Integer totalPageCount, @RequestParam("pageSize") Integer pageSize, HttpServletRequest request) {
         logger.info("Users - delete button Clicked");
-        //HttpSession session = request.getSession(false);
-        //boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
         UserRoleForm userRoleForm = new UserRoleForm();
-        if (true) {
+        if (authenticated) {
             UsersEntity usersEntity = new UsersEntity();
             usersEntity.setId(userId);
             try {
                 getUserDetailsRepository().delete(usersEntity);
                 userRoleForm.setDeletedSuccessMsg(true);
                 userRoleForm.setMessage(networkLoginId + RecapConstants.DELETED_SUCCESSFULLY);
-                userRoleForm = priorSearch(userRoleForm);
+                userRoleForm = priorSearch(userRoleForm, request);
                 userRoleForm.setAfterDelPageNumber(pageNumber);
                 userRoleForm.setAfterDelTotalPageCount(totalPageCount);
                 userRoleForm.setAfterDelPageSize(pageSize);
@@ -124,7 +127,7 @@ public class UserRoleController extends AbstractController {
             }
             userRoleForm.setShowUserSearchView(true);
         }
-        return  userRoleForm;
+        return userRoleForm;
     }
 
     /**
@@ -134,13 +137,13 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/first")
-    public UserRoleForm searchFirstPage(@RequestBody UserRoleForm userRoleForm) {
+    public UserRoleForm searchFirstPage(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
         logger.info("Users - Search First Page button Clicked");
-        //HttpSession session = request.getSession(false);
-        //boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
-        if (true) {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        if (authenticated) {
             userRoleForm.resetPageNumber();
-            userRoleForm = priorSearch(userRoleForm);
+            userRoleForm = priorSearch(userRoleForm, request);
         }
         return userRoleForm;
     }
@@ -152,10 +155,10 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/next")
-    public UserRoleForm searchNextPage(@RequestBody UserRoleForm userRoleForm) {
+    public UserRoleForm searchNextPage(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
         logger.info("Users - Search Next Page button Clicked");
-        userRoleForm.setPageNumber(userRoleForm.getPageNumber()+1);
-        return priorSearch(userRoleForm);
+        userRoleForm.setPageNumber(userRoleForm.getPageNumber() + 1);
+        return priorSearch(userRoleForm, request);
     }
 
     /**
@@ -165,10 +168,10 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/previous")
-    public UserRoleForm searchPreviousPage(@RequestBody UserRoleForm userRoleForm) {
+    public UserRoleForm searchPreviousPage(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
         logger.info("Users - Search Previous Page button Clicked");
-        userRoleForm.setPageNumber(userRoleForm.getPageNumber()-1);
-        return priorSearch(userRoleForm);
+        userRoleForm.setPageNumber(userRoleForm.getPageNumber() - 1);
+        return priorSearch(userRoleForm, request);
     }
 
     /**
@@ -178,10 +181,10 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/last")
-    public UserRoleForm searchLastPage(@RequestBody UserRoleForm userRoleForm) {
+    public UserRoleForm searchLastPage(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
         logger.info("Users - Search Last Page button Clicked");
-        userRoleForm.setPageNumber(userRoleForm.getPageNumber()-1);
-        return priorSearch(userRoleForm);
+        userRoleForm.setPageNumber(userRoleForm.getPageNumber() - 1);
+        return priorSearch(userRoleForm, request);
     }
 
     /**
@@ -191,18 +194,15 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/createUser")
-    public UserRoleForm createUserRequest(@RequestBody UserRoleForm userRoleForm) {
+    public UserRoleForm createUserRequest(@RequestBody UserRoleForm userRoleForm, HttpServletRequest request) {
         logger.info("User - Create Request clicked");
-        //HttpSession session = request.getSession(false);
-        //boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
-        if (true) { //if (authenticated)
-            //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-            UserDetailsForm userDetailsForm = new UserDetailsForm();
-            userDetailsForm.setSuperAdmin(true);
-            userDetailsForm.setLoginInstitutionId(1);
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        if (authenticated) {
+            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
             userRoleForm = getAndSetRolesAndInstitutions(userRoleForm, userDetailsForm);
-            //Object userName = session.getAttribute(RecapConstants.USER_NAME);
-            userRoleForm.setCreatedBy(String.valueOf("DinakarTest"));
+            Object userName = session.getAttribute(RecapConstants.USER_NAME);
+            userRoleForm.setCreatedBy(String.valueOf(userName));
             UsersEntity usersEntity = getUserRoleService().saveNewUserToDB(userRoleForm);
             if (usersEntity != null) {
                 userRoleForm.setShowCreateSuccess(true);
@@ -221,15 +221,12 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @GetMapping("/editUser")
-    public UserRoleForm editUser(@RequestParam("userId") Integer userId, @RequestParam("networkLoginId") String networkLoginId) {
+    public UserRoleForm editUser(@RequestParam("userId") Integer userId, @RequestParam("networkLoginId") String networkLoginId, HttpServletRequest request) {
         UserRoleForm userRoleForm = new UserRoleForm();
-        //HttpSession session = request.getSession(false);
-        //boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
-        if (true) { //if (authenticated)
-            //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-            UserDetailsForm userDetailsForm = new UserDetailsForm();
-            userDetailsForm.setSuperAdmin(true);
-            userDetailsForm.setLoginInstitutionId(1);
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        if (authenticated) {
+            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
             logger.info("User - editUser clicked");
             Optional<UsersEntity> usersEntity = getUserDetailsRepository().findById(userId);
 
@@ -247,7 +244,7 @@ public class UserRoleController extends AbstractController {
                 userRoleForm.setShowUserSearchView(false);
             }
         }
-        return  userRoleForm;
+        return userRoleForm;
     }
 
     /**
@@ -265,28 +262,24 @@ public class UserRoleController extends AbstractController {
                                             @RequestParam("userDescription") String userDescription,
                                             @RequestParam("institutionId") Integer institutionId,
                                             @RequestParam("userEmailId") String userEmailId,
-                                            @RequestParam("roleIds") List<Integer> roleIds) {
+                                            @RequestParam("roleIds") List<Integer> roleIds, HttpServletRequest request) {
         logger.info("Users - saveEditUser button Clicked");
-        //HttpSession session = request.getSession(false);
-        //boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
         UserRoleForm userRoleForm = new UserRoleForm();
-        if (true) {
-            //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-            UserDetailsForm userDetailsForm = new UserDetailsForm();
-            userDetailsForm.setSuperAdmin(true);
-            userDetailsForm.setLoginInstitutionId(1);
-           // List<Integer> roleIds = new ArrayList<>();
-            //String[] parameterValues = request.getParameterValues("roleIds[]");
-            /*String[] parameterValues = new String[3];
-            for (String parameterValue : parameterValues) {
-                roleIds.add(Integer.valueOf(parameterValue));
-            }*/
+        if (authenticated) {
+            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+            List<Integer> roleIdsUpdated = new ArrayList<>();
+            //String[] parameterValues = roleIds;//request.getParameterValues("roleIds");
+            for (Integer parameterValue : roleIds) {
+                roleIdsUpdated.add(Integer.valueOf(parameterValue));
+            }
             userRoleForm.setMessage(networkLoginId + RecapConstants.EDITED_AND_SAVED);
-            userRoleForm = getAndSetRolesAndInstitutions(userRoleForm, userDetailsForm);
+            getAndSetRolesAndInstitutions(userRoleForm, userDetailsForm);
             userRoleForm.setUserId(userId);
-            //Object userName = session.getAttribute(RecapConstants.USER_NAME);
-            userRoleForm.setLastUpdatedBy(String.valueOf("DinakarTest"));
-            UsersEntity usersEntity = getUserRoleService().saveEditedUserToDB(userId, networkLoginId, userDescription, institutionId, roleIds, userEmailId, userRoleForm);
+            Object userName = session.getAttribute(RecapConstants.USER_NAME);
+            userRoleForm.setLastUpdatedBy(String.valueOf(userName));
+            UsersEntity usersEntity = getUserRoleService().saveEditedUserToDB(userId, networkLoginId, userDescription, institutionId, roleIdsUpdated, userEmailId, userRoleForm);
             if (usersEntity != null) {
                 userRoleForm.setShowEditSuccess(true);
                 userRoleForm.setEditNetworkLoginId(usersEntity.getLoginId());
@@ -325,29 +318,24 @@ public class UserRoleController extends AbstractController {
      * @return the model and view
      */
     @GetMapping("/userRoles")
-    public UserRoleForm userRoles() {
+    public UserRoleForm userRoles(HttpServletRequest request) {
         logger.info("Users - userRoles loading called");
-        //HttpSession session = request.getSession(false);
-        //boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
         UserRoleForm userRoleForm = new UserRoleForm();
-        if (true) {
+        if (authenticated) {
             logger.info(RecapConstants.USERS_TAB_CLICKED);
-            UserDetailsForm userDetailsForm = new UserDetailsForm();//getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-            userDetailsForm.setSuperAdmin(true);
-            userDetailsForm.setLoginInstitutionId(1);
-            userRoleForm = setUserRoleForm(userRoleForm,userDetailsForm);
+            UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
+            userRoleForm = setUserRoleForm(userRoleForm, userDetailsForm);
         }
         userRoleForm.setShowUserSearchView(true);
         return userRoleForm;
     }
 
-    private UserRoleForm priorSearch(UserRoleForm userRoleForm) {
-        //HttpSession session = request.getSession(false);
-        Integer userId = 1;//(Integer) session.getAttribute(RecapConstants.USER_ID);
-        //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-        UserDetailsForm userDetailsForm = new UserDetailsForm();
-        userDetailsForm.setSuperAdmin(true);
-        userDetailsForm.setLoginInstitutionId(1);
+    private UserRoleForm priorSearch(UserRoleForm userRoleForm, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Integer userId = (Integer) session.getAttribute(RecapConstants.USER_ID);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         List<Object> institutions = getUserRoleService().getInstitutions(userDetailsForm.isSuperAdmin(), userDetailsForm.getLoginInstitutionId());
         List<Object> roles = getUserRoleService().getRoles(getUserManagementService().getSuperAdminRoleId(), userDetailsForm.isSuperAdmin());
         userRoleForm.setUserId(userId);
@@ -440,8 +428,8 @@ public class UserRoleController extends AbstractController {
         return null;
     }
 
-    private UserRoleForm setUserRoleForm(UserRoleForm userRoleForm,UserDetailsForm userDetailsForm) {
-        List<Object> roles = getUserRoleService().getRoles(getUserManagementService().getSuperAdminRoleId(), /*userDetailsForm.isSuperAdmin()*/true);
+    private UserRoleForm setUserRoleForm(UserRoleForm userRoleForm, UserDetailsForm userDetailsForm) {
+        List<Object> roles = getUserRoleService().getRoles(getUserManagementService().getSuperAdminRoleId(), userDetailsForm.isSuperAdmin());
         List<Object> institutions = getUserRoleService().getInstitutions(userDetailsForm.isSuperAdmin(), userDetailsForm.getLoginInstitutionId());
         userRoleForm.setRoles(roles);
         userRoleForm.setInstitutions(institutions);

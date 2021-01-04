@@ -9,21 +9,21 @@ import org.marc4j.marc.Record;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.DeliveryRestrictionEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.CustomerCodeEntity;
+import org.recap.model.jpa.RequestItemEntity;
 import org.recap.model.jpa.RequestStatusEntity;
 import org.recap.model.jpa.RequestTypeEntity;
-import org.recap.model.jpa.RequestItemEntity;
-import org.recap.model.jpa.DeliveryRestrictionEntity;
 import org.recap.model.search.RequestForm;
 import org.recap.model.usermanagement.UserDetailsForm;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
-import org.recap.repository.jpa.RequestTypeDetailsRepository;
 import org.recap.repository.jpa.CustomerCodeDetailsRepository;
+import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.ItemDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
 import org.recap.repository.jpa.RequestStatusDetailsRepository;
+import org.recap.repository.jpa.RequestTypeDetailsRepository;
 import org.recap.util.BibJSONUtil;
 import org.recap.util.RequestServiceUtil;
 import org.recap.util.UserAuthUtil;
@@ -33,21 +33,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by akulak on 20/4/17.
@@ -183,30 +181,29 @@ public class RequestService {
     public void processCustomerAndDeliveryCodes(RequestForm requestForm, Map<String, String> deliveryLocationsMap, UserDetailsForm userDetailsForm, ItemEntity itemEntity, Integer institutionId) {
         String customerCode = itemEntity.getCustomerCode();
         CustomerCodeEntity customerCodeEntity = customerCodeDetailsRepository.findByCustomerCodeAndOwningInstitutionId(customerCode, institutionId);
-        if(requestForm.getItemOwningInstitution().equals(requestForm.getRequestingInstitution())){
+        if (requestForm.getItemOwningInstitution().equals(requestForm.getRequestingInstitution())) {
             if (customerCodeEntity != null) {
                 String deliveryRestrictions = customerCodeEntity.getDeliveryRestrictions();
                 if (StringUtils.isNotBlank(deliveryRestrictions)) {
                     String[] deliverLocationsArray = deliveryRestrictions.split(",");
-                    addDeliveryLocations(deliveryLocationsMap,deliverLocationsArray);
+                    addDeliveryLocations(deliveryLocationsMap, deliverLocationsArray);
                 }
             }
-        }
-        else{
-            addDeliveryLocationsForCrossPartner(requestForm, deliveryLocationsMap,customerCodeEntity);
+        } else {
+            addDeliveryLocationsForCrossPartner(requestForm, deliveryLocationsMap, customerCodeEntity);
         }
         addRecapDeliveryRestrictions(deliveryLocationsMap, userDetailsForm, customerCodeEntity);
     }
 
-    private void addDeliveryLocationsForCrossPartner(RequestForm requestForm, Map<String, String> deliveryLocationsMap,CustomerCodeEntity customerCodeEntity) {
+    private void addDeliveryLocationsForCrossPartner(RequestForm requestForm, Map<String, String> deliveryLocationsMap, CustomerCodeEntity customerCodeEntity) {
         if (customerCodeEntity != null) {
             List<DeliveryRestrictionEntity> deliveryRestrictionEntityList = customerCodeEntity.getDeliveryRestrictionEntityList();
-            if(CollectionUtils.isNotEmpty(deliveryRestrictionEntityList)){
+            if (CollectionUtils.isNotEmpty(deliveryRestrictionEntityList)) {
                 for (DeliveryRestrictionEntity deliveryRestrictionEntity : deliveryRestrictionEntityList) {
-                    if(requestForm.getRequestingInstitution().equals(deliveryRestrictionEntity.getInstitutionEntity().getInstitutionCode())){
+                    if (requestForm.getRequestingInstitution().equals(deliveryRestrictionEntity.getInstitutionEntity().getInstitutionCode())) {
                         String deliveryRestriction = deliveryRestrictionEntity.getDeliveryRestriction();
                         String[] splitDeliveryLocation = StringUtils.split(deliveryRestriction, ",");
-                        addDeliveryLocations(deliveryLocationsMap,splitDeliveryLocation);
+                        addDeliveryLocations(deliveryLocationsMap, splitDeliveryLocation);
                     }
                 }
             }
@@ -219,7 +216,7 @@ public class RequestService {
         if (CollectionUtils.isNotEmpty(deliveryRestrictionsList)) {
             Collections.sort(deliveryRestrictionsList);
             for (CustomerCodeEntity customerCodeEntity : deliveryRestrictionsList) {
-                if (customerCodeEntity != null){
+                if (customerCodeEntity != null) {
                     deliveryLocationsMap.put(customerCodeEntity.getCustomerCode(), customerCodeEntity.getDescription());
                 }
             }
@@ -227,7 +224,7 @@ public class RequestService {
     }
 
     private void addRecapDeliveryRestrictions(Map<String, String> deliveryLocationsMap, UserDetailsForm userDetailsForm, CustomerCodeEntity customerCodeEntity) {
-        if(userDetailsForm.isRecapUser()){
+        if (userDetailsForm.isRecapUser()) {
             String recapDeliveryRestrictions = customerCodeEntity.getRecapDeliveryRestrictions();
             String[] recapDeliveryRestrictionsArray = recapDeliveryRestrictions.split(",");
             addDeliveryLocations(deliveryLocationsMap, recapDeliveryRestrictionsArray);
@@ -240,8 +237,8 @@ public class RequestService {
      * @param deliveryLocationsMap the delivery locations map
      * @return the map
      */
-    public Map<String,String> sortDeliveryLocations(Map<String, String> deliveryLocationsMap){
-        LinkedHashMap<String,String> sortedDeliverLocationMap = new LinkedHashMap<>();
+    public Map<String, String> sortDeliveryLocations(Map<String, String> deliveryLocationsMap) {
+        LinkedHashMap<String, String> sortedDeliverLocationMap = new LinkedHashMap<>();
         Set<Map.Entry<String, String>> entries = deliveryLocationsMap.entrySet();
         Comparator<Map.Entry<String, String>> valueComparator = (e1, e2) -> {
             String v1 = e1.getValue();
@@ -262,7 +259,7 @@ public class RequestService {
     }
 
     /**
-     *This method is called asynchronously whenever there is a processing status for an item in request search UI page and
+     * This method is called asynchronously whenever there is a processing status for an item in request search UI page and
      * fetch the status from the scsb database for that requested item and
      * update that status value for that requested item in the request search UI page.
      *
@@ -271,21 +268,21 @@ public class RequestService {
      */
     public String getRefreshedStatus(HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
-        Map<Integer,Integer> map = new HashMap<>();
-        Map<String,String> responseMap =  new HashMap<>();
-        Map<String,String> responseMapForNotes =  new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        Map<String, String> responseMap = new HashMap<>();
+        Map<String, String> responseMapForNotes = new HashMap<>();
         List<Integer> requestIdList = new ArrayList<>();
         List<String> listOfRequestStatusDesc = getRequestStatusDetailsRepository().findAllRequestStatusDescExceptProcessing();
         String[] parameterValues = request.getParameterValues("status[]");
         for (String parameterValue : parameterValues) {
             String[] split = StringUtils.split(parameterValue, "-");
-            map.put(Integer.valueOf(split[0]),Integer.valueOf(split[1]));
+            map.put(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
             requestIdList.add(Integer.valueOf(split[0]));
         }
         List<RequestItemEntity> requestItemEntityList = getRequestItemDetailsRepository().findByIdIn(requestIdList);
         for (RequestItemEntity requestItemEntity : requestItemEntityList) {
             Integer rowUpdateNum = map.get(requestItemEntity.getId());
-            for(String requestStatusDescription : listOfRequestStatusDesc) {
+            for (String requestStatusDescription : listOfRequestStatusDesc) {
                 if (requestStatusDescription.equals(requestItemEntity.getRequestStatusEntity().getRequestStatusDescription())) {
                     responseMap.put(String.valueOf(rowUpdateNum), requestItemEntity.getRequestStatusEntity().getRequestStatusDescription());
                     responseMapForNotes.put(String.valueOf(rowUpdateNum), requestItemEntity.getNotes());
@@ -293,10 +290,10 @@ public class RequestService {
             }
         }
         try {
-            jsonObject.put(RecapCommonConstants.STATUS,responseMap);
-            jsonObject.put(RecapCommonConstants.NOTES,responseMapForNotes);
+            jsonObject.put(RecapCommonConstants.STATUS, responseMap);
+            jsonObject.put(RecapCommonConstants.NOTES, responseMapForNotes);
         } catch (JSONException e) {
-            logger.error(RecapCommonConstants.LOG_ERROR,e);
+            logger.error(RecapCommonConstants.LOG_ERROR, e);
         }
         return jsonObject.toString();
     }
@@ -305,25 +302,24 @@ public class RequestService {
      * When an item barcode is submitted to place a request in the request UI page , this method populates the information about that item in the request UI page.
      *
      * @param requestForm the request form
-     * @param request     the request
      * @return the string
      * @throws JSONException the json exception
      */
-    public String populateItemForRequest(RequestForm requestForm) throws JSONException {
+    public String populateItemForRequest(RequestForm requestForm, HttpServletRequest request) throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        Boolean multipleItemBarcodes= false;
-        Map<String,String> deliveryLocationsMap = new LinkedHashMap<>();
+        Boolean multipleItemBarcodes = false;
+        Map<String, String> deliveryLocationsMap = new LinkedHashMap<>();
         if (StringUtils.isNotBlank(requestForm.getItemBarcodeInRequest())) {
             List<String> itemBarcodes = Arrays.asList(requestForm.getItemBarcodeInRequest().split(","));
-            if(itemBarcodes.size()>1){
-                multipleItemBarcodes=true;
+            if (itemBarcodes.size() > 1) {
+                multipleItemBarcodes = true;
             }
             List<String> invalidBarcodes = new ArrayList<>();
             List<String> notAvailableBarcodes = new ArrayList<>();
             Set<String> itemTitles = new HashSet<>();
             Set<String> itemOwningInstitutions = new HashSet<>();
-            List<String> requestTypes=new ArrayList<>();
-            Boolean showEDD=false;
+            List<String> requestTypes = new ArrayList<>();
+            Boolean showEDD = false;
             UserDetailsForm userDetailsForm;
             for (String itemBarcode : itemBarcodes) {
                 String barcode = itemBarcode.trim();
@@ -332,11 +328,11 @@ public class RequestService {
                     if (CollectionUtils.isNotEmpty(itemEntities)) {
                         for (ItemEntity itemEntity : itemEntities) {
                             CustomerCodeEntity customerCodeEntity = getCustomerCodeDetailsRepository().findByCustomerCodeAndRecapDeliveryRestrictionLikeEDD(itemEntity.getCustomerCode());
-                            if(customerCodeEntity!=null) {
+                            if (customerCodeEntity != null) {
                                 showEDD = true;
                             }
                             if (null != itemEntity && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
-                                userDetailsForm = new UserDetailsForm(1,true,true,true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+                                userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
                                 if ((itemEntity.getCollectionGroupId().equals(RecapConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
                                     jsonObject.put(RecapConstants.NO_PERMISSION_ERROR_MESSAGE, RecapConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                                     return jsonObject.toString();
@@ -358,12 +354,12 @@ public class RequestService {
                                         itemTitles.add(bibJSONUtil.getTitle(marcRecord));
                                         itemOwningInstitutions.add(institutionCode);
                                     }
-                                    if(StringUtils.isNotBlank(requestForm.getRequestingInstituionHidden())){
+                                    if (StringUtils.isNotBlank(requestForm.getRequestingInstituionHidden())) {
                                         String replaceReqInst = requestForm.getRequestingInstituionHidden();
                                         requestForm.setRequestingInstitution(replaceReqInst);
                                     }
-                                    if("true".equals(requestForm.getOnChange()) && StringUtils.isNotBlank(requestForm.getRequestingInstitution())){
-                                        getRequestService().processCustomerAndDeliveryCodes(requestForm,deliveryLocationsMap,userDetailsForm,itemEntity,institutionId);
+                                    if ("true".equals(requestForm.getOnChange()) && StringUtils.isNotBlank(requestForm.getRequestingInstitution())) {
+                                        getRequestService().processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
                                         deliveryLocationsMap = sortDeliveryLocationForRecapUser(deliveryLocationsMap, userDetailsForm);
                                     }
                                 }
@@ -380,19 +376,18 @@ public class RequestService {
             if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
                 jsonObject.put(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
             }
-            if((!multipleItemBarcodes && showEDD) && !(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))){
+            if ((!multipleItemBarcodes && showEDD) && !(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
                 List<RequestTypeEntity> requestTypeEntities = getRequestTypeDetailsRepository().findAllExceptBorrowDirect();
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntities) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
-            }
-            else if(!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))){
+            } else if (!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
                 List<RequestTypeEntity> requestTypeEntityList = getRequestTypeDetailsRepository().findAllExceptEDDAndBorrowDirect();
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntityList) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
             }
-            jsonObject.put(RecapConstants.REQUEST_TYPES,requestTypes);
+            jsonObject.put(RecapConstants.REQUEST_TYPES, requestTypes);
             jsonObject.put(RecapConstants.SHOW_EDD, showEDD);
             jsonObject.put(RecapConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
 
@@ -405,19 +400,18 @@ public class RequestService {
             if (null != deliveryLocationsMap) {
                 jsonObject.put(RecapConstants.DELIVERY_LOCATION, deliveryLocationsMap);
             }
-        }
-        else{
+        } else {
             String replaceReqInst = requestForm.getRequestingInstitution().replace(",", "");
-            if(StringUtils.isBlank(replaceReqInst)){
-                deliveryLocationsMap.put("","");
-                jsonObject.put(RecapConstants.DELIVERY_LOCATION,deliveryLocationsMap);
+            if (StringUtils.isBlank(replaceReqInst)) {
+                deliveryLocationsMap.put("", "");
+                jsonObject.put(RecapConstants.DELIVERY_LOCATION, deliveryLocationsMap);
             }
         }
         return jsonObject.toString();
     }
 
     private Map<String, String> sortDeliveryLocationForRecapUser(Map<String, String> deliveryLocationsMap, UserDetailsForm userDetailsForm) {
-        if(userDetailsForm.isRecapUser()){
+        if (userDetailsForm.isRecapUser()) {
             deliveryLocationsMap = getRequestService().sortDeliveryLocations(deliveryLocationsMap);
         }
         return deliveryLocationsMap;
@@ -438,7 +432,7 @@ public class RequestService {
         if (requestedBarcode != null) {
             requestForm.setOnChange("true");
             requestForm.setItemBarcodeInRequest((String) requestedBarcode);
-            String stringJson = populateItemForRequest(requestForm);
+            String stringJson = populateItemForRequest(requestForm, request);
             if (stringJson != null) {
                 JSONObject jsonObject = new JSONObject(stringJson);
                 Object itemTitle = jsonObject.has(RecapConstants.REQUESTED_ITEM_TITLE) ? jsonObject.get(RecapConstants.REQUESTED_ITEM_TITLE) : null;
@@ -446,7 +440,7 @@ public class RequestService {
                 Object deliveryLocations = jsonObject.has(RecapConstants.DELIVERY_LOCATION) ? jsonObject.get(RecapConstants.DELIVERY_LOCATION) : null;
                 Object requestTypes = jsonObject.has(RecapConstants.REQUEST_TYPES) ? jsonObject.get(RecapConstants.REQUEST_TYPES) : null;
                 List<CustomerCodeEntity> customerCodeEntities = new ArrayList<>();
-                List<String> requestTypeList=new ArrayList<>();
+                List<String> requestTypeList = new ArrayList<>();
                 if (itemTitle != null && itemOwningInstitution != null && deliveryLocations != null) {
                     requestForm.setItemTitle((String) itemTitle);
                     requestForm.setItemOwningInstitution((String) itemOwningInstitution);
@@ -462,7 +456,7 @@ public class RequestService {
                     }
                     requestForm.setDeliveryLocations(customerCodeEntities);
                 }
-                if(!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes!=null) {
+                if (!(RecapCommonConstants.RECALL.equals(requestForm.getRequestType())) && requestTypes != null) {
                     JSONArray requestTypeArray = (JSONArray) requestTypes;
                     for (int i = 0; i < requestTypeArray.length(); i++) {
                         requestTypeList.add(requestTypeArray.getString(i));
@@ -485,19 +479,20 @@ public class RequestService {
         RequestForm requestForm = new RequestForm();
         Boolean addOnlyRecall = false;
         Boolean addAllRequestType = false;
-        Object availability = true;
-       //((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY);
-        /*if (availability != null){
+        Model model = new BindingAwareModelMap();
+        // Object availability = true;
+        Object availability = ((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY);
+        if (availability != null) {
             HashSet<String> str = (HashSet<String>) availability;
-            for (String itemAvailability : str){
-                if(RecapCommonConstants.NOT_AVAILABLE.equalsIgnoreCase(itemAvailability)){
+            for (String itemAvailability : str) {
+                if (RecapCommonConstants.NOT_AVAILABLE.equalsIgnoreCase(itemAvailability)) {
                     addOnlyRecall = true;
                 }
-                if(RecapCommonConstants.AVAILABLE.equalsIgnoreCase(itemAvailability)){
+                if (RecapCommonConstants.AVAILABLE.equalsIgnoreCase(itemAvailability)) {
                     addAllRequestType = true;
                 }
             }
-        }*/
+        }
 
         List<String> requestingInstitutions = new ArrayList<>();
         List<String> requestTypes = new ArrayList<>();
@@ -505,7 +500,7 @@ public class RequestService {
         Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
         for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-            if (userDetailsForm.getLoginInstitutionId() == institutionEntity.getId() && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!RecapConstants.HTC.equals(institutionEntity.getInstitutionCode())) ) {
+            if (userDetailsForm.getLoginInstitutionId() == institutionEntity.getId() && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!RecapConstants.HTC.equals(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);
@@ -523,7 +518,7 @@ public class RequestService {
             }
         }
 
-        if(addOnlyRecall &&(addAllRequestType == false)){
+        if (addOnlyRecall && (addAllRequestType == false)) {
             RequestTypeEntity requestTypeEntity = getRequestTypeDetailsRepository().findByRequestTypeCode(RecapCommonConstants.RECALL);
             requestTypes.add(requestTypeEntity.getRequestTypeCode());
             requestForm.setRequestType(requestTypeEntity.getRequestTypeCode());
@@ -562,8 +557,8 @@ public class RequestService {
      */
     public void getInstitutionForSuperAdmin(List<String> institutionList) {
         Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin();
-        for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext();) {
-            InstitutionEntity institutionEntity=(InstitutionEntity)iterator.next();
+        for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
+            InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
             institutionList.add(institutionEntity.getInstitutionCode());
         }
     }

@@ -18,13 +18,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by rajeshbabuk on 6/7/16.
@@ -82,9 +91,9 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchPrevious  Called");
-        searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
+        //searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
+        //searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
     }
 
@@ -104,9 +113,9 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchNext  Called");
-        searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber() + 1);
+        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber() + 1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
+        //searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
     }
 
@@ -132,9 +141,9 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchLast  Called");
-        searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount() - 1);
+        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount() - 1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
+        //searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
     }
 
