@@ -221,7 +221,8 @@ public class RecapConstants {
     public static final String SERVICE_PREFIX = ".service.prefix";
     public static final String LOGOUT_REDIRECT_URI = "scsb.app.logout.redirect.uri";
     public static final String SCSB_UI_URL = "scsb.ui.url";
-
+    public static final String STATUS = "status";
+    public static final String CREATED = "CREATED";
     public static final String SEARCH_REQUEST_ACTIVE = "active";
     public static final String WARNING_MESSAGE_RETRIEVAL_CROSS_BORROWED_ITEM = "Warning : This item has an active retrieval request made by other institution.";
     public static final String WARNING_MESSAGE_RECALL_CROSS_BORROWED_ITEM = "Warning : This item has an active recall request made by other institution.";
