@@ -94,11 +94,11 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         entityManager.refresh(savedEntity);
 
         assertNotNull(savedEntity);
-        assertNotNull(savedEntity.getBibliographicId());
-        assertNotNull(savedEntity.getHoldingsEntities().get(0).getHoldingsId());
+        assertNotNull(savedEntity.getId());
+        assertNotNull(savedEntity.getHoldingsEntities().get(0).getId());
         ItemEntity savedItemEntity = savedEntity.getItemEntities().get(0);
         assertNotNull(savedItemEntity);
-        assertNotNull(savedItemEntity.getItemId());
+        assertNotNull(savedItemEntity.getId());
 
         Long countAfterAdd = itemDetailsRepository.countByOwningInstitutionIdAndIsDeletedFalse(owningInstitutionId);
         assertTrue(countAfterAdd > count);
@@ -136,15 +136,15 @@ public class ItemDetailsRepositoryUT extends BaseTestCase {
         assertNotNull(savedBibliographicEntity.getItemEntities());
         assertEquals("Shared", savedBibliographicEntity.getItemEntities().get(0).getCollectionGroupEntity().getCollectionGroupCode());
 
-        Integer itemId = savedBibliographicEntity.getItemEntities().get(0).getItemId();
-        int updatedItem = itemDetailsRepository.updateCollectionGroupIdByItemId(2, itemId, "guest", new Date());
+        Integer itemId = savedBibliographicEntity.getItemEntities().get(0).getId();
+        int updatedItem = itemDetailsRepository.updateCollectionGroupIdById(2, itemId, "guest", new Date());
         assertEquals(1, updatedItem);
 
-        ItemEntity fetchedItemEntity = itemDetailsRepository.findByItemId(itemId);
+        ItemEntity fetchedItemEntity = itemDetailsRepository.findById(itemId).orElse(null);
         entityManager.refresh(fetchedItemEntity);
         assertNotNull(fetchedItemEntity);
-        assertNotNull(fetchedItemEntity.getItemId());
-        assertEquals(itemId, fetchedItemEntity.getItemId());
+        assertNotNull(fetchedItemEntity.getId());
+        assertEquals(itemId, fetchedItemEntity.getId());
         assertEquals("Open", fetchedItemEntity.getCollectionGroupEntity().getCollectionGroupCode());
     }
 

@@ -112,8 +112,8 @@ public class ScheduleJobsControllerUT extends BaseControllerUT {
         Mockito.when(scheduleJobsController.getJobDetailsRepository()).thenReturn(jobDetailsRepository);
         Mockito.when(getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(scheduleJobsController.getJobDetailsRepository().findAll()).thenReturn(Collections.EMPTY_LIST);
-        Mockito.when(scheduleJobsController.displayJobs(model, request)).thenCallRealMethod();
-        String viewName = scheduleJobsController.displayJobs(model, request);
+        Mockito.when(scheduleJobsController.displayJobs(request)).thenCallRealMethod();
+        String viewName = scheduleJobsController.displayJobs(request).toString();
         assertNotNull(viewName);
     }
     @Test
@@ -126,8 +126,8 @@ public class ScheduleJobsControllerUT extends BaseControllerUT {
         Mockito.when(getUserAuthUtil().getUserDetails(session, RecapConstants.BARCODE_RESTRICTED_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(scheduleJobsController.getJobDetailsRepository()).thenReturn(jobDetailsRepository);
         Mockito.when(scheduleJobsController.getJobDetailsRepository().findAll()).thenReturn(Collections.EMPTY_LIST);
-        Mockito.when(scheduleJobsController.displayJobs(model, request)).thenCallRealMethod();
-        String viewName = scheduleJobsController.displayJobs(model, request);
+        Mockito.when(scheduleJobsController.displayJobs(request)).thenCallRealMethod();
+        String viewName = scheduleJobsController.displayJobs(request).toString();
         assertNotNull(viewName);
     }
 
@@ -164,7 +164,7 @@ public class ScheduleJobsControllerUT extends BaseControllerUT {
        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
        scheduleJobResponse.setMessage("SUCCESS");
        scheduleJobResponse.setNextRunTime(new Date());
-       scheduleJobsController1.scheduleJob(scheduleJobsForm,bindingResult,model);
+       scheduleJobsController1.scheduleJob(scheduleJobsForm);
    }
     private ScheduleJobsForm getScheduleJobsForm(){
         ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();

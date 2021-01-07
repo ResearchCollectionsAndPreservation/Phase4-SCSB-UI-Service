@@ -141,8 +141,8 @@ public class MarcRecordControllerUT extends BaseControllerUT {
         BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
         entityManager.refresh(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getBibliographicId());
-        String content = marcRecordController.openMarcRecord(savedBibliographicEntity.getBibliographicId(),model);
+        assertNotNull(savedBibliographicEntity.getId());
+        String content = marcRecordController.openMarcRecord(savedBibliographicEntity.getId(),model);
         assertEquals(content,"marcRecordView");
 
     }

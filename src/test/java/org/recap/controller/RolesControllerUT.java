@@ -104,9 +104,9 @@ public class RolesControllerUT extends BaseTestCase {
     @Test
     public void populatePermissionNames() throws Exception{
         RolesForm rolesForm = new RolesForm();
-        ModelAndView modelAndView = rolesController.populatePermissionNames(model);
-        assertNotNull(modelAndView);
-        assertEquals("roles",modelAndView.getViewName());
+        RolesForm rolesForm1 = rolesController.populatePermissionNames();
+        assertNotNull(rolesForm1);
+     //   assertEquals("roles",modelAndView.getViewName());
     }
 
     @Test
@@ -117,9 +117,9 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setNewRoleName("test@");
         rolesForm.setNewRoleDescription("test Description");
         rolesForm.setNewPermissionNames("CreateUser");
-        ModelAndView modelAndView = rolesController.newRole(rolesForm,model,request);
-        assertNotNull(modelAndView);
-        assertEquals("roles",modelAndView.getViewName());
+        RolesForm rolesForm1 = rolesController.newRole(rolesForm);
+        assertNotNull(rolesForm1);
+     //   assertEquals("roles",modelAndView.getViewName());
     }
     @Test
     public void newRole1() throws Exception{

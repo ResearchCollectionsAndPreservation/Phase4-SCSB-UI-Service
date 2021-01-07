@@ -63,7 +63,7 @@ public class HoldingsDetailsRepositoryUT extends BaseTestCase {
         HoldingsEntity savedHoldings=holdingsDetailsRepository.saveAndFlush(holdingsEntity);
         entityManager.refresh(savedHoldings);
 
-        assertNotNull(savedHoldings.getHoldingsId());
+        assertNotNull(savedHoldings.getId());
         assertEquals(holdingsEntity.getContent().length,savedHoldings.getContent().length);
         assertTrue(holdingsEntity.getLastUpdatedDate().before(new Date()));
         assertTrue(holdingsEntity.getCreatedDate().before(new Date()));

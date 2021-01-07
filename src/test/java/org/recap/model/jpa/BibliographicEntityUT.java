@@ -147,7 +147,7 @@ public class BibliographicEntityUT extends BaseTestCase {
 
         BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibIdAndIsDeletedFalse(1, owningInstitutionBibId);
         assertNotNull(fetchedBibliographicEntity);
-        assertNotNull(fetchedBibliographicEntity.getBibliographicId());
+        assertNotNull(fetchedBibliographicEntity.getId());
         assertNotNull(fetchedBibliographicEntity.getOwningInstitutionId());
         assertNotNull(fetchedBibliographicEntity.getOwningInstitutionBibId());
         assertEquals(String.valueOf(1), String.valueOf(fetchedBibliographicEntity.getOwningInstitutionId()));
@@ -184,7 +184,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
         entityManager.refresh(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities().get(0).getHoldingsId());
+        assertNotNull(savedBibliographicEntity.getHoldingsEntities().get(0).getId());
         assertEquals(new String(savedBibliographicEntity.getHoldingsEntities().get(0).getContent()),"mock holdings");
         String fetchedCreatedDate = df.format(savedBibliographicEntity.getHoldingsEntities().get(0).getCreatedDate());
         String fetchedLastUpdatedDate = df.format(savedBibliographicEntity.getHoldingsEntities().get(0).getLastUpdatedDate());
@@ -234,8 +234,8 @@ public class BibliographicEntityUT extends BaseTestCase {
         assertNotNull(savedBibliographicEntity);
         assertEquals(savedBibliographicEntity.getCatalogingStatus(),"Complete");
         assertTrue(!savedBibliographicEntity.isDeleted());
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities().get(0).getHoldingsId());
-        assertNotNull(savedBibliographicEntity.getHoldingsEntities().get(1).getHoldingsId());
+        assertNotNull(savedBibliographicEntity.getHoldingsEntities().get(0).getId());
+        assertNotNull(savedBibliographicEntity.getHoldingsEntities().get(1).getId());
     }
 
     @Test
@@ -423,6 +423,7 @@ public class BibliographicEntityUT extends BaseTestCase {
         return new File(resource.toURI());
     }
 
+/*
     @Test
     public void testBibliographicPK(){
         BibliographicPK bibliographicPK = new BibliographicPK();
@@ -452,5 +453,6 @@ public class BibliographicEntityUT extends BaseTestCase {
         assertNotNull(itemPK.getOwningInstitutionId());
         assertNotNull(itemPK.getOwningInstitutionItemId());
     }
+*/
 
 }

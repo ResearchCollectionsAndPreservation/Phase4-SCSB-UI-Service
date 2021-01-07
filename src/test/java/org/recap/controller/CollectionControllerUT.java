@@ -307,7 +307,7 @@ public class CollectionControllerUT extends BaseControllerUT {
         requestStatusEntity1.setRequestStatusDescription("RETRIEVAL_ORDER_PLACED");
 
         ItemEntity itemEntity1 = new ItemEntity();
-        itemEntity1.setItemId(1);
+        itemEntity1.setId(1);
         itemEntity1.setBarcode("123");
         itemEntity1.setOwningInstitutionId(1);
         itemEntity1.setInstitutionEntity(institutionEntity1);
