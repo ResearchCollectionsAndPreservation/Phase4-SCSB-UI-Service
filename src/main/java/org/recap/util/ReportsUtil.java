@@ -114,6 +114,7 @@ public class ReportsUtil {
         ReportsResponse reportsResponse = reportsServiceUtil.requestAccessionDeaccessionCounts(reportsForm);
         reportsForm.setReportsInstitutionFormList(reportsResponse.getReportsInstitutionFormList());
         reportsForm.setShowAccessionDeaccessionTable(true);
+        reportsForm.setErrorMessage(reportsResponse.getMessage());
         return reportsForm;
     }
 
@@ -128,6 +129,7 @@ public class ReportsUtil {
     public ReportsForm populateCGDItemCounts(ReportsForm reportsForm) throws Exception {
         ReportsResponse reportsResponse = reportsServiceUtil.requestCgdItemCounts(reportsForm);
         reportsForm.setReportsInstitutionFormList(reportsResponse.getReportsInstitutionFormList());
+        reportsForm.setErrorMessage(reportsResponse.getMessage());
         return reportsForm;
     }
 
