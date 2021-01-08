@@ -17,14 +17,27 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,8 +45,8 @@ import java.util.regex.Pattern;
  * Created by hemalathas on 22/12/16.
  */
 @RestController
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/roles")
-@CrossOrigin
 public class RolesController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(RolesController.class);
@@ -75,7 +88,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/searchRoles")
     public RolesForm search(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        logger.info("searchRoles calling with the following payload:",rolesForm);
+        logger.info("searchRoles calling with the following payload:", rolesForm);
         return setRolesFormSearchResults(rolesForm);
     }
 
@@ -96,16 +109,15 @@ public class RolesController extends AbstractController {
      * @return the model and view
      */
     @PostMapping("/createRole")
-    public RolesForm newRole(@RequestBody RolesForm rolesForm) {
+    public RolesForm newRole(@RequestBody RolesForm rolesForm, HttpServletRequest request) {
         boolean specialCharacterCheck = isSpecialCharacterCheck(rolesForm.getNewRoleName());
-        logger.info("create Role calling with the following payload:",rolesForm);
+        logger.info("create Role calling with the following payload:", rolesForm);
         if (!specialCharacterCheck) {
             rolesForm.setErrorMessage(RecapConstants.SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE);
             rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(rolesForm.getNewPermissionNames()));
         } else {
-            // HttpSession session = request.getSession(false);
-            // String username = (String) session.getAttribute(RecapConstants.USER_NAME);
-            String username = "DinakarTest";
+            HttpSession session = request.getSession(false);
+            String username = (String) session.getAttribute(RecapConstants.USER_NAME);
             RoleEntity roleEntity = saveNewRoleToDB(rolesForm, username);
             if (null != roleEntity) {
                 rolesForm.setMessage(rolesForm.getNewRoleName() + RecapConstants.ADDED_SUCCESSFULLY);
@@ -118,7 +130,6 @@ public class RolesController extends AbstractController {
         rolesForm.setPermissionNameList(getAllPermissionNames().getPermissionNameList());
         rolesForm.setShowIntial(false);
         return rolesForm;
-        //return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
@@ -141,7 +152,6 @@ public class RolesController extends AbstractController {
         rolesForm.setSelectedPermissionNames(getSelectedPermissionNames(htmlUnescapePermissionName));
         rolesForm.setShowIntial(false);
         return rolesForm;
-        //return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
@@ -157,10 +167,11 @@ public class RolesController extends AbstractController {
     public RolesForm saveEditedRole(@RequestParam("roleId") Integer roleId,
                                     @RequestParam("roleName") String roleName,
                                     @RequestParam("roleDescription") String roleDescription,
-                                    @RequestParam("editPermissionNames") String[] editPermissionNames) {
-        logger.info("edit Role calling:",roleName);
+                                    @RequestParam("editPermissionNames") String[] editPermissionNames, HttpServletRequest request) {
+        logger.info("edit Role calling:", roleName);
         RolesForm rolesForm = new RolesForm();
-        //HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);
+        String username = (String) session.getAttribute(RecapConstants.USER_NAME);
         rolesForm.setRoleId(roleId);
         rolesForm.setEditRoleName(roleName);
         rolesForm.setEditRoleDescription(roleDescription);
@@ -172,7 +183,7 @@ public class RolesController extends AbstractController {
             roleEntityByRoleId.get().setRoleName(roleName);
             roleEntityByRoleId.get().setRoleDescription(roleDescription);
             roleEntityByRoleId.get().setLastUpdatedDate(new Date());
-            roleEntityByRoleId.get().setLastUpdatedBy("DinakarTest");
+            roleEntityByRoleId.get().setLastUpdatedBy(username);
             RoleEntity roleEntity = saveRoleEntity(roleEntityByRoleId.get(), Arrays.asList(editPermissionNames));
             if (null != roleEntity) {
                 rolesForm.setMessage(rolesForm.getEditRoleName() + RecapConstants.EDITED_AND_SAVED);
@@ -184,7 +195,6 @@ public class RolesController extends AbstractController {
         rolesForm.setSelectedPermissionNames(Arrays.asList(editPermissionNames));
         rolesForm.setShowIntial(false);
         return rolesForm;
-        //return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
     }
 
     /**
@@ -227,7 +237,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/delete")
     public RolesForm delete(@RequestBody RolesForm rolesForm) {
-        logger.info("deleting Role calling :",rolesForm);
+        logger.info("deleting Role calling :", rolesForm);
         Optional<RoleEntity> roleEntity = rolesDetailsRepositorty.findById(rolesForm.getRoleId());
         if (roleEntity.isPresent()) {
             try {
@@ -247,8 +257,7 @@ public class RolesController extends AbstractController {
             logger.error(RecapCommonConstants.LOG_ERROR, "e");
         }
         rolesForm.setShowResults(true);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-        return rolesForm;//return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
     }
 
     /**
@@ -259,7 +268,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/previous")
     public RolesForm searchPrevious(@RequestBody RolesForm rolesForm) {
-        rolesForm.setPageNumber(rolesForm.getPageNumber()-1);
+        rolesForm.setPageNumber(rolesForm.getPageNumber() - 1);
         return searchPage(rolesForm);
     }
 
@@ -271,7 +280,7 @@ public class RolesController extends AbstractController {
      */
     @PostMapping("/next")
     public RolesForm searchNext(@RequestBody RolesForm rolesForm) {
-        rolesForm.setPageNumber(rolesForm.getPageNumber()+1);
+        rolesForm.setPageNumber(rolesForm.getPageNumber() + 1);
         return searchPage(rolesForm);
     }
 
@@ -577,7 +586,6 @@ public class RolesController extends AbstractController {
 
     private RolesForm setRolesForm(RolesForm rolesForm) {
         findByPagination(rolesForm);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-        return rolesForm;//return new ModelAndView(RecapConstants.VIEW_SEARCH_RECORDS, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
     }
 }

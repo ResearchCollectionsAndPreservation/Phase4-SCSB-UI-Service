@@ -75,12 +75,16 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
         logger.info("createBulkRequest --> Called");
         HashMap<String, String> resStatus = new HashMap<>();
-        BulkRequestForm res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
-        if (res.getErrorMessage() == null)
-            resStatus.put(RecapConstants.STATUS, RecapConstants.CREATED);
-        else
-            resStatus.put(RecapConstants.STATUS, res.getErrorMessage());
-
+        try {
+            BulkRequestForm  res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
+            if (res.getErrorMessage() == null)
+                resStatus.put(RecapConstants.STATUS, RecapConstants.CREATED);
+            else
+                resStatus.put(RecapConstants.STATUS, res.getErrorMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            resStatus.put(RecapConstants.STATUS,e.getMessage());
+        }
         JSONObject recvObj = new JSONObject(resStatus);
         return recvObj;
     }

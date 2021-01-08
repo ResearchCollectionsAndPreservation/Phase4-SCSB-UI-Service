@@ -96,15 +96,15 @@ public class ReportsController extends AbstractController {
             Date fromDate = getFromDate(requestFromDate);
             Date toDate = getToDate(requestToDate);
             if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_PARTNERS)) {
-                reportsForm = reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
+                reportsUtil.populatePartnersCountForRequest(reportsForm, fromDate, toDate);
             } else if (reportsForm.getShowBy().equalsIgnoreCase(RecapCommonConstants.REPORTS_REQUEST_TYPE)) {
-                reportsForm = reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
+                reportsUtil.populateRequestTypeInformation(reportsForm, fromDate, toDate);
             }
         } else if (reportsForm.getRequestType().equalsIgnoreCase(RecapCommonConstants.REPORTS_ACCESSION_DEACCESSION)) {
-            reportsForm = reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
+            reportsUtil.populateAccessionDeaccessionItemCounts(reportsForm);
 
         } else if ("CollectionGroupDesignation".equalsIgnoreCase(reportsForm.getRequestType())) {
-            reportsForm = reportsUtil.populateCGDItemCounts(reportsForm);
+            reportsUtil.populateCGDItemCounts(reportsForm);
         }
         return reportsForm;
     }
@@ -298,8 +298,6 @@ public class ReportsController extends AbstractController {
             reportsForm.setShowIncompletePagination(true);
             reportsForm.setIncompleteReportResultsRows(incompleteReportResultsRows);
         }
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REPORTS);
-        //return new ModelAndView(RecapConstants.REPORTS_INCOMPLETE_RECORDS_VIEW, RecapConstants.REPORTS_FORM, reportsForm);
         return reportsForm;
     }
 
