@@ -11,6 +11,7 @@ import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.util.CsvUtil;
 import org.recap.util.HelperUtil;
 import org.recap.util.SearchUtil;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +45,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/search")
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class SearchRecordsController extends RecapController {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchRecordsController.class);
@@ -70,6 +74,20 @@ public class SearchRecordsController extends RecapController {
         return institutionDetailsRepository;
     }
 
+    @GetMapping("/checkPermission")
+    public boolean searchRecords(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
+        if (authenticated) {
+            logger.info(RecapConstants.SEARCH_TAB_CLICKED);
+            return RecapConstants.TRUE;
+        } else {
+            return UserManagementService.unAuthorizedUser(session, "Search", logger);
+        }
+
+    }
+
+
     /**
      * Performs search on solr and returns the results as rows to get displayed in the search UI page.
      *
@@ -90,10 +108,8 @@ public class SearchRecordsController extends RecapController {
      */
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        logger.info("searchPrevious  Called");
-        //searchRecordsRequest.setPageNumber(setPageNumber(searchRecordsRequest));
+        logger.info("searchPrevious called");
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        //searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
     }
 
@@ -113,9 +129,7 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchNext  Called");
-        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getPageNumber() + 1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        //searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
     }
 
@@ -141,9 +155,7 @@ public class SearchRecordsController extends RecapController {
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
         logger.info("searchLast  Called");
-        //searchRecordsRequest.setPageNumber(searchRecordsRequest.getTotalPageCount() - 1);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);
-        //searchRecordsResponse.setPageNumber(searchRecordsRequest.getPageNumber());
         return searchRecordsResponse;
     }
 

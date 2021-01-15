@@ -23,6 +23,7 @@ import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.CustomerCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.service.RequestService;
 import org.recap.util.SecurityUtil;
 import org.slf4j.Logger;
@@ -92,6 +93,18 @@ public class RequestController extends RecapController {
         return institutionDetailsRepository;
     }
 
+    @GetMapping("/checkPermission")
+    public boolean request(HttpServletRequest request) throws JSONException {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL);
+        if (authenticated) {
+            logger.info(RecapConstants.REQUEST_TAB_CLICKED);
+            return RecapConstants.TRUE;
+        } else {
+            return UserManagementService.unAuthorizedUser(session, "Request", logger);
+        }
+    }
+
     /**
      * Get results from scsb database and display them as row based on the search conditions provided in the search request UI page.
      *
@@ -119,13 +132,7 @@ public class RequestController extends RecapController {
     public RequestForm goToSearchRequest(@RequestBody RequestForm requestForm, HttpServletRequest request) {
         try {
             UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-     /*       UserDetailsForm userDetails = new UserDetailsForm();
-            userDetails.setRecapUser(true);
-            userDetails.setRecapUser(true);
-            userDetails.setSuperAdmin(true);
-            userDetails.setLoginInstitutionId(1);*/
             requestForm.resetPageNumber();
-            //requestForm.setPatronBarcode(patronBarcodeInRequest);
             setFormValues(requestForm, userDetails);
             requestForm.setStatus("");
             requestForm = searchAndSetResults(requestForm);
@@ -133,7 +140,7 @@ public class RequestController extends RecapController {
             logger.error(RecapCommonConstants.LOG_ERROR, exception);
             logger.debug(exception.getMessage());
         }
-        return requestForm;//return new ModelAndView("request :: #requestContentId", RecapConstants.REQUEST_FORM, requestForm);
+        return requestForm;
     }
 
     /**
@@ -245,7 +252,13 @@ public class RequestController extends RecapController {
 
     @PostMapping("/populateItem")
     public String populateItem(@RequestBody RequestForm requestForm, HttpServletRequest request) throws JSONException {
-        return requestService.populateItemForRequest(requestForm, request);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            return requestService.populateItemForRequest(requestForm, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return jsonObject.put(RecapConstants.ERROR_MESSAGE, e.getMessage()).toString();
+        }
     }
 
     /**

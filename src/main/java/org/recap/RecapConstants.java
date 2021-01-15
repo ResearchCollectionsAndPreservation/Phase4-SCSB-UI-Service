@@ -244,6 +244,14 @@ public class RecapConstants {
     public static final String VIEW_SCHEDULE_JOB_SECTION = "scheduleJobs :: #scheduleJobs";
 
     public static final String USERS_TAB_CLICKED = "Users Tab Clicked";
+    public static final String ROLES_TAB_CLICKED = "Roles Tab Clicked";
+    public static final String REPORTS_TAB_CLICKED = "Reports Tab Clicked";
+    public static final String REQUEST_TAB_CLICKED = "Request Tab Clicked";
+    public static final String BULKREQUEST_TAB_CLICKED = "BulkRequest Tab Clicked";
+    public static final String SEARCH_TAB_CLICKED = "Search Tab Clicked";
+    public static final String COLLECTION_TAB_CLICKED = "Collection Tab Clicked";
+
+
 
     //Incomplete Record Reports
     public static final String SCSB_REPORTS_INCOMPLETE_RESULTS_URL = "reportsService/incompleteRecords";
@@ -310,6 +318,9 @@ public class RecapConstants {
 
     public static final String AUTH_TYPE_OAUTH = "OAuth2";
     public static final String AUTH_TYPE_CAS = "cas";
+    public static final boolean TRUE = true;
+    public static final boolean FALSE = false;
+    public static final String IS_AUTHENTICATED = "isAuthenticated";
 
 
     private RecapConstants() {
