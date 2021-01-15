@@ -61,19 +61,16 @@ public class RolesController extends AbstractController {
     /**
      * Render the roles UI page for the scsb application.
      *
-     * @param model   the model
      * @param request the request
      * @return the string
      */
-    @GetMapping("/roles")
-    public String roles(Model model, HttpServletRequest request) {
+    @GetMapping("/checkPermission")
+    public boolean roles(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL);
         if (authenticated) {
-            RolesForm rolesForm = new RolesForm();
-            model.addAttribute(RecapConstants.ROLES_FORM, rolesForm);
-            model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.ROLES);
-            return RecapConstants.VIEW_SEARCH_RECORDS;
+            logger.info(RecapConstants.ROLES_TAB_CLICKED);
+            return RecapConstants.TRUE;
         } else {
             return UserManagementService.unAuthorizedUser(session, "Roles", logger);
         }

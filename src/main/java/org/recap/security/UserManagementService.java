@@ -30,14 +30,13 @@ public class UserManagementService {
      * @param logger     the logger
      * @return the string
      */
-    public static String unAuthorizedUser(HttpSession session, String moduleName, Logger logger)
+    public static boolean unAuthorizedUser(HttpSession session, String moduleName, Logger logger)
     {
-        final String loginScreen="redirect:/";
         logger.debug(moduleName+" authorization Rejected for :"+(UsernamePasswordToken)session.getAttribute(RecapConstants.USER_TOKEN));
         if(session!=null){
             session.invalidate();
         }
-        return loginScreen;
+        return RecapConstants.FALSE;
     }
 
     /**

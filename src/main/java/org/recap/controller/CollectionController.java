@@ -15,6 +15,7 @@ import org.recap.model.search.SearchRecordsResponse;
 import org.recap.model.search.SearchResultRow;
 import org.recap.model.usermanagement.UserDetailsForm;
 import org.recap.repository.jpa.RequestItemDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.util.CollectionServiceUtil;
 import org.recap.util.MarcRecordViewUtil;
 import org.recap.util.SearchUtil;
@@ -41,7 +42,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/collection")
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class CollectionController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(CollectionController.class);
@@ -86,6 +87,17 @@ public class CollectionController extends AbstractController {
         return requestItemDetailsRepository;
     }
 
+    @RequestMapping("/checkPermission")
+    public boolean collection(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL);
+        if (authenticated) {
+            logger.info(RecapConstants.COLLECTION_TAB_CLICKED);
+            return RecapConstants.TRUE;
+        } else {
+            return UserManagementService.unAuthorizedUser(session, "Collection", logger);
+        }
+    }
 
     /**
      * Perform search on solr based on the item barcodes and returns the results as rows to get displayed in the collection UI page.
@@ -109,8 +121,7 @@ public class CollectionController extends AbstractController {
     @PostMapping("/openMarcView")
     public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws MarcException {
         logger.info("openMarcView  called");
-        //UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
-        UserDetailsForm userDetailsForm = new UserDetailsForm(1, true, true, true);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
         return collectionFormUpdated;
@@ -124,7 +135,7 @@ public class CollectionController extends AbstractController {
      * @throws Exception the exception
      */
     @PostMapping("/collectionUpdate")
-    public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm,HttpServletRequest request) throws Exception {
+    public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws Exception {
         logger.info("collectionUpdate  called");
         HttpSession session = request.getSession(false);
         String username = (String) session.getAttribute(RecapConstants.USER_NAME);

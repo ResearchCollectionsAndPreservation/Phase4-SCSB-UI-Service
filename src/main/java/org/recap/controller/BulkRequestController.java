@@ -10,6 +10,7 @@ import org.recap.model.request.DownloadReports;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.repository.jpa.BulkRequestDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
+import org.recap.security.UserManagementService;
 import org.recap.service.BulkRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,6 +55,18 @@ public class BulkRequestController extends AbstractController {
     @Autowired
     private BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
+    @GetMapping("/checkPermission")
+    public boolean bulkRequest(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_BULK_REQUEST_URL);
+        if (authenticated) {
+            logger.info(RecapConstants.BULKREQUEST_TAB_CLICKED);
+            return RecapConstants.TRUE;
+        } else {
+            return UserManagementService.unAuthorizedUser(session, "BulkRequest", logger);
+        }
+    }
+
     @PostMapping("/loadCreateRequest")
     public BulkRequestForm loadCreateRequest(@RequestBody BulkRequestForm bulkRequestForm) {
         return loadCreateRequestPage(bulkRequestForm);
@@ -76,14 +90,14 @@ public class BulkRequestController extends AbstractController {
         logger.info("createBulkRequest --> Called");
         HashMap<String, String> resStatus = new HashMap<>();
         try {
-            BulkRequestForm  res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
+            BulkRequestForm res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
             if (res.getErrorMessage() == null)
                 resStatus.put(RecapConstants.STATUS, RecapConstants.CREATED);
             else
                 resStatus.put(RecapConstants.STATUS, res.getErrorMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            resStatus.put(RecapConstants.STATUS,e.getMessage());
+            resStatus.put(RecapConstants.STATUS, e.getMessage());
         }
         JSONObject recvObj = new JSONObject(resStatus);
         return recvObj;

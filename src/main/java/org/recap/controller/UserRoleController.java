@@ -70,6 +70,19 @@ public class UserRoleController extends AbstractController {
         return setUserRoleForm(userRoleForm, userDetailsForm);
     }
 
+    @GetMapping("/checkPermission")
+    public boolean showUserRoles(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean authenticated = getUserAuthUtil().isAuthenticated(session, RecapConstants.SCSB_SHIRO_USER_ROLE_URL);
+        if (authenticated) {
+            logger.info(RecapConstants.USERS_TAB_CLICKED);
+            return RecapConstants.TRUE;
+        } else {
+            return UserManagementService.unAuthorizedUser(session, "Users", logger);
+        }
+
+    }
+
     /**
      * Gets user search results from scsb database and display them as rows in the search user UI page.
      *
