@@ -1,12 +1,10 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.ItemEntity;
-import org.recap.model.jpa.ItemPK;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +16,7 @@ import java.util.List;
  * Created by chenchulakshmig on 21/6/16.
  */
 @RepositoryRestResource(collectionResourceRel = "item", path = "item")
-public interface ItemDetailsRepository extends PagingAndSortingRepository<ItemEntity, ItemPK> {
-
-    /**
-     * To get the item entity for the given item id.
-     *
-     * @param itemId the item id
-     * @return the item entity
-     */
-    ItemEntity findByItemId(Integer itemId);
+public interface ItemDetailsRepository extends BaseRepository<ItemEntity> {
 
     /**
      * To get the count of non deleted items in scsb for the given institution.
@@ -89,8 +79,8 @@ public interface ItemDetailsRepository extends PagingAndSortingRepository<ItemEn
      */
     @Modifying
     @Transactional
-    @Query("update ItemEntity item set item.collectionGroupId = :collectionGroupId, item.lastUpdatedBy = :lastUpdatedBy, item.lastUpdatedDate = :lastUpdatedDate where item.itemId = :itemId")
-    int updateCollectionGroupIdByItemId(@Param("collectionGroupId") Integer collectionGroupId, @Param("itemId") Integer itemId, @Param("lastUpdatedBy") String lastUpdatedBy, @Param("lastUpdatedDate") Date lastUpdatedDate);
+    @Query("update ItemEntity item set item.collectionGroupId = :collectionGroupId, item.lastUpdatedBy = :lastUpdatedBy, item.lastUpdatedDate = :lastUpdatedDate where item.id = :itemId")
+    int updateCollectionGroupIdById(@Param("collectionGroupId") Integer collectionGroupId, @Param("itemId") Integer itemId, @Param("lastUpdatedBy") String lastUpdatedBy, @Param("lastUpdatedDate") Date lastUpdatedDate);
 
     /**
      * To get the status of the non deleted item in scsb for the given barcode.

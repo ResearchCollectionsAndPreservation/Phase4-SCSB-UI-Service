@@ -50,7 +50,7 @@ public class MarcRecordViewUtil {
     public BibliographicMarcForm buildBibliographicMarcForm(Integer bibId, Integer itemId, UserDetailsForm userDetailsForm) {
         BibliographicMarcForm bibliographicMarcForm = new BibliographicMarcForm();
         bibliographicMarcForm.setCollectionAction(RecapCommonConstants.UPDATE_CGD);
-        BibliographicEntity bibliographicEntity = bibliographicDetailsRepository.findByBibliographicIdAndCatalogingStatusAndIsDeletedFalse(bibId, RecapCommonConstants.COMPLETE_STATUS);
+        BibliographicEntity bibliographicEntity = bibliographicDetailsRepository.findByIdAndCatalogingStatusAndIsDeletedFalse(bibId, RecapCommonConstants.COMPLETE_STATUS);
         if (null == bibliographicEntity) {
             bibliographicMarcForm.setErrorMessage(RecapConstants.RECORD_NOT_AVAILABLE);
         } else {
@@ -60,7 +60,7 @@ public class MarcRecordViewUtil {
                 bibliographicMarcForm.setErrorMessage(RecapCommonConstants.ACCESS_RESTRICTED);
                 bibliographicMarcForm.setAllowEdit(false);
             }
-                bibliographicMarcForm.setBibId(bibliographicEntity.getBibliographicId());
+                bibliographicMarcForm.setBibId(bibliographicEntity.getId());
                 String bibContent = new String(bibliographicEntity.getContent());
                 BibJSONUtil bibJSONUtil = new BibJSONUtil();
                 List<Record> records = bibJSONUtil.convertMarcXmlToRecord(bibContent);
@@ -81,8 +81,8 @@ public class MarcRecordViewUtil {
                     bibliographicMarcForm.setCallNumber(nonDeletedItemEntities.get(0).getCallNumber());
                     if (null != itemId) {
                         for (ItemEntity itemEntity : nonDeletedItemEntities) {
-                            if (itemEntity.getItemId().intValue() == itemId) {
-                                bibliographicMarcForm.setItemId(itemEntity.getItemId());
+                            if (itemEntity.getId().intValue() == itemId) {
+                                bibliographicMarcForm.setItemId(itemEntity.getId());
                                 bibliographicMarcForm.setBarcode(itemEntity.getBarcode());
                                 bibliographicMarcForm.setUseRestriction(itemEntity.getUseRestrictions());
                                 bibliographicMarcForm.setCallNumber(itemEntity.getCallNumber());

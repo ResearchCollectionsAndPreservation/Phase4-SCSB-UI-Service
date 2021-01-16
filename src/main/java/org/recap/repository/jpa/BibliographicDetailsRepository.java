@@ -1,11 +1,9 @@
 package org.recap.repository.jpa;
 
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.BibliographicPK;
 import org.recap.model.jpa.ItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -17,7 +15,7 @@ import java.util.List;
  * Created by pvsubrah on 6/10/16.
  */
 @RepositoryRestResource(collectionResourceRel = "bibliographic", path = "bibliographic")
-public interface BibliographicDetailsRepository extends JpaRepository<BibliographicEntity, BibliographicPK> {
+public interface BibliographicDetailsRepository extends BaseRepository<BibliographicEntity> {
 
 
     /**
@@ -64,15 +62,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @return the bibliographic entity
      */
     BibliographicEntity findByOwningInstitutionIdAndOwningInstitutionBibIdAndIsDeletedFalse(Integer owningInstitutionId, String owningInstitutionBibId);
-
-    /**
-     * Gets bibliographic entity based on the given bibliographic id.
-     *
-     * @param bibliographicId the bibliographic id
-     * @return the bibliographic entity
-     */
-    BibliographicEntity findByBibliographicId(@Param("bibliographicId") Integer bibliographicId);
-
+    
     /**
      *  Gets bibliographic entity which is not deleted in scsb and with the given cataloging status.
      *
@@ -80,7 +70,7 @@ public interface BibliographicDetailsRepository extends JpaRepository<Bibliograp
      * @param catalogingStatus the cataloging status
      * @return the bibliographic entity
      */
-    BibliographicEntity findByBibliographicIdAndCatalogingStatusAndIsDeletedFalse(@Param("bibliographicId") Integer bibliographicId, @Param("catalogingStatus") String catalogingStatus);
+    BibliographicEntity findByIdAndCatalogingStatusAndIsDeletedFalse(@Param("bibliographicId") Integer bibliographicId, @Param("catalogingStatus") String catalogingStatus);
 
     /**
      *  Gets list of bibliographic entities based on the given owning institution bib id.

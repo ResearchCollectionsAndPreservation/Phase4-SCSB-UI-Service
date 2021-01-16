@@ -41,7 +41,7 @@ repositories {
 
 
 dependencies {
-	compile fileTree(dir: '/data/commonjar', include: '*1.3.jar')
+	compile fileTree(dir: '/data/commonjar', include: '*1.4.jar')
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'

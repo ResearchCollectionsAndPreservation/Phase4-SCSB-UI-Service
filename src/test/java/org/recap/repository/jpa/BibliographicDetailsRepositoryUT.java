@@ -4,7 +4,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.recap.BaseTestCase;
 import org.recap.model.jpa.BibliographicEntity;
-import org.recap.model.jpa.BibliographicPK;
 import org.recap.model.jpa.HoldingsEntity;
 import org.recap.model.jpa.ItemEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,26 +103,26 @@ public class BibliographicDetailsRepositoryUT extends BaseTestCase {
         BibliographicEntity byOwningInstitutionIdAndOwningInstitutionBibId = bibliographicDetailsRepository.findByOwningInstitutionIdAndOwningInstitutionBibIdAndIsDeletedFalse(owningInstitutionId, owningInstitutionBibId);
         assertNotNull(byOwningInstitutionIdAndOwningInstitutionBibId);
 
-        BibliographicPK bibliographicPK = new BibliographicPK();
+        /*BibliographicPK bibliographicPK = new BibliographicPK();
         bibliographicPK.setOwningInstitutionId(owningInstitutionId);
         bibliographicPK.setOwningInstitutionBibId(owningInstitutionBibId);
         BibliographicEntity entity = bibliographicDetailsRepository.getOne(bibliographicPK);
         assertNotNull(entity);
-
+*/
         assertNotNull(holdingsDetailsRepository);
         HoldingsEntity savedHoldingsEntity = savedBibliographicEntity.getHoldingsEntities().get(0);
         assertNotNull(savedHoldingsEntity);
-        assertNotNull(savedHoldingsEntity.getHoldingsId());
+        assertNotNull(savedHoldingsEntity.getId());
 
-        HoldingsEntity byHoldingsId = holdingsDetailsRepository.findByHoldingsId(savedHoldingsEntity.getHoldingsId());
+        HoldingsEntity byHoldingsId = holdingsDetailsRepository.findById(savedHoldingsEntity.getId()).orElse(null);
         assertNotNull(byHoldingsId);
 
         assertNotNull(itemDetailsRepository);
         ItemEntity savedItemEntity = savedBibliographicEntity.getItemEntities().get(0);
         assertNotNull(savedItemEntity);
-        assertNotNull(savedItemEntity.getItemId());
+        assertNotNull(savedItemEntity.getId());
 
-        ItemEntity byItemId = itemDetailsRepository.findByItemId(savedItemEntity.getItemId());
+        ItemEntity byItemId = itemDetailsRepository.findById(savedItemEntity.getId()).orElse(null);
         assertNotNull(byItemId);
     }
 

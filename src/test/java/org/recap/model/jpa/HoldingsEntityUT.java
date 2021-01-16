@@ -12,12 +12,12 @@ public class HoldingsEntityUT extends BaseTestCase {
         holdingsEntity.setCreatedBy("test");
         holdingsEntity.setCreatedDate(new Date());
         holdingsEntity.setDeleted(false);
-        holdingsEntity.setHoldingsId(1);
+        holdingsEntity.setId(1);
         holdingsEntity.setLastUpdatedBy("test");
         holdingsEntity.setLastUpdatedDate(new Date());
         holdingsEntity.setOwningInstitutionHoldingsId("1");
         holdingsEntity.setOwningInstitutionId(1);
-        holdingsEntity.equals(holdingsEntity.getHoldingsId());
+        holdingsEntity.equals(holdingsEntity.getId());
         holdingsEntity.hashCode();
     }
 }

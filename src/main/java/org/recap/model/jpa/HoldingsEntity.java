@@ -3,15 +3,16 @@ package org.recap.model.jpa;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
+import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
-import javax.persistence.IdClass;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
 import java.util.List;
 
 /**
@@ -21,12 +22,13 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "holdings_t", schema = "recap", catalog = "")
-@IdClass(HoldingsPK.class)
+@AttributeOverride(name = "id", column = @Column(name = "HOLDINGS_ID"))
         @NamedNativeQuery(
                 name = "HoldingsEntity.getNonDeletedItemEntities",
-                query = "SELECT ITEM_T.* FROM ITEM_T, ITEM_HOLDINGS_T WHERE ITEM_HOLDINGS_T.ITEM_INST_ID = ITEM_T.OWNING_INST_ID AND " +
-                        "ITEM_HOLDINGS_T.OWNING_INST_ITEM_ID = ITEM_T.OWNING_INST_ITEM_ID AND ITEM_T.IS_DELETED = 0 AND ITEM_T.CATALOGING_STATUS = :catalogingStatus AND " +
-                        " ITEM_HOLDINGS_T.OWNING_INST_HOLDINGS_ID = :owningInstitutionHoldingsId AND ITEM_HOLDINGS_T.HOLDINGS_INST_ID = :owningInstitutionId",
+                query = "SELECT ITEM_T.* FROM ITEM_T, ITEM_HOLDINGS_T, HOLDINGS_T WHERE " +
+                        "HOLDINGS_T.HOLDINGS_ID = ITEM_HOLDINGS_T.HOLDINGS_ID AND ITEM_T.ITEM_ID = ITEM_HOLDINGS_T.ITEM_ID " +
+                        "AND ITEM_T.IS_DELETED = 0 AND ITEM_T.CATALOGING_STATUS = :catalogingStatus AND " +
+                        "HOLDINGS_T.OWNING_INST_HOLDINGS_ID = :owningInstitutionHoldingsId AND HOLDINGS_T.OWNING_INST_ID = :owningInstitutionId",
                 resultClass = ItemEntity.class)
 public class HoldingsEntity extends HoldingsAbstractEntity {
 
@@ -40,11 +42,9 @@ public class HoldingsEntity extends HoldingsAbstractEntity {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "item_holdings_t", joinColumns = {
-            @JoinColumn(name = "OWNING_INST_HOLDINGS_ID", referencedColumnName = "OWNING_INST_HOLDINGS_ID"),
-            @JoinColumn(name = "HOLDINGS_INST_ID", referencedColumnName = "OWNING_INST_ID")},
+            @JoinColumn(name = "HOLDINGS_ID", referencedColumnName = "HOLDINGS_ID")},
             inverseJoinColumns = {
-                    @JoinColumn(name = "OWNING_INST_ITEM_ID", referencedColumnName = "OWNING_INST_ITEM_ID"),
-                    @JoinColumn(name = "ITEM_INST_ID", referencedColumnName = "OWNING_INST_ID")})
+                    @JoinColumn(name="ITEM_ID", referencedColumnName = "ITEM_ID")})
     private List<ItemEntity> itemEntities;
 
     /**

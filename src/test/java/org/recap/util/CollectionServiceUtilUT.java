@@ -109,17 +109,17 @@ public class CollectionServiceUtilUT extends BaseTestCase {
         BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
         entityManager.refresh(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity);
-        assertNotNull(savedBibliographicEntity.getBibliographicId());
+        assertNotNull(savedBibliographicEntity.getId());
         assertNotNull(savedBibliographicEntity.getHoldingsEntities());
         assertNotNull(savedBibliographicEntity.getItemEntities());
         assertNotNull(savedBibliographicEntity.getItemEntities().get(0));
-        assertNotNull(savedBibliographicEntity.getItemEntities().get(0).getItemId());
+        assertNotNull(savedBibliographicEntity.getItemEntities().get(0).getId());
         assertEquals("Shared", savedBibliographicEntity.getItemEntities().get(0).getCollectionGroupEntity().getCollectionGroupCode());
 
         String itemBarcode = savedBibliographicEntity.getItemEntities().get(0).getBarcode();
 
         BibliographicMarcForm bibliographicMarcForm = new BibliographicMarcForm();
-        bibliographicMarcForm.setBibId(savedBibliographicEntity.getBibliographicId());
+        bibliographicMarcForm.setBibId(savedBibliographicEntity.getId());
         bibliographicMarcForm.setBarcode(itemBarcode);
         bibliographicMarcForm.setOwningInstitution("PUL");
         bibliographicMarcForm.setCollectionGroupDesignation("Shared");
@@ -148,7 +148,7 @@ public class CollectionServiceUtilUT extends BaseTestCase {
         for (ItemEntity fetchedItemEntity : fetchedItemEntities) {
             entityManager.refresh(fetchedItemEntity);
             assertNotNull(fetchedItemEntity);
-            assertNotNull(fetchedItemEntity.getItemId());
+            assertNotNull(fetchedItemEntity.getId());
             assertEquals(itemBarcode, fetchedItemEntity.getBarcode());
             //assertEquals("Private", fetchedItemEntity.getCollectionGroupEntity().getCollectionGroupCode());
         }
@@ -167,28 +167,28 @@ public class CollectionServiceUtilUT extends BaseTestCase {
         BibliographicEntity savedBibliographicEntity = bibliographicDetailsRepository.saveAndFlush(bibliographicEntity);
         entityManager.refresh(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity);
-        Integer bibliographicId = savedBibliographicEntity.getBibliographicId();
+        Integer bibliographicId = savedBibliographicEntity.getId();
         assertNotNull(bibliographicId);
 
-        BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findByBibliographicId(bibliographicId);
+        BibliographicEntity fetchedBibliographicEntity = bibliographicDetailsRepository.findById(bibliographicId).orElse(null);
         entityManager.refresh(fetchedBibliographicEntity);
         assertNotNull(fetchedBibliographicEntity);
-        assertNotNull(fetchedBibliographicEntity.getBibliographicId());
-        assertEquals(bibliographicId, fetchedBibliographicEntity.getBibliographicId());
+        assertNotNull(fetchedBibliographicEntity.getId());
+        assertEquals(bibliographicId, fetchedBibliographicEntity.getId());
         assertNotNull(fetchedBibliographicEntity.getItemEntities());
         assertTrue(fetchedBibliographicEntity.getItemEntities().size() > 0);
         assertNotNull(fetchedBibliographicEntity.getItemEntities().get(0));
-        assertNotNull(fetchedBibliographicEntity.getItemEntities().get(0).getItemId());
+        assertNotNull(fetchedBibliographicEntity.getItemEntities().get(0).getId());
 
         CustomerCodeEntity customerCodeEntity = new CustomerCodeEntity();
         customerCodeEntity.setCustomerCode("PB");
 
-        Integer itemId = fetchedBibliographicEntity.getItemEntities().get(0).getItemId();
-        ItemEntity fetchedItemEntity = itemDetailsRepository.findByItemId(itemId);
+        Integer itemId = fetchedBibliographicEntity.getItemEntities().get(0).getId();
+        ItemEntity fetchedItemEntity = itemDetailsRepository.findById(itemId).orElse(null);
         entityManager.refresh(fetchedItemEntity);
         assertNotNull(fetchedItemEntity);
-        assertNotNull(fetchedItemEntity.getItemId());
-        assertEquals(itemId, fetchedItemEntity.getItemId());
+        assertNotNull(fetchedItemEntity.getId());
+        assertEquals(itemId, fetchedItemEntity.getId());
         assertEquals(Boolean.FALSE, fetchedItemEntity.isDeleted());
 
         DeAccessionRequest deAccessionRequest = new DeAccessionRequest();
@@ -221,11 +221,11 @@ public class CollectionServiceUtilUT extends BaseTestCase {
         Mockito.doCallRealMethod().when(collectionServiceUtil).deAccessionItem(bibliographicMarcForm);
         collectionServiceUtil.deAccessionItem(bibliographicMarcForm);
 
-        ItemEntity fetchedItemEntityAfterDeaccession = itemDetailsRepository.findByItemId(itemId);
+        ItemEntity fetchedItemEntityAfterDeaccession = itemDetailsRepository.findById(itemId).orElse(null);
         entityManager.refresh(fetchedItemEntityAfterDeaccession);
         assertNotNull(fetchedItemEntityAfterDeaccession);
-        assertNotNull(fetchedItemEntityAfterDeaccession.getItemId());
-        assertEquals(itemId, fetchedItemEntityAfterDeaccession.getItemId());
+        assertNotNull(fetchedItemEntityAfterDeaccession.getId());
+        assertEquals(itemId, fetchedItemEntityAfterDeaccession.getId());
         assertNotNull(deAccessionItem.getDeliveryLocation());
         assertNotNull(deAccessionItem.getItemBarcode());
         assertNotNull(deAccessionRequest.getUsername());
