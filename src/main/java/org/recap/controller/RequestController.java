@@ -560,7 +560,7 @@ public class RequestController extends RecapController {
     private void setBibData(RequestItemEntity requestItemEntity, SearchResultRow searchResultRow, List<SearchResultRow> searchResultRows) {
         ItemEntity itemEntity = requestItemEntity.getItemEntity();
         if (null != itemEntity && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
-            searchResultRow.setBibId(itemEntity.getBibliographicEntities().get(0).getBibliographicId());
+            searchResultRow.setBibId(itemEntity.getBibliographicEntities().get(0).getId());
         }
         searchResultRows.add(searchResultRow);
     }

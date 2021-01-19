@@ -44,8 +44,8 @@ public class MarcRecordViewUtilUT extends BaseTestCase {
         assertNotNull(savedBibliographicEntity.getHoldingsEntities());
         assertNotNull(savedBibliographicEntity.getItemEntities());
 
-        Integer bibId = savedBibliographicEntity.getBibliographicId();
-        Integer itemId = savedBibliographicEntity.getItemEntities().get(0).getItemId();
+        Integer bibId = savedBibliographicEntity.getId();
+        Integer itemId = savedBibliographicEntity.getItemEntities().get(0).getId();
 
         UserDetailsForm userDetailsForm= new UserDetailsForm();
         userDetailsForm.setSuperAdmin(false);

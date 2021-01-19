@@ -3,13 +3,14 @@ package org.recap.model.jpa;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.CascadeType;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
-import javax.persistence.JoinColumn;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "item_t", schema = "recap", catalog = "")
-@IdClass(ItemPK.class)
+@AttributeOverride(name = "id", column = @Column(name = "ITEM_ID"))
 public class ItemEntity extends ItemAbstractEntity {
 
 
