@@ -4,7 +4,6 @@ import org.recap.model.jpa.RequestItemEntity;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,7 +13,7 @@ import java.util.List;
 /**
  * Created by rajeshbabuk on 26/10/16.
  */
-public interface RequestItemDetailsRepository extends BaseRepository<RequestItemEntity>, JpaSpecificationExecutor {
+public interface RequestItemDetailsRepository extends BaseRepository<RequestItemEntity> {
 
     /**
      * To get the pageable request item entities for the given status.

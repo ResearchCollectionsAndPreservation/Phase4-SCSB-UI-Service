@@ -4,7 +4,6 @@ import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.UsersEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * Created by dharmendrag on 29/11/16.
  */
 @Repository
-public interface UserDetailsRepository extends BaseRepository<UsersEntity>,JpaSpecificationExecutor {
+public interface UserDetailsRepository extends BaseRepository<UsersEntity> {
 
 
     /**
