@@ -137,6 +137,7 @@ public class RecapConstants {
     public static final Integer CGD_SHARED = 1;
     public static final Integer CGD_OPEN = 2;
 
+    public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";
     public static final String SCSB_UPDATE_CGD_URL = "updateCgdService/updateCgd";
     public static final String SCSB_DEACCESSION_URL = "deAccessionService/deaccession";
@@ -309,6 +310,8 @@ public class RecapConstants {
     public static final String LOGGING_FORM = "loggingForm";
     public static final String MONITORING = "isMonitoring";
     public static final String LOGGING = "isLogging";
+    public static final String DATA_EXPORT = "isDataExport";
+
 
     public static final String SCSB_UI = "scsb_ui";
     public static final String SCSB_AUTH = "scsb_auth";
