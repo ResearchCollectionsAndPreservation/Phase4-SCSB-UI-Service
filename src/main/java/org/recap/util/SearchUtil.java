@@ -36,7 +36,6 @@ public class SearchUtil {
         SearchRecordsResponse searchRecordsResponse = new SearchRecordsResponse();
         try {
             RestTemplate restTemplate = new RestTemplate();
-
             HttpHeaders headers = HelperUtil.getSwaggerHeaders();
             HttpEntity<SearchRecordsRequest> httpEntity = new HttpEntity<>(searchRecordsRequest, headers);
 

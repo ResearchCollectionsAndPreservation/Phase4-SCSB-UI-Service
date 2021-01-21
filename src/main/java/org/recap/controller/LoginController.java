@@ -142,6 +142,7 @@ public class LoginController extends AbstractController {
         session.setAttribute(RecapCommonConstants.RESUBMIT_REQUEST_PRIVILEGE, authMap.get(RecapCommonConstants.RESUBMIT_REQUEST_PRIVILEGE));
         session.setAttribute(RecapConstants.MONITORING, authMap.get(RecapConstants.MONITORING));
         session.setAttribute(RecapConstants.LOGGING, authMap.get(RecapConstants.LOGGING));
+        session.setAttribute(RecapConstants.DATA_EXPORT, authMap.get(RecapConstants.DATA_EXPORT));
         Object isSuperAdmin = session.getAttribute(RecapConstants.SUPER_ADMIN_USER);
         if ((boolean) isSuperAdmin) {
             session.setAttribute(RecapConstants.ROLE_FOR_SUPER_ADMIN, true);

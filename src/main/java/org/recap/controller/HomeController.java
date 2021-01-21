@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,14 +65,12 @@ public class HomeController extends AbstractController {
      */
     @GetMapping("/institutions")
     public Map<String, String> loadInstitutions() {
-        Map<String, String> instList = new HashMap<>();
+        Map<String, String> instList = new LinkedHashMap<>();
         List<InstitutionEntity> InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
-            if (institutionEntity.getInstitutionCode().equalsIgnoreCase(RecapConstants.HTC))
-                instList.put(institutionEntity.getInstitutionCode(), RecapConstants.HTC);
-            else
-                instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
+            instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
+        instList.put(RecapConstants.HTC, RecapConstants.HTC);
         return instList;
     }
 
@@ -98,6 +97,7 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.SUPER_ADMIN_USER, request.getSession().getAttribute(RecapConstants.SUPER_ADMIN_USER));
             resultMap.put(RecapConstants.MONITORING, request.getSession().getAttribute(RecapConstants.MONITORING));
             resultMap.put(RecapConstants.LOGGING, request.getSession().getAttribute(RecapConstants.LOGGING));
+            resultMap.put(RecapConstants.DATA_EXPORT, request.getSession().getAttribute(RecapConstants.DATA_EXPORT));
             resultMap.put("isAuthenticated", isAuthenticated);
         } catch (Exception e) {
             e.printStackTrace();

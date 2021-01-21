@@ -39,6 +39,6 @@ public interface InstitutionDetailsRepository extends BaseRepository<Institution
      *
      * @return the institutions
      */
-    @Query(value="select inst from InstitutionEntity inst")
+    @Query(value="select inst from InstitutionEntity inst  where inst.institutionCode not in ('HTC') ORDER BY inst.id")
     List<InstitutionEntity> getInstitutionCodes();
 }
