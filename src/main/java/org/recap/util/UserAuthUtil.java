@@ -64,7 +64,7 @@ public class UserAuthUtil {
             if (serviceURL.contains(RecapConstants.LOGOUT))
                 logger.info(RecapConstants.LOG_USER_LOGOUT_SUCCUSS);
             else
-                logger.error(token.getUsername() + RecapConstants.LOG_USER_NOT_VALID);
+                logger.error(RecapConstants.LOG_USER_NOT_VALID);
         }
         return statusResponse;
     }

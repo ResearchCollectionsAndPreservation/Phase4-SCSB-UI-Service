@@ -82,7 +82,7 @@ public class SearchRecordsController extends RecapController {
             logger.info(RecapConstants.SEARCH_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "Search", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
         }
 
     }

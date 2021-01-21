@@ -63,7 +63,7 @@ public class BulkRequestController extends AbstractController {
             logger.info(RecapConstants.BULKREQUEST_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "BulkRequest", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.BULK_REQUEST_CHECK, logger);
         }
     }
 

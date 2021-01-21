@@ -95,7 +95,7 @@ public class CollectionController extends AbstractController {
             logger.info(RecapConstants.COLLECTION_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "Collection", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.COLLECTION, logger);
         }
     }
 

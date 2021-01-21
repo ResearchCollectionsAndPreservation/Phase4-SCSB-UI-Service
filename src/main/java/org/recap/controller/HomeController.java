@@ -82,7 +82,7 @@ public class HomeController extends AbstractController {
         HttpSession session = request.getSession(false);
         Map<String, Object> resultMap = new HashMap<>();
         boolean isAuthenticated = false;
-        resultMap.put("isAuthenticated", isAuthenticated);
+        resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         try {
             isAuthenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
             resultMap.put(RecapConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(RecapConstants.REQUEST_PRIVILEGE));
@@ -98,10 +98,10 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.MONITORING, request.getSession().getAttribute(RecapConstants.MONITORING));
             resultMap.put(RecapConstants.LOGGING, request.getSession().getAttribute(RecapConstants.LOGGING));
             resultMap.put(RecapConstants.DATA_EXPORT, request.getSession().getAttribute(RecapConstants.DATA_EXPORT));
-            resultMap.put("isAuthenticated", isAuthenticated);
+            resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
             e.printStackTrace();
-            isAuthenticated = UserManagementService.unAuthorizedUser(session, "Users", logger);
+            isAuthenticated = UserManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         }
         return resultMap;

@@ -94,14 +94,14 @@ public class RequestController extends RecapController {
     }
 
     @GetMapping("/checkPermission")
-    public boolean request(HttpServletRequest request) throws JSONException {
+    public boolean request(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         boolean authenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL);
         if (authenticated) {
             logger.info(RecapConstants.REQUEST_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "Request", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.REQUEST, logger);
         }
     }
 
@@ -153,7 +153,6 @@ public class RequestController extends RecapController {
     public RequestForm searchFirst(@RequestBody RequestForm requestForm) {
         requestForm.setPageNumber(0);
         return setSearch(requestForm);
-        //return new ModelAndView(RecapConstants.VIEW_SEARCH_REQUESTS_SECTION, RecapConstants.REQUEST_FORM, requestForm);
     }
 
     /**
@@ -209,24 +208,12 @@ public class RequestController extends RecapController {
      *
      * @return the RequestForm
      */
-    @PostMapping("/loadCreateRequest")
-    public RequestForm loadCreateRequest() {
-        UserDetailsForm userDetailsForm = new UserDetailsForm(1, true, true, true); //getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
+    @GetMapping("/loadCreateRequest")
+    public RequestForm loadCreateRequest(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(session, RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
-        return requestForm;//setRequestAttribute(requestForm);
-    }
-
-    /**
-     * Retains patron's barcode , patron email address and requesting institution values in the create request UI page when request is going to be placed for the same patron.
-     *
-     * @return the RequestForm
-     */
-    @PostMapping("/loadCreateRequestForSamePatron")
-    public RequestForm loadCreateRequestForSamePatron() {
-        UserDetailsForm userDetailsForm = new UserDetailsForm(4, false, false, true);//getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
-        RequestForm requestForm = getRequestService().setDefaultsToCreateRequest(userDetailsForm);
-        requestForm.setOnChange("true");
-        return requestForm;//setRequestAttribute(requestForm);
+        return requestForm;
     }
 
     /**
@@ -239,7 +226,7 @@ public class RequestController extends RecapController {
         UserDetailsForm userDetails = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE);
         RequestForm requestForm = new RequestForm();
         setFormValues(requestForm, userDetails);
-        return requestForm;//setRequestAttribute(requestForm);
+        return requestForm;
     }
 
     /**
@@ -377,7 +364,6 @@ public class RequestController extends RecapController {
             requestForm.setDisableRequestingInstitution(true);
         }
         return requestForm;
-        //return new ModelAndView(RecapConstants.CREATE_REQUEST_SECTION, RecapConstants.REQUEST_FORM, requestForm);
     }
 
     /**
@@ -566,10 +552,6 @@ public class RequestController extends RecapController {
     }
 
     private RequestForm setRequestAttribute(RequestForm requestForm) {
-       /* model.addAttribute(RecapConstants.REQUEST_FORM, requestForm);
-        model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
-        return new ModelAndView(RecapCommonConstants.REQUEST, RecapConstants.REQUEST_FORM, requestForm);
-    */
         return requestForm;
     }
 
@@ -582,10 +564,8 @@ public class RequestController extends RecapController {
     }
 
     private RequestForm setSearch(RequestForm requestForm) {
-        //requestForm = disableRequestSearchInstitutionDropDown(requestForm);
         requestForm.setPageNumber(0);
         return searchAndSetResults(requestForm);
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapCommonConstants.REQUEST);
     }
 }
 

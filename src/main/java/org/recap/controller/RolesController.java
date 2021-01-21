@@ -72,7 +72,7 @@ public class RolesController extends AbstractController {
             logger.info(RecapConstants.ROLES_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "Roles", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.ROLES, logger);
         }
     }
 

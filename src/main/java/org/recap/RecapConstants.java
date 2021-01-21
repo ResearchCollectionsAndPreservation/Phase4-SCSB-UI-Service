@@ -7,10 +7,12 @@ public class RecapConstants {
 
     //Report Types
     public static final String MATCHING_TYPE = "Matching";
-
+    //SEARCH
+    public static final String SEARCH = "Search";
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or Bib table does not contains this record";
     //Collection
+    public static final String COLLECTION = "Collection";
     public static final String COLLECTION_UPDATE_CALLED = "Collection Update Called";
     public static final String COLLECTION_CCIB_CALLED = "Check Cross Institution Borrowed Called";
     public static final String COLLECTION_OMV_CALLED = "Open MarcView Called";
@@ -21,7 +23,8 @@ public class RecapConstants {
     //Request
     public static final String REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED = "User is not permitted to request private item(s) from other partners";
     public static final String REQUEST_ERROR_USER_NOT_PERMITTED = "User is not permitted to request item(s)";
-
+    public static final String REQUEST = "Request";
+    public static final String BULK_REQUEST_CHECK = "BulkRequest";
     public static final String VALIDATE_REQUEST_ITEM_URL = "requestItem/validateItemRequestInformations";
     public static final String REQUEST_ITEM_URL = "requestItem/requestItem";
     public static final String BULK_REQUEST_ITEM_URL = "requestItem/bulkRequest";
@@ -44,7 +47,7 @@ public class RecapConstants {
     //Reports
     public static final Integer CGD_SHARED = 1;
     public static final Integer CGD_OPEN = 2;
-
+    public static final String REPORTS = "Reports";
     public static final String SCSB_DATA_DUMP_URL = "dataDump/exportDataDump";
     public static final String SCSB_SEARCH_SERVICE_URL = "searchService/search";
     public static final String SCSB_UPDATE_CGD_URL = "updateCgdService/updateCgd";
@@ -96,6 +99,8 @@ public class RecapConstants {
     public static final String SPECIAL_CHARACTERS_NOT_ALLOWED = "Special characters and spaces are not allowed";
     public static final String SPECIAL_CHARACTERS_NOT_ALLOWED_CREATE = "Special characters and spaces are not allowed in Role Name";
     public static final String ROLES_SUPER_ADMIN = "Super Admin";
+    public static final String ROLES = "Roles";
+
 
     public static final String EDITED_AND_SAVED = " edited and saved successfully";
     public static final String DELETED_SUCCESSFULLY = " deleted successfully";
@@ -103,6 +108,7 @@ public class RecapConstants {
     public static final String ADDED_SUCCESSFULLY = " added Successfully";
     public static final String EDITED_SUCCESSFULLY = " edited Successfully";
     //USERS
+    public static final String LOGIN_USER = "Login User";
     public static final String NETWORK_LOGIN_ID_DOES_NOT_EXIST = "Network Login Id does not exist";
     public static final String EMAILID_ID_DOES_NOT_EXIST = "User email ID does not exist";
     public static final String NETWORK_LOGIN_ID_AND_EMAILID_ID_DOES_NOT_EXIST = "Network ID and email ID do not exist";
