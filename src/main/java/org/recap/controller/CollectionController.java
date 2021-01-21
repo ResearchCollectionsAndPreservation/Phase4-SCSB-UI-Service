@@ -120,7 +120,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/openMarcView")
     public CollectionForm openMarcView(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws MarcException {
-        logger.info("openMarcView  called");
+        logger.info(RecapConstants.COLLECTION_OMV_CALLED);
         UserDetailsForm userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.BARCODE_RESTRICTED_PRIVILEGE);
         BibliographicMarcForm bibliographicMarcForm = getMarcRecordViewUtil().buildBibliographicMarcForm(collectionForm.getBibId(), collectionForm.getItemId(), userDetailsForm);
         CollectionForm collectionFormUpdated = populateCollectionForm(collectionForm, bibliographicMarcForm);
@@ -136,7 +136,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/collectionUpdate")
     public CollectionForm collectionUpdate(@RequestBody CollectionForm collectionForm, HttpServletRequest request) throws Exception {
-        logger.info("collectionUpdate  called");
+        logger.info(RecapConstants.COLLECTION_UPDATE_CALLED);
         HttpSession session = request.getSession(false);
         String username = (String) session.getAttribute(RecapConstants.USER_NAME);
         collectionForm.setUsername(username);
@@ -158,7 +158,7 @@ public class CollectionController extends AbstractController {
      */
     @PostMapping("/checkCrossInstitutionBorrowed")
     public CollectionForm checkCrossInstitutionBorrowed(@RequestBody CollectionForm collectionForm) {
-        logger.info("checkCrossInstitutionBorrowed  called");
+        logger.info(RecapConstants.COLLECTION_CCIB_CALLED);
         String itemBarcode = collectionForm.getBarcode();
         String warningMessage = null;
         List<CustomerCodeEntity> deliveryLocations = marcRecordViewUtil.getDeliveryLocationsList(collectionForm.getCustomerCode());

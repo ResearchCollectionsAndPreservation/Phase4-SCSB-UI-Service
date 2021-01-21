@@ -223,7 +223,7 @@ public class RolesController extends AbstractController {
         rolesForm.setPageNumber(pageNumber);
         rolesForm.setTotalPageCount(totalPageCount);
         rolesForm.setShowIntial(false);
-        return rolesForm;//return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
     }
 
     /**

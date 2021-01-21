@@ -87,7 +87,7 @@ public class BulkRequestController extends AbstractController {
         bulkRequestForm.setBulkRequestName(BulkRequestName);
         bulkRequestForm.setPatronBarcodeInRequest(patronBarcodeId);
         bulkRequestForm.setRequestingInstitution(requestingInstitutionId);
-        logger.info("createBulkRequest --> Called");
+        logger.info(RecapConstants.CREATE_BULKREQUEST_CALLED);
         HashMap<String, String> resStatus = new HashMap<>();
         try {
             BulkRequestForm res = bulkRequestService.processCreateBulkRequest(bulkRequestForm, request);
@@ -105,7 +105,7 @@ public class BulkRequestController extends AbstractController {
 
     @PostMapping("/searchRequest")
     public BulkRequestForm searchRequest(@RequestBody BulkRequestForm bulkRequestForm) {
-        logger.info("SearchRequest --> called");
+        logger.info(RecapConstants.CREATE_SR_BULKREQUEST_CALLED);
         return bulkRequestService.processSearchRequest(bulkRequestForm);
     }
 
@@ -168,12 +168,6 @@ public class BulkRequestController extends AbstractController {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         BulkRequestItemEntity bulkRequestItemEntity = bulkRequestService.saveUpadatedRequestStatus(Integer.valueOf(bulkRequestId));
         String fileNameWithExtension = "Results_" + StringUtils.substringBefore(bulkRequestItemEntity.getBulkRequestFileName(), ".csv") + dateFormat.format(new Date()) + ".csv";
-        //response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameWithExtension + "\"");
-        // response.setContentLength(bulkRequestItemEntity.getBulkRequestFileData().length);
-        //FileCopyUtils.copy(bulkRequestItemEntity.getBulkRequestFileData(), response.getOutputStream());
-        //model.addAttribute(RecapCommonConstants.TEMPLATE, RecapConstants.BULK_REQUEST);
-        //return bulkRequestItemEntity.getBulkRequestFileData();
-        //return b.toString();
         DownloadReports downloadReports = new DownloadReports();
         downloadReports.setContent(bulkRequestItemEntity.getBulkRequestFileData());
         downloadReports.setFileName(fileNameWithExtension);
