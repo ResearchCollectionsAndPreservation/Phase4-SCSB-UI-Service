@@ -72,7 +72,7 @@ public class RolesController extends AbstractController {
             logger.info(RecapConstants.ROLES_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "Roles", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.ROLES, logger);
         }
     }
 
@@ -223,7 +223,7 @@ public class RolesController extends AbstractController {
         rolesForm.setPageNumber(pageNumber);
         rolesForm.setTotalPageCount(totalPageCount);
         rolesForm.setShowIntial(false);
-        return rolesForm;//return new ModelAndView(RecapConstants.ROLES, RecapConstants.ROLES_FORM, rolesForm);
+        return rolesForm;
     }
 
     /**

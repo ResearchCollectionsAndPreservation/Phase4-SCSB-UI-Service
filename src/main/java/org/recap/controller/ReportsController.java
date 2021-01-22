@@ -70,7 +70,7 @@ public class ReportsController extends AbstractController {
             logger.info(RecapConstants.REPORTS_TAB_CLICKED);
             return RecapConstants.TRUE;
         } else {
-            return UserManagementService.unAuthorizedUser(session, "Reports", logger);
+            return UserManagementService.unAuthorizedUser(session, RecapConstants.REPORTS, logger);
         }
 
     }
