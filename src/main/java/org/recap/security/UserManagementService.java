@@ -45,7 +45,7 @@ public class UserManagementService {
      * @return the integer
      */
     public Integer getSuperAdminRoleId(){
-        RoleEntity roleEntity=rolesDetailsRepositorty.findByRoleName("Super Admin");
+        RoleEntity roleEntity=rolesDetailsRepositorty.findByRoleName(RecapConstants.ROLES_SUPER_ADMIN);
         return roleEntity.getId();
     }
 }

@@ -84,7 +84,6 @@ public class SearchRecordsController extends RecapController {
         } else {
             return UserManagementService.unAuthorizedUser(session, RecapConstants.SEARCH, logger);
         }
-
     }
 
 

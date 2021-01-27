@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 public class VersionNumberUT extends BaseTestCase{
 
     @Autowired
-    VersionNumber versionNumber;
+    DashBoardController versionNumber;
 
     @Test
     public void testVersionNumber(){
