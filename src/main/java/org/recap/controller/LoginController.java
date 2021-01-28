@@ -88,7 +88,7 @@ public class LoginController extends AbstractController {
                     username = (String) additionalInformation.get("sub");
                 }
             }
-            logger.info("passing in /login");
+            logger.info("passing in login-scsb");
             UsernamePasswordToken token = new UsernamePasswordToken(username + RecapConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
             if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {

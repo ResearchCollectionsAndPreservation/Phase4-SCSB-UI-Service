@@ -62,9 +62,9 @@ public class UserAuthUtil {
             statusResponse = restTemplate.postForObject(scsbShiro + serviceURL, requestEntity, Boolean.class);
         } catch (Exception e) {
             if (serviceURL.contains(RecapConstants.LOGOUT))
-                logger.info(RecapConstants.LOG_USER_LOGOUT_SUCCUSS);
+                logger.info(RecapConstants.LOG_USER_LOGOUT_SUCCUSS+" :: {}",token.getUsername());
             else
-                logger.error(RecapConstants.LOG_USER_NOT_VALID);
+                logger.error(RecapConstants.LOG_USER_NOT_VALID+" :: {}",token.getUsername());
         }
         return statusResponse;
     }

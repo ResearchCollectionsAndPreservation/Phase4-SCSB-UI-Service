@@ -1,9 +1,11 @@
 package org.recap.controller;
 
-import org.apache.commons.lang3.StringUtils;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
+import org.recap.filter.CsrfCookieGeneratorFilter;
+import org.recap.filter.ReCAPInstitutionFilter;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserInstitutionCache;
@@ -15,13 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.FilterChain;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,11 +69,17 @@ public class HomeController extends AbstractController {
     @GetMapping("/institutions")
     public Map<String, String> loadInstitutions() {
         Map<String, String> instList = new LinkedHashMap<>();
-        List<InstitutionEntity> InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
+        List<InstitutionEntity> InstitutionCodes = null;
+        try {
+            InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
+        } catch (Exception e) {
+            logger.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
+        }
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
             instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
         instList.put(RecapConstants.HTC, RecapConstants.HTC);
+        logger.info("Institutions fetched from DB successfully :: {}", instList);
         return instList;
     }
 
@@ -81,9 +89,9 @@ public class HomeController extends AbstractController {
     @GetMapping(value = "/loginCheck")
     public Map<String, Object> login(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+        logger.info("session info :: {}", session.getId());
         Map<String, Object> resultMap = new HashMap<>();
         boolean isAuthenticated = false;
-        resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         try {
             isAuthenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
             resultMap.put(RecapConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(RecapConstants.REQUEST_PRIVILEGE));
@@ -101,7 +109,7 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.DATA_EXPORT, request.getSession().getAttribute(RecapConstants.DATA_EXPORT));
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("Exception Occured while User Validation :: {}", e.getMessage());
             isAuthenticated = UserManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         }
@@ -112,21 +120,41 @@ public class HomeController extends AbstractController {
      *
      */
     @GetMapping("/logout")
-    public boolean logoutUser(HttpServletRequest request) {
+    public boolean logoutUser(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Subject Logged out");
-        HttpSession session=null;
-        try{
-            session=request.getSession(false);
-            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL,(UsernamePasswordToken)session.getAttribute(RecapConstants.USER_TOKEN));
-            SecurityContextHolder.clearContext();
-            for(Cookie cookie : request.getCookies()) {
-                cookie.setMaxAge(0);
-            }
-        }finally{
-            if(session!=null) {
+        String institutionCode = HelperUtil.getInstitutionFromRequest(request);
+        String requestedSessionId = request.getSession().getId();
+        HttpSession session = null;
+        try {
+            session = request.getSession(false);
+            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
+        } finally {
+            if (session != null) {
+                Cookie[] cookies = request.getCookies();
+                cookiesOuter:
+                for (Cookie cookie : cookies) {
+                    if (StringUtils.equals(cookie.getName(), RecapConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
+                        for (Cookie innerCookies : cookies) {
+                            if (StringUtils.equals(innerCookies.getName(), RecapConstants.LOGGED_IN_INSTITUTION)) {
+                                institutionCode = innerCookies.getValue();
+                                cookie.setValue(null);
+                                cookie.setMaxAge(0);
+                                response.addCookie(cookie);
+
+                                innerCookies.setValue(null);
+                                innerCookies.setMaxAge(0);
+                                response.addCookie(innerCookies);
+
+                                break cookiesOuter;
+                            }
+                        }
+                    }
+                }
+                userInstitutionCache.removeSessionId(requestedSessionId);
                 session.invalidate();
+                logger.info("session info :: {}", session.getId());
             }
-            return true;
         }
+        return true;
     }
 }

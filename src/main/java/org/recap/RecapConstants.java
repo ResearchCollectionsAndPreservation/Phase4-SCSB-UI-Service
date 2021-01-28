@@ -77,6 +77,7 @@ public class RecapConstants {
     public static final String IS_USER_AUTHENTICATED = "isAuthenticated";
     public static final String HTC = "HTC";
     public static final String AUTH = "auth";
+    public static  final  String LOG_USER_LOGOUT_URL = "/api/logout";
 
     public static final String USER_ID = "id";
 

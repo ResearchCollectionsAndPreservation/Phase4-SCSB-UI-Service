@@ -1,5 +1,6 @@
 package org.recap.security;
 
+import org.recap.RecapConstants;
 import org.recap.filter.CsrfCookieGeneratorFilter;
 import org.recap.filter.ReCAPInstitutionFilter;
 import org.recap.filter.ReCAPLogoutFilter;
@@ -69,13 +70,13 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
 
-        http.authorizeRequests().antMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
+        http.authorizeRequests().antMatchers("/","/login", "/home", "/actuator", "/actuator/prometheus").permitAll()
                 .antMatchers("*").authenticated().anyRequest().authenticated();
 
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
         httpSecuritySessionManagementConfigurer.invalidSessionUrl(uiUrl+"home");
 
-        http.logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true)
+        http.logout().logoutUrl(RecapConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
         // @formatter:on
     }
