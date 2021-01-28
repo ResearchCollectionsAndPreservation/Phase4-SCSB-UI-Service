@@ -65,10 +65,6 @@ public class SearchRecordsRequest implements Serializable {
         this.setDeleted(false);
         this.setCatalogingStatus(RecapCommonConstants.COMPLETE_STATUS);
 
-        this.getOwningInstitutions().add("NYPL");
-        this.getOwningInstitutions().add("CUL");
-        this.getOwningInstitutions().add("PUL");
-
         this.getCollectionGroupDesignations().add("Shared");
         this.getCollectionGroupDesignations().add("Private");
         this.getCollectionGroupDesignations().add("Open");
