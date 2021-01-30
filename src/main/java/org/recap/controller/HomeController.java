@@ -39,8 +39,7 @@ import java.util.Map;
 public class HomeController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
-    @Value("${scsb.app.logout.redirect.uri}")
-    private String test;
+
     @Autowired
     private ReportsUtil reportsUtil;
 
@@ -54,14 +53,6 @@ public class HomeController extends AbstractController {
 
     @Autowired
     private PropertyUtil propertyUtil;
-
-    /**
-     *
-     */
-    @GetMapping("/authenticate")
-    public void authenticate(HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("authenticated", "true");
-    }
 
     /**
      * @return InstitutionsList
@@ -114,47 +105,5 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         }
         return resultMap;
-    }
-
-    /**
-     *
-     */
-    @GetMapping("/logout")
-    public boolean logoutUser(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("Subject Logged out");
-        String institutionCode = HelperUtil.getInstitutionFromRequest(request);
-        String requestedSessionId = request.getSession().getId();
-        HttpSession session = null;
-        try {
-            session = request.getSession(false);
-            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
-        } finally {
-            if (session != null) {
-                Cookie[] cookies = request.getCookies();
-                cookiesOuter:
-                for (Cookie cookie : cookies) {
-                    if (StringUtils.equals(cookie.getName(), RecapConstants.IS_USER_AUTHENTICATED) && StringUtils.equals(cookie.getValue(), "Y")) {
-                        for (Cookie innerCookies : cookies) {
-                            if (StringUtils.equals(innerCookies.getName(), RecapConstants.LOGGED_IN_INSTITUTION)) {
-                                institutionCode = innerCookies.getValue();
-                                cookie.setValue(null);
-                                cookie.setMaxAge(0);
-                                response.addCookie(cookie);
-
-                                innerCookies.setValue(null);
-                                innerCookies.setMaxAge(0);
-                                response.addCookie(innerCookies);
-
-                                break cookiesOuter;
-                            }
-                        }
-                    }
-                }
-                userInstitutionCache.removeSessionId(requestedSessionId);
-                session.invalidate();
-                logger.info("session info :: {}", session.getId());
-            }
-        }
-        return true;
     }
 }

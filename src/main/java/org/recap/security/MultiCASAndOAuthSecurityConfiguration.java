@@ -34,9 +34,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableOAuth2Sso
 public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Value("${scsb.ui.url}")
-    private String uiUrl;
-
     @Value("${cas.default.url.prefix}")
     private String casUrlPrefix;
 
@@ -70,11 +67,11 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
                 .addFilterBefore(reCAPLogoutFilter(), LogoutFilter.class)
                 .addFilterBefore(requestCasGlobalLogoutFilter(), LogoutFilter.class);
 
-        http.authorizeRequests().antMatchers("/","/login", "/home", "/actuator", "/actuator/prometheus").permitAll()
+        http.authorizeRequests().antMatchers("/", "/home", "/actuator", "/actuator/prometheus").permitAll()
                 .antMatchers("*").authenticated().anyRequest().authenticated();
 
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
-        httpSecuritySessionManagementConfigurer.invalidSessionUrl(uiUrl+"home");
+        httpSecuritySessionManagementConfigurer.invalidSessionUrl("/home");
 
         http.logout().logoutUrl(RecapConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
@@ -90,14 +87,10 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Bean
     public LogoutFilter requestCasGlobalLogoutFilter() {
         String logoutSuccessUrl = casServiceLogout + "?service=" + appServiceLogout;
-
         ReCAPSimpleUrlLogoutSuccessHandler reCAPSimpleUrlLogoutSuccessHandler = new ReCAPSimpleUrlLogoutSuccessHandler(userAuthUtil);
         reCAPSimpleUrlLogoutSuccessHandler.setDefaultTargetUrl(logoutSuccessUrl);
-
         LogoutFilter logoutFilter = new LogoutFilter(reCAPSimpleUrlLogoutSuccessHandler, new SecurityContextLogoutHandler());
-        logoutFilter.setLogoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"));
-
-
+        logoutFilter.setLogoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
         return logoutFilter;
     }
 
@@ -172,7 +165,8 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/collection/**").antMatchers("/search/**").antMatchers("/request/**").antMatchers("/reports/**").antMatchers("/userRoles/**").antMatchers("/bulkRequest/**").antMatchers("/roles/**").antMatchers("/jobs/**").antMatchers("/openMarcRecord/**").antMatchers("/admin/**").antMatchers("/api/**").antMatchers("/dataExport/**").antMatchers("/validation/**");
+        web.ignoring().antMatchers("/resources/**", "/static/**", "/assets/**", "/index.html", "/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.gif", "/**/*.svg", "/**/favicon.ico","/**/*.bmp","/**/*.jpeg","/**/*.ttf","/**/*.eot","/**/*.svg","/**/*.woff","/**/*.woff2","/images/**").
+                antMatchers("/collection/**","/search/**","/request/**","/reports/**","/userRoles/**","/bulkRequest/**","/roles/**","/jobs/**","/openMarcRecord/**","/admin/**","/api/**","/dataExport/**","/validation/**");
     }
 
     /**

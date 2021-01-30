@@ -85,7 +85,7 @@ public class RolesController extends AbstractController {
     @PostMapping("/searchRoles")
     public RolesForm search(@RequestBody RolesForm rolesForm) {
         rolesForm.setShowResults(true);
-        logger.info("searchRoles calling with the following payload:", rolesForm);
+        logger.info("searchRoles calling with the following payload :: {}", rolesForm);
         return setRolesFormSearchResults(rolesForm);
     }
 

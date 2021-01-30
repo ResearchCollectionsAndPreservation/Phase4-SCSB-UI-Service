@@ -16,8 +16,8 @@ public class CollectionGroupEntityUT extends BaseTestCase{
     @Test
     public void collectionGroupEntity(){
         CollectionGroupEntity collectionGroupEntity = new CollectionGroupEntity();
-        collectionGroupEntity.setCollectionGroupCode("public");
-        collectionGroupEntity.setCollectionGroupDescription("public");
+        collectionGroupEntity.setCollectionGroupCode("static");
+        collectionGroupEntity.setCollectionGroupDescription("static");
         collectionGroupEntity.setCreatedDate(new Date());
         collectionGroupEntity.setLastUpdatedDate(new Date());
         collectionGroupEntity.equals(collectionGroupEntity.id);
@@ -26,8 +26,8 @@ public class CollectionGroupEntityUT extends BaseTestCase{
         assertNotNull(entity);
         System.out.println("collection group id -->"+entity.getId());
         System.out.println("collection group created date-->"+entity.getCreatedDate());
-        assertEquals(entity.getCollectionGroupCode(),"public");
-        assertEquals(entity.getCollectionGroupDescription(),"public");
+        assertEquals(entity.getCollectionGroupCode(), "static");
+        assertEquals(entity.getCollectionGroupDescription(), "static");
         assertNotNull(collectionGroupEntity.getLastUpdatedDate().toString());
         collectionGroupDetailRepository.delete(collectionGroupEntity);
     }
