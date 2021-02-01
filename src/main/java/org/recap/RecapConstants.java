@@ -9,6 +9,9 @@ public class RecapConstants {
     public static final String MATCHING_TYPE = "Matching";
     //SEARCH
     public static final String SEARCH = "Search";
+    public static final String redirectSearch = "redirect:search";
+    public static final String redirectHome = "redirect:home";
+    public static final String forwardIndex = "forward:/index.html";
     //Error Message
     public static final String RECORD_NOT_AVAILABLE = "Database may be empty or Bib table does not contains this record";
     //Collection
@@ -77,6 +80,7 @@ public class RecapConstants {
     public static final String IS_USER_AUTHENTICATED = "isAuthenticated";
     public static final String HTC = "HTC";
     public static final String AUTH = "auth";
+    public static  final  String LOG_USER_LOGOUT_URL = "/logout";
 
     public static final String USER_ID = "id";
 

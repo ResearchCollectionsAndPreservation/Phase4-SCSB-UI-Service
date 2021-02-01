@@ -31,7 +31,7 @@ public class ReCAPInstitutionFilter extends OncePerRequestFilter {
         String requestedSessionId = request.getSession().getId();
 
         String requestURI = request.getRequestURI();
-        if (StringUtils.equals(requestURI, "/api/logout")) {
+        if (StringUtils.equals(requestURI, "/home")) {
             Cookie[] cookies = request.getCookies();
             cookiesOuter:
             for (Cookie cookie : cookies) {

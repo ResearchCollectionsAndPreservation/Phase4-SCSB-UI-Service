@@ -236,6 +236,7 @@ public class ReportsController extends AbstractController {
             instList.add(institutionEntity.getInstitutionCode());
         }
         reportsForm.setIncompleteShowByInst(instList);
+        logger.info("Institutions List Returned");
         return reportsForm;
     }
 

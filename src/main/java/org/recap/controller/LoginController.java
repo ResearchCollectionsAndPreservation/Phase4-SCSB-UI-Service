@@ -4,16 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.model.usermanagement.LoginValidator;
-import org.recap.model.usermanagement.UserForm;
-import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -21,9 +17,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,14 +31,7 @@ import java.util.Map;
 public class LoginController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-    private static final String redirectSearch = "redirect:/search";
-    private final LoginValidator loginValidator = new LoginValidator();
 
-    @Value("${scsb.ui.url}")
-    private String uiUrl;
-
-    @Autowired
-    private InstitutionDetailsRepository institutionDetailsRepository;
 
     @Autowired
     private TokenStore tokenStore;
@@ -56,12 +43,30 @@ public class LoginController extends AbstractController {
     private PropertyUtil propertyUtil;
 
     /**
+     * Return either login or search view. Returns search view if user authenticated. If not it will return login view.
      *
-     * @return
+     * @param request the request
+     * @return the string
      */
-    @GetMapping("/home")
-    public String home(HttpServletRequest request){
-        return "redirect:" + uiUrl + "home";
+    @GetMapping(value = "/")
+    public String loginScreen(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (null != auth && !HelperUtil.isAnonymousUser(auth)) {
+            return RecapConstants.redirectSearch;
+        }
+        logger.info("Login Screen Called");
+        return RecapConstants.forwardIndex;
+    }
+
+    /**
+     * Return home view.
+     *
+     * @param request the request
+     * @return the string
+     */
+    @GetMapping(value = "/home")
+    public String home(HttpServletRequest request) {
+        return RecapConstants.forwardIndex;
     }
 
     /**
@@ -88,22 +93,22 @@ public class LoginController extends AbstractController {
                     username = (String) additionalInformation.get("sub");
                 }
             }
-            logger.info("passing in /login");
+            logger.info("passing in login-scsb");
             UsernamePasswordToken token = new UsernamePasswordToken(username + RecapConstants.TOKEN_SPLITER + institutionFromRequest, "", true);
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
             if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {
                 String errorMessage = (String) resultMap.get(RecapConstants.USER_AUTH_ERRORMSG);
                 logger.error(RecapCommonConstants.LOG_ERROR + errorMessage);
-                return "redirect:" + uiUrl + "home";
+                return RecapConstants.redirectHome;
             }
             setSessionValues(session, resultMap, token);
 
         } catch (Exception exception) {
             logger.error(RecapCommonConstants.LOG_ERROR, exception);
             logger.error("Exception occurred in authentication : " + exception.getLocalizedMessage());
-            return "redirect:" + uiUrl + "home";
+            return RecapConstants.redirectHome;
         }
-        return "redirect:" + uiUrl + "search";
+        return RecapConstants.redirectSearch;
     }
 
     private HttpSession processSessionFixation(HttpServletRequest request) {
@@ -122,6 +127,26 @@ public class LoginController extends AbstractController {
         return session;
     }
 
+
+    /**
+     *
+     * @param request
+     * @return return redirect URL
+     */
+    @GetMapping("/logout")
+    public String logoutUser(HttpServletRequest request) {
+        logger.info("Subject Logged out");
+        HttpSession session = null;
+        try {
+            session = request.getSession(false);
+            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) session.getAttribute(RecapConstants.USER_TOKEN));
+        } finally {
+            if (session != null) {
+                session.invalidate();
+            }
+            return "redirect:/";
+        }
+    }
 
     private void setValuesInSession(HttpSession session, Map<String, Object> authMap) {
         session.setAttribute("userName", authMap.get("userName"));

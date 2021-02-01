@@ -1,30 +1,23 @@
 package org.recap.controller;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.security.UserManagementService;
-import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,8 +30,7 @@ import java.util.Map;
 public class HomeController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportsController.class);
-    @Value("${scsb.app.logout.redirect.uri}")
-    private String test;
+
     @Autowired
     private ReportsUtil reportsUtil;
 
@@ -54,24 +46,22 @@ public class HomeController extends AbstractController {
     private PropertyUtil propertyUtil;
 
     /**
-     *
-     */
-    @GetMapping("/authenticate")
-    public void authenticate(HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("authenticated", "true");
-    }
-
-    /**
      * @return InstitutionsList
      */
     @GetMapping("/institutions")
     public Map<String, String> loadInstitutions() {
         Map<String, String> instList = new LinkedHashMap<>();
-        List<InstitutionEntity> InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
+        List<InstitutionEntity> InstitutionCodes = null;
+        try {
+            InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
+        } catch (Exception e) {
+            logger.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
+        }
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
             instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
         instList.put(RecapConstants.HTC, RecapConstants.HTC);
+        logger.info("Institutions fetched from DB successfully :: {}", instList);
         return instList;
     }
 
@@ -81,9 +71,9 @@ public class HomeController extends AbstractController {
     @GetMapping(value = "/loginCheck")
     public Map<String, Object> login(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+        logger.info("session info :: {}", session.getId());
         Map<String, Object> resultMap = new HashMap<>();
         boolean isAuthenticated = false;
-        resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         try {
             isAuthenticated = getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_SEARCH_URL);
             resultMap.put(RecapConstants.REQUEST_PRIVILEGE, request.getSession().getAttribute(RecapConstants.REQUEST_PRIVILEGE));
@@ -101,32 +91,10 @@ public class HomeController extends AbstractController {
             resultMap.put(RecapConstants.DATA_EXPORT, request.getSession().getAttribute(RecapConstants.DATA_EXPORT));
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("Exception Occured while User Validation :: {}", e.getMessage());
             isAuthenticated = UserManagementService.unAuthorizedUser(session, RecapConstants.LOGIN_USER, logger);
             resultMap.put(RecapConstants.IS_AUTHENTICATED, isAuthenticated);
         }
         return resultMap;
-    }
-
-    /**
-     *
-     */
-    @GetMapping("/logout")
-    public boolean logoutUser(HttpServletRequest request) {
-        logger.info("Subject Logged out");
-        HttpSession session=null;
-        try{
-            session=request.getSession(false);
-            getUserAuthUtil().authorizedUser(RecapConstants.SCSB_SHIRO_LOGOUT_URL,(UsernamePasswordToken)session.getAttribute(RecapConstants.USER_TOKEN));
-            SecurityContextHolder.clearContext();
-            for(Cookie cookie : request.getCookies()) {
-                cookie.setMaxAge(0);
-            }
-        }finally{
-            if(session!=null) {
-                session.invalidate();
-            }
-            return true;
-        }
     }
 }
