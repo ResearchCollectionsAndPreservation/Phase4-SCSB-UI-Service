@@ -129,7 +129,9 @@ public class LoginController extends AbstractController {
 
 
     /**
-     * @return logout status
+     *
+     * @param request
+     * @return return redirect URL
      */
     @GetMapping("/logout")
     public String logoutUser(HttpServletRequest request) {

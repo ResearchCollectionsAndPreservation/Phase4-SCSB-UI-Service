@@ -1,32 +1,23 @@
 package org.recap.controller;
 
-import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
-import org.recap.filter.CsrfCookieGeneratorFilter;
-import org.recap.filter.ReCAPInstitutionFilter;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserInstitutionCache;
 import org.recap.security.UserManagementService;
-import org.recap.util.HelperUtil;
 import org.recap.util.PropertyUtil;
 import org.recap.util.ReportsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
