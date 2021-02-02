@@ -36,6 +36,7 @@ public class HomeController extends AbstractController {
 
     @Autowired
     private InstitutionDetailsRepository institutionDetailsRepository;
+
     @Autowired
     private TokenStore tokenStore;
 
@@ -51,12 +52,7 @@ public class HomeController extends AbstractController {
     @GetMapping("/institutions")
     public Map<String, String> loadInstitutions() {
         Map<String, String> instList = new LinkedHashMap<>();
-        List<InstitutionEntity> InstitutionCodes = null;
-        try {
-            InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
-        } catch (Exception e) {
-            logger.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
-        }
+        List<InstitutionEntity> InstitutionCodes = fecthingInstituionsFromDB();
         for (InstitutionEntity institutionEntity : InstitutionCodes) {
             instList.put(institutionEntity.getInstitutionCode(), institutionEntity.getInstitutionName());
         }
@@ -65,8 +61,20 @@ public class HomeController extends AbstractController {
         return instList;
     }
 
+    public List<InstitutionEntity> fecthingInstituionsFromDB() {
+        List<InstitutionEntity> InstitutionCodes = null;
+        try {
+            InstitutionCodes = institutionDetailsRepository.getInstitutionCodes();
+        } catch (Exception e) {
+            logger.info("Exception occured while pulling institutions from DB :: {}", e.getMessage());
+        }
+        return InstitutionCodes;
+    }
+
     /**
      *
+     * @param request
+     * @return permission list of user
      */
     @GetMapping(value = "/loginCheck")
     public Map<String, Object> login(HttpServletRequest request) {
