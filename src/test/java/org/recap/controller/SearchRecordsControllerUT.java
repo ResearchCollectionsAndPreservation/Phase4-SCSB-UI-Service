@@ -96,8 +96,8 @@ public class SearchRecordsControllerUT extends BaseControllerUT{
         when(searchUtil.requestSearchResults(searchRecordsRequest)).thenReturn(searchRecordsResponse);
         when(searchRecordsController.getUserAuthUtil()).thenReturn(userAuthUtil);
         when(searchRecordsController.getSearchUtil()).thenReturn(searchUtil);
-        when(searchRecordsController.searchRecords(model,request)).thenCallRealMethod();
-        String response = searchRecordsController.searchRecords(model,request);
+        when(searchRecordsController.searchRecords(request)).thenCallRealMethod();
+        boolean response = searchRecordsController.searchRecords(request);
         assertNotNull(response);
 //        assertEquals("searchRecords",response);
     }
@@ -234,41 +234,7 @@ public class SearchRecordsControllerUT extends BaseControllerUT{
     //    ModelAndView modelAndView = searchRecordsController.requestRecords(searchRecordsRequest,bindingResult,model, request, redirectAttributes);
     //    assertNotNull(modelAndView);
     }
-    @Test
-    public void requestRecords3() throws Exception{
-        searchRecordsRequest = new SearchRecordsRequest();
-        searchRecordsRequest.setErrorMessage("error");
-        SearchResultRow searchResultRow = new SearchResultRow();
-        searchResultRow.setRequestId(1);
-        searchResultRow.setSelected(false);
-        searchResultRow.setCollectionGroupDesignation("Private");
-        searchResultRow.setOwningInstitution("PUL");
-        searchResultRow.setTitle("test");
-        searchResultRow.setBarcode("23456");
-        SearchItemResultRow searchItemResultRow = new SearchItemResultRow();
-        searchItemResultRow.setSelectedItem(true);
-        searchResultRow.setSearchItemResultRows(Arrays.asList(searchItemResultRow));
-        searchRecordsRequest.setSearchResultRows(Arrays.asList(searchResultRow));
-        UserDetailsForm userDetailsForm = new UserDetailsForm();
-        userDetailsForm.setSuperAdmin(true);
-        userDetailsForm.setRecapPermissionAllowed(true);
-        userDetailsForm.setLoginInstitutionId(1);
-        String privilege = RecapConstants.REQUEST_PRIVILEGE;
-        usersSessionAttributes();
-        InstitutionEntity institutionEntity = new InstitutionEntity();
-        institutionEntity.setInstitutionCode("UC");
-        institutionEntity.setInstitutionName("University of Chicago");
-        Mockito.when(searchRecordsController.getUserAuthUtil()).thenReturn(userAuthUtil);
-        Mockito.when(searchRecordsController.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
-        Mockito.when(searchRecordsController.getInstitutionDetailsRepository().findById(userDetailsForm.getLoginInstitutionId())).thenReturn(Optional.of(institutionEntity));
-        Mockito.when(searchRecordsController.getUserAuthUtil().getUserDetails(request.getSession(false),RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
-        Mockito.when(userAuthUtil.getUserDetails(session, privilege)).thenCallRealMethod();
-        Mockito.when(searchRecordsController.requestRecords(searchRecordsRequest,bindingResult,model, request, redirectAttributes)).thenCallRealMethod();
-        ModelAndView modelAndView = searchRecordsController.requestRecords(searchRecordsRequest,bindingResult,model, request, redirectAttributes);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
 
-    }
     @Test
     public void requestRecords4() throws Exception{
         searchRecordsRequest = new SearchRecordsRequest();

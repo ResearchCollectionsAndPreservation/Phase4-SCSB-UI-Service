@@ -74,7 +74,7 @@ public class BulkRequestControllerUT extends BaseTestCase {
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
         usernamePasswordToken.setUsername("token");
         when(session.getAttribute(RecapConstants.USER_TOKEN)).thenReturn(usernamePasswordToken);
-        String response = bulkRequestController.bulkRequest(model,request);
+        boolean response = bulkRequestController.bulkRequest(request);
         assertNotNull(response);
     }
 
@@ -87,8 +87,8 @@ public class BulkRequestControllerUT extends BaseTestCase {
     @Test
     public void searchNext() throws Exception{
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.searchNext(bulkRequestForm,model);
-        assertNotNull(modelAndView);
+        BulkRequestForm bulkRequestFormResponse = bulkRequestController.searchNext(bulkRequestForm);
+        assertNotNull(bulkRequestFormResponse);
     }
 
    /* @Test
@@ -100,8 +100,8 @@ public class BulkRequestControllerUT extends BaseTestCase {
     @Test
     public void searchLast() throws Exception {
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.searchLast(bulkRequestForm, model);
-        assertNotNull(modelAndView);
+        BulkRequestForm bulkRequestFormResponse = bulkRequestController.searchLast(bulkRequestForm);
+        assertNotNull(bulkRequestFormResponse);
     }
    /* @Test
     public void onPageSizeChange() throws Exception{
@@ -146,15 +146,10 @@ public class BulkRequestControllerUT extends BaseTestCase {
     @Test
     public void loadCreateRequest(){
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.loadCreateRequest(bulkRequestForm,model);
-        assertNotNull(modelAndView);
+        BulkRequestForm bulkRequestFormResponse = bulkRequestController.loadCreateRequest(bulkRequestForm);
+        assertNotNull(bulkRequestFormResponse);
     }
-    @Test
-    public void loadSearchRequest(){
-        BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.loadSearchRequest(model);
-        assertNotNull(modelAndView);
-    }
+
     @Test
     public void searchRequestByPatronBarcode(){
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
@@ -170,8 +165,8 @@ public class BulkRequestControllerUT extends BaseTestCase {
     @Test
     public void populateDeliveryLocations(){
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
-        ModelAndView modelAndView = bulkRequestController.populateDeliveryLocations(bulkRequestForm,model);
-        assertNotNull(modelAndView);
+        BulkRequestForm bulkRequestFormResponse = bulkRequestController.populateDeliveryLocations(bulkRequestForm);
+        assertNotNull(bulkRequestFormResponse);
     }
     @Test
     public void downloadReports() throws Exception{

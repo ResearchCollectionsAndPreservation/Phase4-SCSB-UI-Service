@@ -318,7 +318,7 @@ public class RequestServiceUT extends BaseTestCase {
         Mockito.when(((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_BARCODE)).thenReturn(barcode);
         Mockito.when(requestServiceMocked.setFormDetailsForRequest(model,request,userDetailsForm)).thenCallRealMethod();
         Mockito.doReturn(message).when(requestServiceMocked).populateItemForRequest(requestForm,request);
-        Mockito.when(requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm,model)).thenCallRealMethod();
+        Mockito.when(requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm)).thenCallRealMethod();
         RequestForm requestForm1 = requestServiceMocked.setFormDetailsForRequest(model, request, userDetailsForm);
         Assert.notNull(requestForm1);
     }
@@ -332,8 +332,8 @@ public class RequestServiceUT extends BaseTestCase {
         Mockito.when(requestServiceMocked.getInstitutionDetailsRepository()).thenReturn(institutionDetailRepository);
         Mockito.when(requestServiceMocked.getRequestTypeDetailsRepository()).thenReturn(requestTypeDetailsRepository);
         Mockito.when(((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY)).thenReturn(requestedItemAvailabilty);
-        Mockito.when(requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm,model)).thenCallRealMethod();
-        RequestForm requestForm = requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm, model);
+        Mockito.when(requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm)).thenCallRealMethod();
+        RequestForm requestForm = requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm);
         Assert.notNull(requestForm);
     }
     @Test
@@ -345,8 +345,8 @@ public class RequestServiceUT extends BaseTestCase {
         Mockito.when(requestServiceMocked.getInstitutionDetailsRepository()).thenReturn(institutionDetailRepository);
         Mockito.when(requestServiceMocked.getRequestTypeDetailsRepository()).thenReturn(requestTypeDetailsRepository);
         Mockito.when(((BindingAwareModelMap) model).get(RecapConstants.REQUESTED_ITEM_AVAILABILITY)).thenReturn(requestedItemAvailabilty);
-        Mockito.when(requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm,model)).thenCallRealMethod();
-        RequestForm requestForm = requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm, model);
+        Mockito.when(requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm)).thenCallRealMethod();
+        RequestForm requestForm = requestServiceMocked.setDefaultsToCreateRequest(userDetailsForm);
         Assert.notNull(requestForm);
     }
 

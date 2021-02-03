@@ -126,8 +126,8 @@ public class CollectionControllerUT extends BaseControllerUT {
         Mockito.when(getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(true);
         Mockito.when(getCollectionController.getUserAuthUtil()).thenReturn(userAuthUtil);
         Mockito.when(getSearchUtil().requestSearchResults(searchRecordsRequest)).thenReturn(searchRecordsResponse);
-        Mockito.doCallRealMethod().when(getCollectionController).collection(model,request);
-        String response = getCollectionController.collection(model,request);
+        Mockito.doCallRealMethod().when(getCollectionController).collection(request);
+        boolean response = getCollectionController.collection(request);
         assertNotNull(response);
         assertEquals("searchRecords",response);
     }
@@ -137,9 +137,9 @@ public class CollectionControllerUT extends BaseControllerUT {
         when(request.getSession(false)).thenReturn(session);
         Mockito.when(getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_COLLECTION_URL)).thenReturn(false);
         Mockito.when(getCollectionController.getUserAuthUtil()).thenReturn(userAuthUtil);
-        Mockito.when(getCollectionController.collection(model,request)).thenCallRealMethod();
+        Mockito.when(getCollectionController.collection(request)).thenCallRealMethod();
         Mockito.when(searchUtil.requestSearchResults(searchRecordsRequest)).thenReturn(searchRecordsResponse);
-        String response = getCollectionController.collection(model,request);
+        boolean response = getCollectionController.collection(request);
         assertNotNull(response);
     }
 

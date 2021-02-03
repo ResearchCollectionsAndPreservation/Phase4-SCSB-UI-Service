@@ -91,8 +91,8 @@ public class ReportsControllerUT extends BaseControllerUT {
         when(request.getSession(false)).thenReturn(session);
         Mockito.when(getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REPORT_URL)).thenReturn(false);
         Mockito.when(reportsController.getUserAuthUtil()).thenReturn(userAuthUtil);
-        Mockito.when(reportsController.reports(model,request)).thenCallRealMethod();
-        String response = reportsController.reports(model,request);
+        Mockito.when(reportsController.reports(request)).thenCallRealMethod();
+        boolean response = reportsController.reports(request);
         assertNotNull(response);
         assertEquals("redirect:/",response);
     }
@@ -101,8 +101,8 @@ public class ReportsControllerUT extends BaseControllerUT {
         when(request.getSession(false)).thenReturn(session);
         Mockito.when(getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REPORT_URL)).thenReturn(true);
         Mockito.when(reportsController.getUserAuthUtil()).thenReturn(userAuthUtil);
-        Mockito.when(reportsController.reports(model,request)).thenCallRealMethod();
-        String response = reportsController.reports(model,request);
+        Mockito.when(reportsController.reports(request)).thenCallRealMethod();
+        boolean response = reportsController.reports(request);
         assertNotNull(response);
         assertEquals("searchRecords",response);
     }
@@ -328,13 +328,12 @@ public class ReportsControllerUT extends BaseControllerUT {
     @Test
     public void getInstitutionForIncompletereport() throws Exception{
         ReportsForm reportsForm = new ReportsForm();
-        ModelAndView modelAndView = reportsControllerWired.getInstitutionForIncompleteReport(request,reportsForm);
-        assertNotNull(modelAndView);
+        ReportsForm reportsFormResponse = reportsControllerWired.getInstitutionForIncompleteReport();
+        assertNotNull(reportsFormResponse);
         List<String> incompleteShowByInst = reportsForm.getIncompleteShowByInst();
         assertNotNull(incompleteShowByInst);
         boolean instutions = incompleteShowByInst.containsAll(Arrays.asList("PUL", "CUL", "NYPL"));
         assertEquals(true,instutions);
-        assertEquals("reports :: #incompleteShowBy",modelAndView.getViewName());
     }
 
     @Test

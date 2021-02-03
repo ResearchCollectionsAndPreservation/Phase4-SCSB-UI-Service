@@ -164,10 +164,10 @@ public class RequestControllerUT extends BaseControllerUT {
         Mockito.when(requestController.getUserAuthUtil()).thenReturn(userAuthUtil);
         Mockito.when(requestController.getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_REQUEST_URL)).thenReturn(false);
         UserDetailsForm userDetailsForm = getUserDetails();
-        Mockito.when(requestController.getRequestService().setDefaultsToCreateRequest(userDetailsForm,model)).thenCallRealMethod();
+        Mockito.when(requestController.getRequestService().setDefaultsToCreateRequest(userDetailsForm)).thenCallRealMethod();
        // Mockito.when(requestController.getRequestService().setFormDetailsForRequest(model,request,userDetailsForm)).thenCallRealMethod();
-        Mockito.when(requestController.request(model,request)).thenCallRealMethod();
-        String response = requestController.request(model,request);
+        Mockito.when(requestController.request(request)).thenCallRealMethod();
+        boolean response = requestController.request(request);
         assertNotNull(response);
 //        assertEquals("searchRecords",response);
     }
@@ -192,7 +192,7 @@ public class RequestControllerUT extends BaseControllerUT {
         Page<RequestItemEntity> requestItemEntities = new PageImpl<RequestItemEntity>(new ArrayList<>());
         when(requestController.getRequestServiceUtil()).thenReturn(requestServiceUtil);
         when(requestServiceUtil.searchRequests(requestForm)).thenReturn(requestItemEntities);
-        when(requestController.searchPrevious(requestForm, bindingResult, model)).thenCallRealMethod();
+        when(requestController.searchPrevious(requestForm)).thenCallRealMethod();
        /* ModelAndView modelAndView = requestController.searchPrevious(requestForm, bindingResult, model);
         assertNotNull(modelAndView);
         assertEquals("request :: #searchRequestsSection", modelAndView.getViewName());*/
@@ -215,7 +215,7 @@ public class RequestControllerUT extends BaseControllerUT {
         Page<RequestItemEntity> requestItemEntities = new PageImpl<RequestItemEntity>(new ArrayList<>());
         when(requestController.getRequestServiceUtil()).thenReturn(requestServiceUtil);
         when(requestServiceUtil.searchRequests(requestForm)).thenReturn(requestItemEntities);
-        when(requestController.onRequestPageSizeChange(requestForm, bindingResult, model)).thenCallRealMethod();
+        when(requestController.onRequestPageSizeChange(requestForm)).thenCallRealMethod();
       /*  ModelAndView modelAndView = requestController.onRequestPageSizeChange(requestForm, bindingResult, model);
         assertNotNull(modelAndView);*/
     }
@@ -255,7 +255,7 @@ public class RequestControllerUT extends BaseControllerUT {
         UserDetailsForm userDetailsForm = getUserDetails();
         Mockito.when(requestController.getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         RequestForm requestForm = getRequestForm();
-        Mockito.when(requestController.getRequestService().setDefaultsToCreateRequest(userDetailsForm,model)).thenCallRealMethod();
+        Mockito.when(requestController.getRequestService().setDefaultsToCreateRequest(userDetailsForm)).thenCallRealMethod();
   /*      when(requestController.loadCreateRequest(model,request)).thenCallRealMethod();
         ModelAndView modelAndView = requestController.loadCreateRequest(model,request);
         assertNotNull(modelAndView);
@@ -271,7 +271,7 @@ public class RequestControllerUT extends BaseControllerUT {
         UserDetailsForm userDetailsForm = getUserDetails();
         Mockito.when(requestController.getUserAuthUtil().getUserDetails(request.getSession(false), RecapConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         RequestForm requestForm = getRequestForm();
-        Mockito.when(requestController.getRequestService().setDefaultsToCreateRequest(userDetailsForm,model)).thenCallRealMethod();
+        Mockito.when(requestController.getRequestService().setDefaultsToCreateRequest(userDetailsForm)).thenCallRealMethod();
      /*   when(requestController.loadCreateRequestForSamePatron(model,request)).thenCallRealMethod();
         ModelAndView modelAndView = requestController.loadCreateRequestForSamePatron(model,request);
         assertNotNull(modelAndView);
@@ -411,7 +411,7 @@ public class RequestControllerUT extends BaseControllerUT {
         Mockito.when(requestController.getCustomerCodeDetailsRepository().findByDescription(requestForm.getDeliveryLocationInRequest())).thenReturn(customerCodeEntity);
         Mockito.when(requestController.getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class)).thenReturn(responseEntity1);
         Mockito.when(requestController.getRestTemplate().exchange(validateRequestItemUrl, HttpMethod.POST, requestEntity, String.class)).thenReturn(responseEntity);
-        Mockito.when(requestController.createRequest(requestForm,bindingResult,model,request)).thenCallRealMethod();
+        Mockito.when(requestController.createRequest(requestForm,request)).thenCallRealMethod();
        /* ModelAndView modelAndView = requestController.createRequest(requestForm,bindingResult,model,request);
         assertNotNull(modelAndView);*/
     }
@@ -441,7 +441,7 @@ public class RequestControllerUT extends BaseControllerUT {
         Mockito.when(requestController.getCustomerCodeDetailsRepository().findByDescription(requestForm.getDeliveryLocationInRequest())).thenReturn(customerCodeEntity);
         Mockito.when(requestController.getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ItemResponseInformation.class)).thenReturn(responseEntity1);
         Mockito.when(requestController.getRestTemplate().exchange(validateRequestItemUrl, HttpMethod.POST, requestEntity, String.class)).thenReturn(responseEntity);
-        Mockito.when(requestController.createRequest(requestForm,bindingResult,model,request)).thenCallRealMethod();
+        Mockito.when(requestController.createRequest(requestForm,request)).thenCallRealMethod();
       //  ModelAndView modelAndView = requestController.createRequest(requestForm,bindingResult,model,request);
      //   assertNotNull(modelAndView);
     }
@@ -460,8 +460,8 @@ public class RequestControllerUT extends BaseControllerUT {
         Mockito.when(requestController.getRestHeaderService()).thenReturn(restHeaderService);
         Mockito.when(requestController.getRestTemplate().postForEntity( scsbUrl + RecapConstants.URL_REQUEST_RESUBMIT,itemRequestInfo,Map.class)).thenThrow(new RestClientException("Exception occured"));
         Mockito.when(requestController.getRestTemplate().exchange(requestItemUrl, HttpMethod.POST, requestEntity, ReplaceRequest.class)).thenReturn(responseEntity1);
-        Mockito.when(requestController.resubmitRequest(requestForm,bindingResult,model)).thenCallRealMethod();
-        String response = requestController.resubmitRequest(requestForm,bindingResult,model);
+        Mockito.when(requestController.resubmitRequest(requestForm)).thenCallRealMethod();
+        String response = requestController.resubmitRequest(requestForm);
         assertNotNull(response);
     }
 
@@ -485,8 +485,8 @@ public class RequestControllerUT extends BaseControllerUT {
         Mockito.when(requestController.getRequestItemDetailsRepository()).thenReturn(requestItemDetailsRepository);
         Mockito.when(requestController.getRequestItemDetailsRepository().findById(requestForm.getRequestId())).thenReturn(Optional.of(requestItemEntity));
         Mockito.when(requestController.getRestTemplate().exchange(builder.build().encode().toUri(), HttpMethod.POST, requestEntity, CancelRequestResponse.class)).thenReturn(responseEntity);
-        Mockito.when(requestController.cancelRequest(requestForm,bindingResult,model)).thenCallRealMethod();
-        String response = requestController.cancelRequest(requestForm,bindingResult,model);
+        Mockito.when(requestController.cancelRequest(requestForm)).thenCallRealMethod();
+        String response = requestController.cancelRequest(requestForm);
         assertNotNull(response);
         assertTrue(response.contains("Request cancelled."));
     }
@@ -513,7 +513,7 @@ public class RequestControllerUT extends BaseControllerUT {
         Mockito.when(requestController.getInstitutionDetailsRepository().findById(userDetailsForm.getLoginInstitutionId())).thenReturn(Optional.of(institutionEntity));
         Mockito.when(requestStatusDetailsRepository.findAll()).thenReturn(Arrays.asList(requestStatusEntity));
         Mockito.when(requestController.getInstitutionDetailsRepository().getInstitutionCodeForSuperAdmin()).thenReturn(Arrays.asList(institutionEntity));
-        Mockito.when(requestController.loadSearchRequest(model,request)).thenCallRealMethod();
+        Mockito.when(requestController.loadSearchRequest(request)).thenCallRealMethod();
        // ModelAndView modelAndView = requestController.loadSearchRequest(model,request);
       //  assertNotNull(modelAndView);
       //  assertEquals(modelAndView.getViewName(),"request");
