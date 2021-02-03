@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import org.recap.RecapCommonConstants;
 import org.recap.RecapConstants;
 import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.search.BibliographicMarcForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
@@ -142,8 +143,8 @@ public class MarcRecordControllerUT extends BaseControllerUT {
         entityManager.refresh(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity);
         assertNotNull(savedBibliographicEntity.getId());
-        String content = marcRecordController.openMarcRecord(savedBibliographicEntity.getId(),model);
-        assertEquals(content,"marcRecordView");
+        BibliographicMarcForm content = marcRecordController.openMarcRecord(savedBibliographicEntity.getId());
+        assertNotNull(content);
 
     }
 

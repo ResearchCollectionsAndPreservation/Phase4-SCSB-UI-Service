@@ -34,7 +34,7 @@ public class UserManagementServiceUT extends BaseTestCase{
 
     @Test
     public void testUnAuthorizedUser(){
-        String response = userManagementService.unAuthorizedUser(httpSession,"test",logger);
+        boolean response = userManagementService.unAuthorizedUser(httpSession,"test",logger);
         assertNotNull(response);
         assertEquals(response,"redirect:/");
     }

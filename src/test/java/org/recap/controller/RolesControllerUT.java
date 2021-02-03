@@ -63,8 +63,8 @@ public class RolesControllerUT extends BaseTestCase {
         when(request.getSession(false)).thenReturn(session);
         Mockito.when(mockedrolesController.getUserAuthUtil()).thenReturn(userAuthUtil);
         Mockito.when(mockedrolesController.getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(true);
-        Mockito.doCallRealMethod().when(mockedrolesController).roles(model,request);
-        String response = mockedrolesController.roles(model,request);
+        Mockito.doCallRealMethod().when(mockedrolesController).roles(request);
+        boolean response = mockedrolesController.roles(request);
         assertNotNull(response);
     }
     @Test
@@ -73,8 +73,8 @@ public class RolesControllerUT extends BaseTestCase {
         when(request.getSession(false)).thenReturn(session);
         Mockito.when(mockedrolesController.getUserAuthUtil()).thenReturn(userAuthUtil);
         Mockito.when(mockedrolesController.getUserAuthUtil().isAuthenticated(request, RecapConstants.SCSB_SHIRO_ROLE_URL)).thenReturn(false);
-        Mockito.doCallRealMethod().when(mockedrolesController).roles(model,request);
-        String response = mockedrolesController.roles(model,request);
+        Mockito.doCallRealMethod().when(mockedrolesController).roles(request);
+        boolean response = mockedrolesController.roles(request);
         assertNotNull(response);
     }
 
@@ -83,12 +83,8 @@ public class RolesControllerUT extends BaseTestCase {
         RolesForm rolesForm = new RolesForm();
         rolesForm.setRoleName("SuperAdmin");
         rolesForm.setPermissionNames("Create User");
-        ModelAndView modelAndView = rolesController.search(rolesForm,model);
-        assertNotNull(modelAndView);
-        Map rolesMap = new HashMap();
-        rolesMap = modelAndView.getModel();
-        rolesForm = (RolesForm) rolesMap.get("rolesForm");
-        assertEquals(rolesForm.getRolesSearchResults().size(),0);
+        RolesForm rolesForm1 = rolesController.search(rolesForm);
+        assertEquals(rolesForm1.getRolesSearchResults().size(),0);
     }
 
     @Test
@@ -96,9 +92,8 @@ public class RolesControllerUT extends BaseTestCase {
         RolesForm rolesForm = new RolesForm();
         rolesForm.setRoleName("Admin");
         rolesForm.setPermissionNames("CreateUser");
-        ModelAndView modelAndView = rolesController.search(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
+        RolesForm rolesForm1 = rolesController.search(rolesForm);
+        assertNotNull(rolesForm1);
     }
 
     @Test
@@ -117,7 +112,7 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setNewRoleName("test@");
         rolesForm.setNewRoleDescription("test Description");
         rolesForm.setNewPermissionNames("CreateUser");
-        RolesForm rolesForm1 = rolesController.newRole(rolesForm);
+        RolesForm rolesForm1 = rolesController.newRole(rolesForm, request);
         assertNotNull(rolesForm1);
      //   assertEquals("roles",modelAndView.getViewName());
     }
@@ -129,8 +124,8 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setNewRoleName("test2");
         rolesForm.setNewRoleDescription("test Description");
         rolesForm.setNewPermissionNames("CreateUser");
-        ModelAndView modelAndView = rolesController.newRole(rolesForm,model,request);
-        //assertNotNull(modelAndView);
+        RolesForm rolesFormResponse = rolesController.newRole(rolesForm,request);
+        assertNotNull(rolesFormResponse);
     }
 
     @Test
@@ -140,9 +135,8 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setRoleName("Admin");
         rolesForm.setPermissionNames("CreateUser");
         rolesForm.setRoleDescriptionForDelete("test desc");
-        ModelAndView modelAndView = rolesController.editRole(rolesForm.getRoleId(),rolesForm.getRoleName(),rolesForm.getRoleDescription(),rolesForm.getPermissionNames());
-        assertNotNull(modelAndView);
-        assertEquals("roles",modelAndView.getViewName());
+        RolesForm rolesFormResponse  = rolesController.editRole(rolesForm.getRoleId(),rolesForm.getRoleName(),rolesForm.getRoleDescription(),rolesForm.getPermissionNames());
+        assertNotNull(rolesFormResponse);
     }
 
     @Test
@@ -156,9 +150,9 @@ public class RolesControllerUT extends BaseTestCase {
         when(session.getAttribute(RecapConstants.USER_NAME)).thenReturn("SuperAdmin");
         rolesForm.setEditPermissionName(Arrays.asList(permissionName));
         rolesForm.setEditRoleDescription("test desc");
-        ModelAndView modelAndView = rolesController.saveEditedRole(rolesForm.getRoleId(),rolesForm.getEditRoleName(),rolesForm.getEditRoleName(),request);
-        assertNotNull(modelAndView);
-        assertEquals("roles",modelAndView.getViewName());
+        RolesForm rolesFormResponse= rolesController.saveEditedRole(rolesForm.getRoleId(),rolesForm.getEditRoleName(),rolesForm.getEditRoleName(), permissionName, request);
+        assertNotNull(rolesFormResponse);
+       // assertEquals("roles",modelAndView.getViewName());
     }
     @Test
     public void deleteRole() throws Exception{
@@ -167,17 +161,17 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setRoleNameForDelete("Admin");
         rolesForm.setRoleDescriptionForDelete("test desc");
         rolesForm.setPermissionNamesForDelete("CreateUser");
-        ModelAndView modelAndView = rolesController.deleteRole(rolesForm.getRoleId(),rolesForm.getRoleName(),rolesForm.getRoleDescription(),rolesForm.getPermissionNamesForDelete(),10,1,2);
-        assertNotNull(modelAndView);
-        assertEquals("roles",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.deleteRole(rolesForm.getRoleId(),rolesForm.getRoleName(),rolesForm.getRoleDescription(),rolesForm.getPermissionNamesForDelete(),10,1,2);
+        assertNotNull(rolesFormResponse);
+      //  assertEquals("roles",modelAndView.getViewName());
     }
 
     @Test
     public void delete() throws Exception{
         RolesForm rolesForm = getRolesForm();
-        ModelAndView modelAndView = rolesController.delete(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("roles",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.delete(rolesForm);
+        assertNotNull(rolesFormResponse);
+       // assertEquals("roles",modelAndView.getViewName());
     }
 
     @Test
@@ -187,9 +181,9 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setPermissionNames("CreateUser");
         rolesForm.setPageNumber(0);
         rolesForm.setPageSize(10);
-        ModelAndView modelAndView = rolesController.searchNext(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.searchNext(rolesForm);
+        assertNotNull(rolesFormResponse);
+      //  assertEquals("searchRecords",modelAndView.getViewName());
     }
 
     @Test
@@ -199,9 +193,9 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setPermissionNames("CreateUser");
         rolesForm.setPageNumber(0);
         rolesForm.setPageSize(25);
-        ModelAndView modelAndView = rolesController.searchPrevious(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.searchPrevious(rolesForm);
+        assertNotNull(rolesFormResponse);
+       // assertEquals("searchRecords",modelAndView.getViewName());
     }
 
     @Test
@@ -211,9 +205,9 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setPermissionNames("CreateUser");
         rolesForm.setPageNumber(0);
         rolesForm.setPageSize(25);
-        ModelAndView modelAndView = rolesController.searchFirst(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.searchFirst(rolesForm);
+        assertNotNull(rolesFormResponse);
+        //assertEquals("searchRecords",modelAndView.getViewName());
     }
     @Test
     public void goBack() throws Exception{
@@ -234,9 +228,9 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setPageNumber(2);
         rolesForm.setPageSize(10);
         rolesForm.setTotalPageCount(3);
-        ModelAndView modelAndView = rolesController.searchLast(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.searchLast(rolesForm);
+        assertNotNull(rolesFormResponse);
+       // assertEquals("searchRecords",modelAndView.getViewName());
     }
 
     @Test
@@ -246,9 +240,9 @@ public class RolesControllerUT extends BaseTestCase {
         rolesForm.setPermissionNames("CreateUser");
         rolesForm.setPageNumber(2);
         rolesForm.setPageSize(25);
-        ModelAndView modelAndView = rolesController.onPageSizeChange(rolesForm,model);
-        assertNotNull(modelAndView);
-        assertEquals("searchRecords",modelAndView.getViewName());
+        RolesForm rolesFormResponse = rolesController.onPageSizeChange(rolesForm);
+        assertNotNull(rolesFormResponse);
+      //  assertEquals("searchRecords",modelAndView.getViewName());
     }
 
     @Test

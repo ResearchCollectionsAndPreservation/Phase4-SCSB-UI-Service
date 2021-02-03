@@ -152,8 +152,8 @@ public class ScheduleJobsControllerUT extends BaseControllerUT {
         when(scheduleJobsController.getRestTemplate()).thenReturn(restTemplate);
         ResponseEntity responseEntity1 = new ResponseEntity<ScheduleJobResponse>(scheduleJobResponse,HttpStatus.OK);
         Mockito.when(scheduleJobsController.getRestTemplate().exchange(getScsbUrl() + RecapCommonConstants.URL_SCHEDULE_JOBS, HttpMethod.POST, httpEntity, ScheduleJobResponse.class)).thenReturn(responseEntity1);
-        Mockito.doCallRealMethod().when(scheduleJobsController).scheduleJob(scheduleJobsForm,bindingResult,model);
-        scheduleJobsController.scheduleJob(scheduleJobsForm,bindingResult,model);
+        Mockito.doCallRealMethod().when(scheduleJobsController).scheduleJob(scheduleJobsForm);
+        scheduleJobsController.scheduleJob(scheduleJobsForm);
     }
    @Test
    public void testScheduleJob(){
