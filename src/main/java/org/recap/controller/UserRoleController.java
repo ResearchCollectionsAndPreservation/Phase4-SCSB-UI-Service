@@ -357,36 +357,36 @@ public class UserRoleController extends AbstractController {
         userRoleForm.setInstitutions(institutions);
         userRoleForm.setAllowCreateEdit(true);
         userRoleForm.setSubmitted(true);
-        return searchAndSetResult(userRoleForm, userDetailsForm.isSuperAdmin(), userId);
+        return searchAndSetResult(request,userRoleForm, userDetailsForm.isSuperAdmin(), userId);
     }
 
-    private UserRoleForm searchAndSetResult(UserRoleForm userRoleForm, boolean superAdmin, Integer userId) {
+    private UserRoleForm searchAndSetResult(HttpServletRequest request,UserRoleForm userRoleForm, boolean superAdmin, Integer userId) {
         if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
             logger.debug("Search All Users");
             Page<UsersEntity> usersEntities = getUserRoleService().searchUsers(userRoleForm, superAdmin);
-            userRoleForm = setUserRoleFormValues(userRoleForm, usersEntities, userId);
+            userRoleForm = setUserRoleFormValues(request,userRoleForm, usersEntities, userId);
         } else if (StringUtils.isNotBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isBlank(userRoleForm.getUserEmailId())) {
             logger.debug("Search Users By NetworkId :" + userRoleForm.getSearchNetworkId());
             Page<UsersEntity> usersEntities = getUserRoleService().searchByNetworkId(userRoleForm, superAdmin);
-            userRoleForm = getUsersInformation(userRoleForm, superAdmin, userId, usersEntities, RecapConstants.NETWORK_LOGIN_ID_DOES_NOT_EXIST);
+            userRoleForm = getUsersInformation(request,userRoleForm, superAdmin, userId, usersEntities, RecapConstants.NETWORK_LOGIN_ID_DOES_NOT_EXIST);
         } else if (StringUtils.isBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isNotBlank(userRoleForm.getUserEmailId())) {
             logger.debug("Search Users by Email Id:" + userRoleForm.getUserEmailId());
             Page<UsersEntity> usersEntities = getUserRoleService().searchByUserEmailId(userRoleForm, superAdmin);
-            userRoleForm = getUsersInformation(userRoleForm, superAdmin, userId, usersEntities, RecapConstants.EMAILID_ID_DOES_NOT_EXIST);
+            userRoleForm = getUsersInformation(request,userRoleForm, superAdmin, userId, usersEntities, RecapConstants.EMAILID_ID_DOES_NOT_EXIST);
         } else if (StringUtils.isNotBlank(userRoleForm.getSearchNetworkId()) && StringUtils.isNotBlank(userRoleForm.getUserEmailId())) {
             logger.debug("Search Users by Network Id : " + userRoleForm.getSearchNetworkId() + " and Email Id : " + userRoleForm.getUserEmailId());
             Page<UsersEntity> usersEntities = getUserRoleService().searchByNetworkIdAndUserEmailId(userRoleForm, superAdmin);
-            userRoleForm = getUsersInformation(userRoleForm, superAdmin, userId, usersEntities, RecapConstants.NETWORK_LOGIN_ID_AND_EMAILID_ID_DOES_NOT_EXIST);
+            userRoleForm = getUsersInformation(request,userRoleForm, superAdmin, userId, usersEntities, RecapConstants.NETWORK_LOGIN_ID_AND_EMAILID_ID_DOES_NOT_EXIST);
         } else {
             userRoleForm.setShowResults(false);
         }
         return userRoleForm;
     }
 
-    private UserRoleForm getUsersInformation(UserRoleForm userRoleForm, boolean superAdmin, Integer userId, Page<UsersEntity> usersEntities, String message) {
+    private UserRoleForm getUsersInformation(HttpServletRequest request,UserRoleForm userRoleForm, boolean superAdmin, Integer userId, Page<UsersEntity> usersEntities, String message) {
         List<UsersEntity> userEntity = usersEntities.getContent();
         if (!userEntity.isEmpty()) {
-            setUserRoleFormValues(userRoleForm, usersEntities, userId);
+            setUserRoleFormValues(request,userRoleForm, usersEntities, userId);
         } else {
             userRoleForm.setMessage(message);
             userRoleForm.setShowErrorMessage(true);
@@ -395,20 +395,20 @@ public class UserRoleController extends AbstractController {
         return userRoleForm;
     }
 
-    private List<UserRoleForm> setFormValues(List<UsersEntity> usersEntities, Integer userId) {
+    private List<UserRoleForm> setFormValues(HttpServletRequest request,List<UsersEntity> usersEntities, Integer userId) {
         List<UserRoleForm> userRoleFormList = new ArrayList<>();
-        appendValues(usersEntities, userRoleFormList, userId);
+        appendValues(request,usersEntities, userRoleFormList, userId);
         return userRoleFormList;
     }
 
-    private void appendValues(Collection<UsersEntity> usersEntities, List<UserRoleForm> userRoleFormList, Integer userId) {
+    private void appendValues(HttpServletRequest request,Collection<UsersEntity> usersEntities, List<UserRoleForm> userRoleFormList, Integer userId) {
         for (UsersEntity usersEntity : usersEntities) {
             InstitutionEntity institutionEntity = usersEntity.getInstitutionEntity();
             List<RoleEntity> userRole = usersEntity.getUserRole();
             boolean addUsers = true;
-            //HttpSession session = request.getSession(false);
-            Object isSuperAdmin = true;//session.getAttribute(RecapConstants.SUPER_ADMIN_USER);
-            String userName = "Test";//(String) session.getAttribute(RecapConstants.USER_NAME);
+            HttpSession session = request.getSession(false);
+            Object isSuperAdmin = session.getAttribute(RecapConstants.SUPER_ADMIN_USER);
+            String userName = (String) session.getAttribute(RecapConstants.USER_NAME);
             if (!(boolean) isSuperAdmin) {
                 for (RoleEntity superAdminCheck : userRole) {
                     if (superAdminCheck.getRoleName().equals(RecapConstants.ROLES_SUPER_ADMIN)) {
@@ -449,8 +449,8 @@ public class UserRoleController extends AbstractController {
         return userRoleForm;
     }
 
-    private UserRoleForm setUserRoleFormValues(UserRoleForm userRoleForm, Page<UsersEntity> usersEntities, Integer userId) {
-        userRoleForm.setUserRoleFormList(setFormValues(usersEntities.getContent(), userId));
+    private UserRoleForm setUserRoleFormValues(HttpServletRequest request,UserRoleForm userRoleForm, Page<UsersEntity> usersEntities, Integer userId) {
+        userRoleForm.setUserRoleFormList(setFormValues(request,usersEntities.getContent(), userId));
         userRoleForm.setShowResults(true);
         userRoleForm.setTotalRecordsCount(String.valueOf(usersEntities.getTotalElements()));
         userRoleForm.setTotalPageCount(usersEntities.getTotalPages());
