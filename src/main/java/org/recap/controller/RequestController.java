@@ -217,7 +217,7 @@ public class RequestController extends RecapController {
     }
 
     /**
-     * Populate default values to the status and institution drop downs in search request UI page.
+     * Load default values to the status and institution drop downs in search request UI page.
      *
      * @return the RequestForm
      */

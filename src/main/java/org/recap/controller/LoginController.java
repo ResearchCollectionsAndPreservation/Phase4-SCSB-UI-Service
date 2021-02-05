@@ -98,14 +98,14 @@ public class LoginController extends AbstractController {
             Map<String, Object> resultMap = getUserAuthUtil().doAuthentication(token);
             if (!(Boolean) resultMap.get(RecapConstants.IS_USER_AUTHENTICATED)) {
                 String errorMessage = (String) resultMap.get(RecapConstants.USER_AUTH_ERRORMSG);
-                logger.error(RecapCommonConstants.LOG_ERROR + errorMessage);
+                logger.error("User: {}, {} {}", token.getUsername(), RecapCommonConstants.LOG_ERROR, errorMessage);
                 return RecapConstants.redirectHome;
             }
             setSessionValues(session, resultMap, token);
 
         } catch (Exception exception) {
             logger.error(RecapCommonConstants.LOG_ERROR, exception);
-            logger.error("Exception occurred in authentication : " + exception.getLocalizedMessage());
+            logger.error("Exception occurred in authentication : {}" , exception.getLocalizedMessage());
             return RecapConstants.redirectHome;
         }
         return RecapConstants.redirectSearch;

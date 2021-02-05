@@ -41,6 +41,7 @@ public class RecapConstants {
     public static final String NO_PERMISSION_ERROR_MESSAGE = "noPermissionErrorMessage";
     public static final Integer CGD_PRIVATE = 3;
 
+    public static final String REQUEST_TYPE = "requestType";
     public static final String REQUEST_TYPES = "requestTypes";
     public static final String SHOW_EDD = "showEDD";
     public static final String MULTIPLE_BARCODES = "multipleBarcodes";
@@ -75,7 +76,7 @@ public class RecapConstants {
     public static final String SCSB_SHIRO_ROLE_URL = "auth/roles";
     public static final String SCSB_SHIRO_LOGOUT_URL = "userAuth/logout";
     public static final String LOG_USER_NOT_VALID = ": User not valid :";
-    public static final String LOG_USER_LOGOUT_SUCCUSS = "User logout succussfully";
+    public static final String LOG_USER_LOGOUT_SUCCESS = "User logged out successfully";
     public static final String LOGOUT = "logout";
     public static final String IS_USER_AUTHENTICATED = "isAuthenticated";
     public static final String HTC = "HTC";

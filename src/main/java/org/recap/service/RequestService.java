@@ -35,17 +35,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by akulak on 20/4/17.
@@ -318,7 +308,7 @@ public class RequestService {
             List<String> notAvailableBarcodes = new ArrayList<>();
             Set<String> itemTitles = new HashSet<>();
             Set<String> itemOwningInstitutions = new HashSet<>();
-            List<String> requestTypes = new ArrayList<>();
+            LinkedHashSet<String> requestTypes = new LinkedHashSet<>();
             Boolean showEDD = false;
             UserDetailsForm userDetailsForm;
             for (String itemBarcode : itemBarcodes) {
@@ -376,6 +366,10 @@ public class RequestService {
             if (CollectionUtils.isNotEmpty(itemOwningInstitutions)) {
                 jsonObject.put(RecapConstants.REQUESTED_ITEM_OWNING_INSTITUTION, StringUtils.join(itemOwningInstitutions, ","));
             }
+            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes)) {
+                requestForm.setRequestType(RecapCommonConstants.RECALL);
+                requestTypes.add(requestForm.getRequestType());
+            }
             if ((!multipleItemBarcodes && showEDD) && !(RecapCommonConstants.RECALL.equals(requestForm.getRequestType()))) {
                 List<RequestTypeEntity> requestTypeEntities = getRequestTypeDetailsRepository().findAllExceptBorrowDirect();
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntities) {
@@ -388,6 +382,7 @@ public class RequestService {
                 }
             }
             jsonObject.put(RecapConstants.REQUEST_TYPES, requestTypes);
+            jsonObject.put(RecapConstants.REQUEST_TYPE, !requestTypes.isEmpty() ? requestTypes.stream().findFirst().get() : "");
             jsonObject.put(RecapConstants.SHOW_EDD, showEDD);
             jsonObject.put(RecapConstants.MULTIPLE_BARCODES, multipleItemBarcodes);
 
@@ -518,10 +513,11 @@ public class RequestService {
             }
         }
 
-        if (addOnlyRecall && (addAllRequestType == false)) {
+        if (addOnlyRecall && !addAllRequestType) {
             RequestTypeEntity requestTypeEntity = getRequestTypeDetailsRepository().findByRequestTypeCode(RecapCommonConstants.RECALL);
             requestTypes.add(requestTypeEntity.getRequestTypeCode());
             requestForm.setRequestType(requestTypeEntity.getRequestTypeCode());
+            requestForm.setRequestTypes(requestTypes);
         }
         if (!addOnlyRecall || addAllRequestType) {
             Iterable<RequestTypeEntity> requestTypeEntities = getRequestTypeDetailsRepository().findAll();
@@ -532,8 +528,8 @@ public class RequestService {
                 }
             }
             requestForm.setRequestType(RecapCommonConstants.RETRIEVAL);
+            requestForm.setRequestTypes(requestTypes);
         }
-        requestForm.setRequestTypes(requestTypes);
         return requestForm;
     }
 

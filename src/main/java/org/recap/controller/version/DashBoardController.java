@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 @CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class DashBoardController extends RecapController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchRecordsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DashBoardController.class);
 
     @Value("${version.number}")
     private String versionNumberService;

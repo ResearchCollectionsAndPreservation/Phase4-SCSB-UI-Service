@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by rajeshbabuk on 22/7/16.
  */
 @RestController
-@RequestMapping("/openMarcRecord")
+@RequestMapping("/openMarcRecordByBibId")
 @CrossOrigin
 public class MarcRecordController {
     private static final Logger logger = LoggerFactory.getLogger(MarcRecordController.class);
