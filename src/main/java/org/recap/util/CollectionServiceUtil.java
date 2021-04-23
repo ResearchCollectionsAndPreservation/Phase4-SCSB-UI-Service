@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -167,6 +168,13 @@ public class CollectionServiceUtil {
             String jsonString = objectMapper.writeValueAsString(deAccessionRequest);
             HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, getRestHeaderService().getHttpHeaders());
             Map<String, String> resultMap = getRestTemplate().postForObject(getScsbUrl() + RecapConstants.SCSB_DEACCESSION_URL, requestEntity, Map.class);
+            for (Map.Entry<String, String> entry : new HashSet<>(resultMap.entrySet())) {
+                String trimmedBarcode = entry.getKey().replaceAll(", $", "").trim();
+                if (!trimmedBarcode.equals(entry.getKey())) {
+                    resultMap.remove(entry.getKey());
+                    resultMap.put(trimmedBarcode, entry.getValue());
+                }
+            }
             String resultMessage = resultMap.get(itemBarcode);
             if (StringUtils.isNotBlank(resultMessage)) {
                 if (resultMessage.contains(RecapCommonConstants.SUCCESS)) {
