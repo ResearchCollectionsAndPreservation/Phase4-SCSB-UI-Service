@@ -572,7 +572,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
     private UserDetailsForm getUserDetailsForm() {
         UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setRecapPermissionAllowed(true);
-        userDetailsForm.setRecapUser(true);
+        userDetailsForm.setRepositoryUser(true);
         userDetailsForm.setSuperAdmin(true);
         return userDetailsForm;
     }
@@ -722,7 +722,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         userDetailsForm.setLoginInstitutionId(2);
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setRecapPermissionAllowed(false);
-        userDetailsForm.setRecapUser(false);
+        userDetailsForm.setRepositoryUser(false);
         return userDetailsForm;
     }
 

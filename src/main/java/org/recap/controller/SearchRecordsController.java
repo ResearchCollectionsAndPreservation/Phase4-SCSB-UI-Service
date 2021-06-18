@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -199,7 +198,7 @@ public class SearchRecordsController extends ScsbController {
         Set<String> itemAvailability = new HashSet<>();
         for (SearchResultRow searchResultRow : searchResultRows) {
             if (searchResultRow.isSelected()) {
-                if (ScsbCommonConstants.PRIVATE.equals(searchResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRecapUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
+                if (ScsbCommonConstants.PRIVATE.equals(searchResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRepositoryUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
                     searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                 } else if (!userDetailsForm.isRecapPermissionAllowed()) {
                     searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_ERROR_USER_NOT_PERMITTED);
@@ -209,7 +208,7 @@ public class SearchRecordsController extends ScsbController {
             } else if (!CollectionUtils.isEmpty(searchResultRow.getSearchItemResultRows())) {
                 for (SearchItemResultRow searchItemResultRow : searchResultRow.getSearchItemResultRows()) {
                     if (searchItemResultRow.isSelectedItem()) {
-                        if (ScsbCommonConstants.PRIVATE.equals(searchItemResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRecapUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
+                        if (ScsbCommonConstants.PRIVATE.equals(searchItemResultRow.getCollectionGroupDesignation()) && !userDetailsForm.isSuperAdmin() && !userDetailsForm.isRepositoryUser() && StringUtils.isNotBlank(userInstitution) && !userInstitution.equals(searchResultRow.getOwningInstitution())) {
                             searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                         } else if (!userDetailsForm.isRecapPermissionAllowed()) {
                             searchRecordsRequest.setErrorMessage(ScsbConstants.REQUEST_ERROR_USER_NOT_PERMITTED);

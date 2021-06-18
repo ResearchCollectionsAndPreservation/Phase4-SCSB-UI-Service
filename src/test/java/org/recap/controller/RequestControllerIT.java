@@ -484,7 +484,7 @@ public class RequestControllerIT extends BaseControllerUT {
     public void testLoadSearchRequest(){
         UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setRecapPermissionAllowed(true);
-        userDetailsForm.setRecapUser(true);
+        userDetailsForm.setRepositoryUser(true);
         userDetailsForm.setSuperAdmin(true);
         RequestStatusEntity requestStatusEntity = new RequestStatusEntity();
         requestStatusEntity.setRequestStatusDescription("RETRIEVAL ORDER PLACED");
@@ -643,7 +643,7 @@ public class RequestControllerIT extends BaseControllerUT {
         userDetailsForm.setLoginInstitutionId(2);
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setRecapPermissionAllowed(false);
-        userDetailsForm.setRecapUser(false);
+        userDetailsForm.setRepositoryUser(false);
         return userDetailsForm;
     }
 

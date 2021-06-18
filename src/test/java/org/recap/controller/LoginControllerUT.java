@@ -252,7 +252,7 @@ public class LoginControllerUT extends BaseTestCaseUT {
         authMap.put(ScsbConstants.USER_ID, 1);
         authMap.put(ScsbConstants.USER_INSTITUTION, 1);
         authMap.put(ScsbConstants.SUPER_ADMIN_USER, 1);
-        authMap.put(ScsbConstants.RECAP_USER, 1);
+        authMap.put(ScsbConstants.REPOSITORY, 1);
         authMap.put(ScsbConstants.REQUEST_PRIVILEGE, 1);
         authMap.put(ScsbConstants.COLLECTION_PRIVILEGE, 1);
         authMap.put(ScsbConstants.REPORTS_PRIVILEGE, 1);

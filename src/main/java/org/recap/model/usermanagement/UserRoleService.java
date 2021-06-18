@@ -47,6 +47,15 @@ public interface UserRoleService {
     List<Object> getInstitutions(boolean isSuperAdmin, Integer loginInstitutionId);
 
     /**
+     * Gets all the roles that are in scsb except super admin role.
+     *
+     * @param superAdminRole the super admin role
+     * @param superAdmin
+     * @return the roles
+     */
+    List<Object> getRolesCall(Integer superAdminRole, boolean superAdmin,boolean admin);
+
+    /**
      * Save a new user with role in scsb.
      *
      * @param userRoleForm the user role form

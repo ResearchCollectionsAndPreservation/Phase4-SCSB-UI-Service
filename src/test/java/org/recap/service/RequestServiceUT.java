@@ -184,7 +184,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(requestTypeDetailsRepository.findAll()).thenReturn(requestTypeEntities);
         Mockito.when(userDetailsForm.getLoginInstitutionId()).thenReturn(1);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
-        Mockito.when(userDetailsForm.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsForm.isRepositoryUser()).thenReturn(true);
         Mockito.when(userDetailsForm.isSuperAdmin()).thenReturn(true);
         Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("PUL");
         Mockito.when(requestTypeEntity.getRequestTypeCode()).thenReturn(ScsbCommonConstants.EDD);
@@ -223,7 +223,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(requestTypeDetailsRepository.findAll()).thenReturn(requestTypeEntities);
         Mockito.when(userDetailsForm.getLoginInstitutionId()).thenReturn(1);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
-        Mockito.when(userDetailsForm.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsForm.isRepositoryUser()).thenReturn(true);
         Mockito.when(userDetailsForm.isSuperAdmin()).thenReturn(true);
         Mockito.when(institutionEntity.getInstitutionCode()).thenReturn("PUL");
         Mockito.when(requestTypeEntity.getRequestTypeCode()).thenReturn(ScsbCommonConstants.EDD);
@@ -359,7 +359,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
@@ -404,7 +404,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
@@ -447,7 +447,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
@@ -491,7 +491,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
@@ -534,7 +534,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndRecapDeliveryRestrictionLikeEDD(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeAndInstitutionId(anyString(), Mockito.anyInt())).thenReturn(customerCodeEntity);
         Mockito.when(ownerCodeDetailsRepository.findByOwnerCodeIn(any())).thenReturn(Arrays.asList(customerCodeEntity));
-        Mockito.when(userDetailsFormAuth.isRecapUser()).thenReturn(true);
+        Mockito.when(userDetailsFormAuth.isRepositoryUser()).thenReturn(true);
         Mockito.when(customerCodeEntity.getOwnerCode()).thenReturn("PB");
         Mockito.when(customerCodeEntity.getDescription()).thenReturn("Firestone Library Use Only");
         Mockito.when(userAuthUtil.getUserDetails(any(), anyString())).thenReturn(userDetailsFormAuth);
@@ -612,7 +612,7 @@ public class RequestServiceUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setLoginInstitutionId(2);
-        userDetailsForm.setRecapUser(true);
+        userDetailsForm.setRepositoryUser(true);
         return userDetailsForm;
     }
 

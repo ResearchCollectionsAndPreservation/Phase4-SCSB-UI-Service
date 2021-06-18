@@ -46,7 +46,7 @@ public class MarcRecordViewUtilIT extends BaseTestCase {
         UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setLoginInstitutionId(2);
-        userDetailsForm.setRecapUser(false);
+        userDetailsForm.setRepositoryUser(false);
 
         BibliographicMarcForm bibliographicMarcForm = marcRecordViewUtil.buildBibliographicMarcForm(bibId, itemId, userDetailsForm);
         assertNotNull(bibliographicMarcForm);

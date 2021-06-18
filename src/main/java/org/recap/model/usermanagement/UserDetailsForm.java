@@ -15,6 +15,7 @@ import lombok.Setter;
 public class UserDetailsForm {
     private Integer loginInstitutionId;
     private boolean superAdmin;
-    private boolean recapUser;
+    private boolean repositoryUser;
     private boolean recapPermissionAllowed;
+    private boolean userAdministrator;
 }

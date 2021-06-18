@@ -335,7 +335,7 @@ public class CollectionControllerUT extends BaseTestCaseUT {
         UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setSuperAdmin(false);
         userDetailsForm.setLoginInstitutionId(2);
-        userDetailsForm.setRecapUser(false);
+        userDetailsForm.setRepositoryUser(false);
         return userDetailsForm;
     }
 

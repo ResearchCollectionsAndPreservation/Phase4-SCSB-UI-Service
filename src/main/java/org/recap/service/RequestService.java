@@ -181,7 +181,7 @@ public class RequestService {
             List<Object[]> instDeliveryCodeObjects = ownerCodeDetailsRepository.findInstitutionDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId());
             prepareDeliveryCodeEntities(insDeliveryCodeEntities, instDeliveryCodeObjects);
             addDeliveryLocationsToMap(deliveryLocationsMap, insDeliveryCodeEntities);
-            if (userDetailsForm.isRecapUser()) {
+            if (userDetailsForm.isRepositoryUser()) {
                 List<DeliveryCodeEntity> imsDeliveryCodeEntities = new ArrayList<>();
                 List<Object[]> imsDeliveryCodeObjects = ownerCodeDetailsRepository.findImsLocationDeliveryRestrictionsByOwnerCodeIdAndRequestingInstId(ownerCodeEntity.getId(), requestingInstitutionEntity.getId(), itemEntity.getImsLocationId());
                 prepareDeliveryCodeEntities(imsDeliveryCodeEntities, imsDeliveryCodeObjects);
@@ -328,7 +328,7 @@ public class RequestService {
                                     frozenBarcodes.add(barcode);
                                 } else {
                                     userDetailsForm = getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.REQUEST_PRIVILEGE);
-                                    if ((itemEntity.getCollectionGroupId().equals(ScsbConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
+                                    if ((itemEntity.getCollectionGroupId().equals(ScsbConstants.CGD_PRIVATE)) && (!userDetailsForm.isSuperAdmin()) && (!userDetailsForm.isRepositoryUser()) && (!userDetailsForm.getLoginInstitutionId().equals(itemEntity.getOwningInstitutionId()))) {
                                         jsonObject.put(ScsbConstants.NO_PERMISSION_ERROR_MESSAGE, ScsbConstants.REQUEST_PRIVATE_ERROR_USER_NOT_PERMITTED);
                                         return jsonObject.toString();
                                     } else if (!userDetailsForm.isRecapPermissionAllowed()) {
@@ -432,7 +432,7 @@ public class RequestService {
     }
 
     private Map<String, String> sortDeliveryLocationForRecapUser(Map<String, String> deliveryLocationsMap, UserDetailsForm userDetailsForm) {
-        if (userDetailsForm.isRecapUser()) {
+        if (userDetailsForm.isRepositoryUser()) {
             deliveryLocationsMap = getRequestService().sortDeliveryLocations(deliveryLocationsMap);
         }
         return deliveryLocationsMap;
@@ -528,7 +528,7 @@ public class RequestService {
         Iterable<InstitutionEntity> institutionEntities = getInstitutionDetailsRepository().findAll();
         for (Iterator iterator = institutionEntities.iterator(); iterator.hasNext(); ) {
             InstitutionEntity institutionEntity = (InstitutionEntity) iterator.next();
-            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRecapUser()) && (!userDetailsForm.isSuperAdmin()) && (!supportInstitution.equalsIgnoreCase(institutionEntity.getInstitutionCode()))) {
+            if (userDetailsForm.getLoginInstitutionId().equals(institutionEntity.getId()) && (!userDetailsForm.isRepositoryUser()) && (!userDetailsForm.isSuperAdmin()) && (!supportInstitution.equalsIgnoreCase(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);
@@ -537,7 +537,7 @@ public class RequestService {
                 requestForm.setDisableRequestingInstitution(true);
                 requestForm.setOnChange("true");
             }
-            if ((userDetailsForm.isRecapUser() || userDetailsForm.isSuperAdmin()) && (!supportInstitution.equalsIgnoreCase(institutionEntity.getInstitutionCode()))) {
+            if ((userDetailsForm.isRepositoryUser() || userDetailsForm.isSuperAdmin()) && (!supportInstitution.equalsIgnoreCase(institutionEntity.getInstitutionCode()))) {
                 requestingInstitutions.add(institutionEntity.getInstitutionCode());
                 requestForm.setRequestingInstitutions(requestingInstitutions);
                 requestForm.setInstitutionList(requestingInstitutions);

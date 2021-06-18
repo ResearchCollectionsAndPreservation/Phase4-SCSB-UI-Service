@@ -558,7 +558,7 @@ public class RequestController extends ScsbController {
 
     private RequestForm setFormValuesToDisableSearchInstitution(@Valid @ModelAttribute("requestForm") RequestForm requestForm, UserDetailsForm userDetails, List<String> institutionList) {
         Optional<InstitutionEntity> institutionEntity = getInstitutionDetailsRepository().findById(userDetails.getLoginInstitutionId());
-        if (userDetails.isSuperAdmin() || userDetails.isRecapUser() || ((institutionEntity.isPresent()) && (institutionEntity.get().getInstitutionCode().equalsIgnoreCase(supportInstitution)))) {
+        if (userDetails.isSuperAdmin() || userDetails.isRepositoryUser() || ((institutionEntity.isPresent()) && (institutionEntity.get().getInstitutionCode().equalsIgnoreCase(supportInstitution)))) {
             getRequestService().getInstitutionForSuperAdmin(institutionList);
             requestForm.setInstitutionList(institutionList);
         } else {

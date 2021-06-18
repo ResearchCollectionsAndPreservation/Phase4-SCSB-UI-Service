@@ -172,10 +172,17 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public List<Object> getRoles(Integer superAdminRole, boolean superAdmin) {
+     return getRolesCall(superAdminRole,superAdmin,ScsbConstants.FALSE);
+    }
+
+    @Override
+    public List<Object> getRolesCall(Integer superAdminRole, boolean superAdmin,boolean admin){
         List<Object> rolesList = new ArrayList<>();
         List<RoleEntity> roleEntities = null;
         if (superAdmin) {
             roleEntities = rolesDetailsRepositorty.findAll();
+        } else if(admin){
+            roleEntities = rolesDetailsRepositorty.findAllExceptMonitoringAndLogging();
         } else {
             roleEntities = rolesDetailsRepositorty.findAllExceptReSubmitRole();
         }

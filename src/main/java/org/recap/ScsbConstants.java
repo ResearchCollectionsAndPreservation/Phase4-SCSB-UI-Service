@@ -170,7 +170,8 @@ public class ScsbConstants {
     public static final String BARCODE_RESTRICTED_PRIVILEGE = "isBarcodeRestricted";
     public static final String DEACCESSION_PRIVILEGE = "isDeaccessionAllowed";
     public static final String SUPER_ADMIN_USER = "isSuperAdmin";
-    public static final String RECAP_USER = "isRecapUser";
+    public static final String USER_ADMINISTRATOR = "isUserAdministrator";
+    public static final String REPOSITORY = "isRepository";
     public static final String USER_AUTH_ERRORMSG = "authErrorMsg";
     public static final String USER_NAME = "userName";
     public static final String USER_DESC = "userDesc";

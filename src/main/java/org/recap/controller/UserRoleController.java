@@ -443,7 +443,7 @@ public class UserRoleController extends AbstractController {
     }
 
     private UserRoleForm setUserRoleForm(UserRoleForm userRoleForm, UserDetailsForm userDetailsForm) {
-        List<Object> roles = getUserRoleService().getRoles(getUserManagementService().getSuperAdminRoleId(), userDetailsForm.isSuperAdmin());
+        List<Object> roles = getUserRoleService().getRolesCall(getUserManagementService().getSuperAdminRoleId(), userDetailsForm.isSuperAdmin(),userDetailsForm.isUserAdministrator());
         List<Object> institutions = getUserRoleService().getInstitutions(userDetailsForm.isSuperAdmin(), userDetailsForm.getLoginInstitutionId());
         userRoleForm.setRoles(roles);
         userRoleForm.setInstitutions(institutions);

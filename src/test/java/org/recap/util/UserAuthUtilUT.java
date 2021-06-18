@@ -49,7 +49,7 @@ public class UserAuthUtilUT extends BaseTestCaseUT {
         Mockito.when(session.getAttribute(Mockito.anyString())).thenReturn(true);
         Mockito.when(session.getAttribute(ScsbConstants.USER_INSTITUTION)).thenReturn(1);
         UserDetailsForm userDetailsForm=userAuthUtil.getUserDetails(session,"");
-        assertTrue(userDetailsForm.isRecapUser());
+        assertTrue(userDetailsForm.isRepositoryUser());
     }
 
     @Test

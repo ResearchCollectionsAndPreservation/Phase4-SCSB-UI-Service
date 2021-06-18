@@ -164,7 +164,8 @@ public class LoginController extends AbstractController {
         session.setAttribute(ScsbConstants.USER_ID, authMap.get(ScsbConstants.USER_ID));
         session.setAttribute(ScsbConstants.USER_INSTITUTION, authMap.get(ScsbConstants.USER_INSTITUTION));
         session.setAttribute(ScsbConstants.SUPER_ADMIN_USER, authMap.get(ScsbConstants.SUPER_ADMIN_USER));
-        session.setAttribute(ScsbConstants.RECAP_USER, authMap.get(ScsbConstants.RECAP_USER));
+        session.setAttribute(ScsbConstants.USER_ADMINISTRATOR, authMap.get(ScsbConstants.USER_ADMINISTRATOR));
+        session.setAttribute(ScsbConstants.REPOSITORY, authMap.get(ScsbConstants.REPOSITORY));
         session.setAttribute(ScsbConstants.REQUEST_PRIVILEGE, authMap.get(ScsbConstants.REQUEST_PRIVILEGE));
         session.setAttribute(ScsbConstants.COLLECTION_PRIVILEGE, authMap.get(ScsbConstants.COLLECTION_PRIVILEGE));
         session.setAttribute(ScsbConstants.REPORTS_PRIVILEGE, authMap.get(ScsbConstants.REPORTS_PRIVILEGE));

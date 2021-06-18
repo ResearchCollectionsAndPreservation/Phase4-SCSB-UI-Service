@@ -77,9 +77,10 @@ public class UserAuthUtil {
     public UserDetailsForm getUserDetails(HttpSession session, String recapPermission) {
         UserDetailsForm userDetailsForm = new UserDetailsForm();
         userDetailsForm.setSuperAdmin((Boolean) session.getAttribute(ScsbConstants.SUPER_ADMIN_USER));
-        userDetailsForm.setRecapUser((Boolean) session.getAttribute(ScsbConstants.RECAP_USER));
+        userDetailsForm.setRepositoryUser((Boolean) session.getAttribute(ScsbConstants.REPOSITORY));
         userDetailsForm.setLoginInstitutionId((Integer) session.getAttribute(ScsbConstants.USER_INSTITUTION));
         userDetailsForm.setRecapPermissionAllowed((Boolean) session.getAttribute(recapPermission));
+        userDetailsForm.setUserAdministrator((Boolean) session.getAttribute(ScsbConstants.USER_ADMINISTRATOR));
         return userDetailsForm;
     }
 
