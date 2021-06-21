@@ -15,6 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by akulak on 25/9/17.
  */
@@ -36,31 +39,16 @@ public class BulkSearchRequestService {
         if(StringUtils.isNotBlank(requestId)){bulkRequestId = Integer.valueOf(requestId);}
         String bulkRequestName = StringUtils.isNotBlank(bulkRequestForm.getRequestNameSearch()) ? bulkRequestForm.getRequestNameSearch().trim() : bulkRequestForm.getRequestNameSearch();
         String patronId = StringUtils.isNotBlank(bulkRequestForm.getPatronBarcodeSearch()) ? bulkRequestForm.getPatronBarcodeSearch().trim() : bulkRequestForm.getPatronBarcodeSearch();
+        bulkRequestName = (bulkRequestName == null)? "" : bulkRequestName;
+        patronId = (patronId == null)? "" : patronId;
         String institution = StringUtils.isNotBlank(bulkRequestForm.getInstitution()) ? bulkRequestForm.getInstitution().trim() : bulkRequestForm.getInstitution();
-        Integer storageLcoation = imsLocationDetailRepository.findByImsLocationCode(bulkRequestForm.getStorageLocation()).getId();
+        Integer storageLcoation = (!bulkRequestForm.getStorageLocation().isEmpty()) ? imsLocationDetailRepository.findByImsLocationCode(bulkRequestForm.getStorageLocation()).getId() : 0 ;
         InstitutionEntity institutionEntity = institutionDetailsRepository.findByInstitutionCode(institution);
         Integer requestingInstitutionId = 0;
         if (institutionEntity != null){
             requestingInstitutionId = institutionEntity.getId();
         }
         Pageable pageable = PageRequest.of(bulkRequestForm.getPageNumber(), bulkRequestForm.getPageSize(), Sort.Direction.DESC,"id");
-
-        if (StringUtils.isNotBlank(requestId) && StringUtils.isBlank(bulkRequestName) && StringUtils.isBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByIdAndRequestingInstitutionIdAndImsLocation(pageable,bulkRequestId,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByIdAndImsLocation(pageable,bulkRequestId,storageLcoation);
-        } else if (StringUtils.isBlank(requestId) && StringUtils.isNotBlank(bulkRequestName) && StringUtils.isBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByBulkRequestNameAndRequestingInstitutionIdAndImsLocation(pageable,bulkRequestName,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByBulkRequestNameAndImsLocation(pageable,bulkRequestName,storageLcoation);
-        } else if (StringUtils.isBlank(requestId) && StringUtils.isBlank(bulkRequestName) && StringUtils.isNotBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByPatronIdAndRequestingInstitutionIdAndImsLocation(pageable,patronId,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByPatronIdAndImsLocation(pageable,patronId,storageLcoation);
-        } else if (StringUtils.isNotBlank(requestId) && StringUtils.isNotBlank(bulkRequestName) && StringUtils.isBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndRequestingInstitutionIdAndImsLocation(pageable,bulkRequestId,bulkRequestName,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndImsLocation(pageable,bulkRequestId,bulkRequestName,storageLcoation);
-        } else if (StringUtils.isBlank(requestId) && StringUtils.isNotBlank(bulkRequestName) && StringUtils.isNotBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(pageable,bulkRequestName,patronId,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndImsLocation(pageable,bulkRequestName,patronId,storageLcoation);
-        } else if (StringUtils.isNotBlank(requestId) && StringUtils.isBlank(bulkRequestName) && StringUtils.isNotBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByIdAndPatronIdAndRequestingInstitutionIdAndImsLocation(pageable,bulkRequestId,patronId,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByIdAndPatronIdAndImsLocation(pageable,bulkRequestId,patronId,storageLcoation);
-        } else if (StringUtils.isNotBlank(requestId) && StringUtils.isNotBlank(bulkRequestName) && StringUtils.isNotBlank(patronId)) {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(pageable,bulkRequestId,bulkRequestName,patronId,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndImsLocation(pageable,bulkRequestId,bulkRequestName,patronId,storageLcoation);
-        } else {
-            return StringUtils.isNotBlank(institution) ? bulkRequestDetailsRepository.findByRequestingInstitutionIdAndImsLocation(pageable,requestingInstitutionId,storageLcoation) : bulkRequestDetailsRepository.findByImsLocation(pageable,storageLcoation);
-        }
+        return bulkRequestDetailsRepository.findBulkRequestItems(pageable,bulkRequestId,bulkRequestName,patronId,requestingInstitutionId,storageLcoation);
     }
 }
