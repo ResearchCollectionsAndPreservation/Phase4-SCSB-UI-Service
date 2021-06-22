@@ -45,9 +45,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
     public void testProcessSearch(){
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByRequestingInstitutionIdAndImsLocation(any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -59,9 +60,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getRequestNameSearch()).thenReturn("findByBulkRequestNameAndRequestingInstitutionId");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndRequestingInstitutionIdAndImsLocation(any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -73,9 +75,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPatronBarcodeSearch()).thenReturn("5");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByPatronIdAndRequestingInstitutionIdAndImsLocation(any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -89,9 +92,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPatronBarcodeSearch()).thenReturn("");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -105,9 +109,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPatronBarcodeSearch()).thenReturn("");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -121,9 +126,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPatronBarcodeSearch()).thenReturn("6");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -137,9 +143,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPatronBarcodeSearch()).thenReturn("6");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndPatronIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);
@@ -153,9 +160,10 @@ public class BulkSearchRequestServiceUT extends BaseTestCaseUT {
         Mockito.when(bulkRequestForm.getPatronBarcodeSearch()).thenReturn("6");
         Mockito.when(bulkRequestForm.getInstitution()).thenReturn("PUL");
         Mockito.when(bulkRequestForm.getPageSize()).thenReturn(1);
+        Mockito.when(bulkRequestForm.getStorageLocation()).thenReturn("Test");
         Mockito.when(institutionDetailsRepository.findByInstitutionCode(Mockito.anyString())).thenReturn(institutionEntity);
         Page<BulkRequestItemEntity> bulkRequestItemEntity= PowerMockito.mock(Page.class);
-        Mockito.when(bulkRequestDetailsRepository.findByIdAndBulkRequestNameAndPatronIdAndRequestingInstitutionIdAndImsLocation(any(), any(),Mockito.anyString(),Mockito.anyString(),Mockito.anyInt(),Mockito.anyInt())).thenReturn(bulkRequestItemEntity);
+        Mockito.when(bulkRequestDetailsRepository.findBulkRequestItems(any(),any(),any(),any(),any(),any())).thenReturn(bulkRequestItemEntity);
         Mockito.when(institutionEntity.getId()).thenReturn(1);
         Mockito.when(imsLocationDetailRepository.findByImsLocationCode(any())).thenReturn(getImsLocationEntity());
         Page<BulkRequestItemEntity> bulkRequestItemEntities = bulkSearchRequestService.processSearchRequest(bulkRequestForm);

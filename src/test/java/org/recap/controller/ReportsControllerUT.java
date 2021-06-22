@@ -15,6 +15,7 @@ import org.recap.model.request.DownloadReports;
 import org.recap.model.search.DeaccessionItemResultsRow;
 import org.recap.model.search.IncompleteReportResultsRow;
 import org.recap.model.search.ReportsForm;
+import org.recap.model.submitCollection.SubmitCollectionReport;
 import org.recap.repository.jpa.CollectionGroupDetailsRepository;
 import org.recap.repository.jpa.ImsLocationDetailRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -24,15 +25,16 @@ import org.recap.service.SCSBService;
 import org.recap.util.ReportsUtil;
 import org.recap.util.UserAuthUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -248,6 +250,36 @@ public class ReportsControllerUT extends BaseTestCaseUT {
         Mockito.when(reportsUtil.exportIncompleteRecords(any(), any())).thenReturn(csvFile);
         DownloadReports fileContent= reportsController.exportIncompleteRecords(reportsForm);
         assertNotNull(fileContent);
+    }
+
+    @Test
+    public void submitCollectionReport() throws Exception {
+        SubmitCollectionReport submitCollectionReprot = new SubmitCollectionReport();
+        String fromDate = new Date().toString();
+        String toDate = new Date().toString();
+        ResponseEntity<SubmitCollectionReport> submitCollectionReportResponseEntity = new ResponseEntity<>(HttpStatus.OK);
+        Map<String,Date> dateMap = new HashMap<>();
+        dateMap.put("fromDate",new Date());
+        dateMap.put("toDate",new Date());
+        Mockito.when(scsbService.dateFormatter(any(),any())).thenReturn(dateMap);
+        Mockito.when(reportsUtil.submitCollectionReport(any())).thenReturn(submitCollectionReportResponseEntity);
+        ResponseEntity<SubmitCollectionReport> responseEntity = reportsController.submitCollectionReport(submitCollectionReprot,fromDate,toDate);
+        assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void accessionReport() throws Exception {
+        SubmitCollectionReport submitCollectionReprot = new SubmitCollectionReport();
+        String fromDate = new Date().toString();
+        String toDate = new Date().toString();
+        ResponseEntity<SubmitCollectionReport> submitCollectionReportResponseEntity = new ResponseEntity<>(HttpStatus.OK);
+        Map<String,Date> dateMap = new HashMap<>();
+        dateMap.put("fromDate",new Date());
+        dateMap.put("toDate",new Date());
+        Mockito.when(scsbService.dateFormatter(any(),any())).thenReturn(dateMap);
+        Mockito.when(reportsUtil.accessionReport(any())).thenReturn(submitCollectionReportResponseEntity);
+        ResponseEntity<SubmitCollectionReport> responseEntity = reportsController.accessionReport(submitCollectionReprot,fromDate,toDate);
+        assertNotNull(responseEntity);
     }
 
     private File getBibContentFile() throws URISyntaxException {

@@ -122,7 +122,6 @@ public class HelperUtilUT extends BaseTestCaseUT {
     @Test
     public void getInstitutionFromRequest(){
         Mockito.when(request.getParameter("institution")).thenReturn("HD");
-        Mockito.when(request.getAttribute(ScsbConstants.SCSB_INSTITUTION_CODE)).thenReturn("HD");
         String institution = mockedHelperUtil.getInstitutionFromRequest(request);
         assertNotNull(institution);
     }
