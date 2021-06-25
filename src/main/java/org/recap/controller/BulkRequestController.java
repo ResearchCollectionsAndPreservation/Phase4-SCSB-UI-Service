@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +44,6 @@ import java.util.stream.Collectors;
  * Created by akulak on 19/9/17.
  */
 @RestController
-@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/bulkRequest")
 public class BulkRequestController extends AbstractController {
 

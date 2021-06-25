@@ -3,10 +3,10 @@ package org.recap.controller;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkCustomerCodeEntity;
-import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.FileUploadEntity;
 import org.recap.model.jpa.InstitutionEntity;
 import org.recap.model.jpa.LocationEntity;
+import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.SCSBProprtiesEntity;
 import org.recap.repository.jpa.BulkCustomerCodeDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
@@ -17,7 +17,6 @@ import org.recap.service.FileUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,7 +43,6 @@ import java.util.Objects;
  * Created by dinakar on 24/11/20.
  */
 @RestController
-@CrossOrigin
 @RequestMapping("/admin")
 public class AdminController {
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);

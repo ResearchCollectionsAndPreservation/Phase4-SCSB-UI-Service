@@ -22,7 +22,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/validation")
-@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class DashBoardController extends ScsbController {
 
     private static final Logger logger = LoggerFactory.getLogger(DashBoardController.class);

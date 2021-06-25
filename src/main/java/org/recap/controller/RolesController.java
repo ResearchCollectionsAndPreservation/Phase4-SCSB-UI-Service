@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +44,6 @@ import java.util.regex.Pattern;
  * Created by hemalathas on 22/12/16.
  */
 @RestController
-@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/roles")
 public class RolesController extends AbstractController {
 

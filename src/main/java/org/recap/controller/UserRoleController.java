@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +33,6 @@ import java.util.Optional;
  * Created by dharmendrag on 23/12/16.
  */
 @RestController
-@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/userRoles")
 public class UserRoleController extends AbstractController {
 

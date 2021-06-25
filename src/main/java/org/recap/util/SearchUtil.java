@@ -59,9 +59,6 @@ public class SearchUtil {
         searchRecordsRequest.setSearchResultRows(null);
         searchRecordsRequest.setShowResults(true);
         searchRecordsRequest.setSelectAll(false);
-        if(searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbConstants.ISSN) || searchRecordsRequest.getFieldName().equalsIgnoreCase(ScsbConstants.ISBN)){
-            searchRecordsRequest.setFieldValue(searchRecordsRequest.getFieldValue().replaceAll(ScsbConstants.REGEX_SPECIAL_CHARACTERS, ""));
-        }
         SearchRecordsResponse searchRecordsResponse = requestSearchResults(searchRecordsRequest);
         if (CollectionUtils.isEmpty(searchRecordsResponse.getSearchResultRows())) {
             searchRecordsResponse.setTotalRecordsCount(String.valueOf(0));

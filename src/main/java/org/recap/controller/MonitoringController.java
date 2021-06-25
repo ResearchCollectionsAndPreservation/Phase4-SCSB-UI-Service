@@ -1,26 +1,21 @@
 package org.recap.controller;
 
 import org.recap.PropertyKeyConstants;
-import org.recap.ScsbConstants;
 import org.recap.security.UserManagementService;
 import org.recap.util.MonitoringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/monitoring")
-@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 public class MonitoringController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitoringController.class);

@@ -49,10 +49,6 @@ public class ScsbConstants {
     public static final String SHOW_EDD = "showEDD";
     public static final String MULTIPLE_BARCODES = "multipleBarcodes";
     public static final String CREATE_BULKREQUEST_CALLED = "Create BulkRequest Called";
-    public static final  String ISSN = "ISSN";
-    public static final String ISBN = "ISBN";
-    public static final String REGEX_SPECIAL_CHARACTERS = "[^a-zA-Z0-9]";
-
     //Reports
     public static final Integer CGD_SHARED = 1;
     public static final Integer CGD_OPEN = 2;

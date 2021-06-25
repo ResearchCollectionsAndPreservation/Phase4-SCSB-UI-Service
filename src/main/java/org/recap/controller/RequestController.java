@@ -43,7 +43,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,7 +74,6 @@ import java.util.stream.Collectors;
 @RestController
 @Getter
 @Setter
-@CrossOrigin(allowCredentials = "true", allowedHeaders = "*")
 @RequestMapping("/request")
 public class RequestController extends ScsbController {
 

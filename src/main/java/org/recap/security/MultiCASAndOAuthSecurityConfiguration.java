@@ -29,6 +29,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Created by sheiks on 30/01/17.
@@ -187,6 +189,18 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Bean
     public SCSBHttpSessionEventPublisher httpSessionEventPublisher() {
         return new SCSBHttpSessionEventPublisher();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedOrigins("*")
+                        .allowedHeaders("*");
+            }
+        };
     }
 
 }
