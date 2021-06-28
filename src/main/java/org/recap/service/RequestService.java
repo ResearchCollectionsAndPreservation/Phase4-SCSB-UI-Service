@@ -10,6 +10,7 @@ import org.recap.PropertyKeyConstants;
 import org.recap.ScsbCommonConstants;
 import org.recap.ScsbConstants;
 import org.recap.model.jpa.BibliographicEntity;
+import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.jpa.OwnerCodeEntity;
 import org.recap.model.jpa.DeliveryCodeEntity;
 import org.recap.model.jpa.InstitutionEntity;
@@ -72,6 +73,9 @@ public class RequestService {
 
     @Autowired
     private PropertyUtil propertyUtil;
+
+    @Autowired
+    private BulkRequestDetailsRepository bulkRequestDetailsRepository;
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
@@ -242,41 +246,48 @@ public class RequestService {
         return sortedDeliverLocationMap;
     }
 
-    /**
-     * This method is called asynchronously whenever there is a processing status for an item in request search UI page and
-     * fetch the status from the scsb database for that requested item and
-     * update that status value for that requested item in the request search UI page.
-     *
-     * @param request the request
-     * @return the refreshed status
-     */
-    public String getRefreshedStatus(String request) {
+    public String getRefreshedStatus(String request, boolean isBulkRequestRefresh) {
         JSONObject jsonObject = new JSONObject();
         Map<Integer, Integer> map = new HashMap<>();
         Map<String, String> responseMap = new HashMap<>();
         Map<String, String> responseMapForNotes = new HashMap<>();
+        Map<String, String> responseMapForFileNames = new HashMap<>();
         List<Integer> requestIdList = new ArrayList<>();
         try {
-            List<String> listOfRequestStatusDesc = getRequestStatusDetailsRepository().findAllRequestStatusDescExceptProcessing();
+            List<String> listOfRequestStatusDesc = (isBulkRequestRefresh == ScsbConstants.TRUE) ? bulkRequestDetailsRepository.findAllBulkRequestStatusDescExceptProcessing() : getRequestStatusDetailsRepository().findAllRequestStatusDescExceptProcessing();
             JSONObject requestJson = new JSONObject(request);
-            JSONArray parameterValues = (JSONArray) requestJson.get("status");
+            JSONArray parameterValues = (JSONArray) requestJson.get(ScsbConstants.STATUS);
             for (int i = 0; i < parameterValues.length(); i++) {
                 String parameterValue = (String) parameterValues.get(i);
                 String[] split = StringUtils.split(parameterValue, "-");
                 map.put(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
                 requestIdList.add(Integer.valueOf(split[0]));
             }
-            List<RequestItemEntity> requestItemEntityList = getRequestItemDetailsRepository().findByIdIn(requestIdList);
-            for (RequestItemEntity requestItemEntity : requestItemEntityList) {
-                Integer rowUpdateNum = map.get(requestItemEntity.getId());
-                for (String requestStatusDescription : listOfRequestStatusDesc) {
-                    if (requestStatusDescription.equals(requestItemEntity.getRequestStatusEntity().getRequestStatusDescription())) {
-                        responseMap.put(String.valueOf(rowUpdateNum), requestItemEntity.getRequestStatusEntity().getRequestStatusDescription());
-                        responseMapForNotes.put(String.valueOf(rowUpdateNum), requestItemEntity.getNotes());
+            if(isBulkRequestRefresh) {
+                List<BulkRequestItemEntity> requestItemEntityList = bulkRequestDetailsRepository.findByIdIn(requestIdList);
+                for (BulkRequestItemEntity bulkRequestItemEntity : requestItemEntityList) {
+                    Integer rowUpdateNum = map.get(bulkRequestItemEntity.getId());
+                    for (String requestStatusDescription : listOfRequestStatusDesc) {
+                        if (requestStatusDescription.equals(bulkRequestItemEntity.getBulkRequestStatus())) {
+                            responseMap.put(String.valueOf(rowUpdateNum), bulkRequestItemEntity.getBulkRequestStatus());
+                            responseMapForNotes.put(String.valueOf(rowUpdateNum), bulkRequestItemEntity.getNotes());
+                            responseMapForFileNames.put(String.valueOf(rowUpdateNum), bulkRequestItemEntity.getBulkRequestFileName());
+                        }
+                    }
+                }
+                jsonObject.put(ScsbConstants.FILE_NAMES,responseMapForFileNames);
+            } else {
+                List<RequestItemEntity> requestItemEntityList = getRequestItemDetailsRepository().findByIdIn(requestIdList);
+                for (RequestItemEntity requestItemEntity : requestItemEntityList) {
+                    Integer rowUpdateNum = map.get(requestItemEntity.getId());
+                    for (String requestStatusDescription : listOfRequestStatusDesc) {
+                        if (requestStatusDescription.equals(requestItemEntity.getRequestStatusEntity().getRequestStatusDescription())) {
+                            responseMap.put(String.valueOf(rowUpdateNum), requestItemEntity.getRequestStatusEntity().getRequestStatusDescription());
+                            responseMapForNotes.put(String.valueOf(rowUpdateNum), requestItemEntity.getNotes());
+                        }
                     }
                 }
             }
-
             jsonObject.put(ScsbCommonConstants.STATUS, responseMap);
             jsonObject.put(ScsbCommonConstants.NOTES, responseMapForNotes);
         } catch (JSONException e) {

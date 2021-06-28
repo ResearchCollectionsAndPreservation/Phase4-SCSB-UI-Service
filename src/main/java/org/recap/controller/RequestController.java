@@ -551,7 +551,7 @@ public class RequestController extends ScsbController {
      */
     @PostMapping(value = "/refreshStatus")
     public String refreshStatus(@RequestBody String request) {
-        return requestService.getRefreshedStatus(request);
+        return requestService.getRefreshedStatus(request,ScsbConstants.FALSE);
     }
 
     private RequestForm setFormValuesToDisableSearchInstitution(@Valid @ModelAttribute("requestForm") RequestForm requestForm, UserDetailsForm userDetails, List<String> institutionList) {

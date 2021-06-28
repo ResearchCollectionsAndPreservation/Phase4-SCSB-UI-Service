@@ -1,17 +1,21 @@
 package org.recap.controller;
 
+import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.recap.BaseTestCaseUT;
+import org.recap.ScsbCommonConstants;
+import org.recap.ScsbConstants;
 import org.recap.model.jpa.BulkRequestItemEntity;
 import org.recap.model.search.BulkRequestForm;
 import org.recap.model.search.BulkSearchResultRow;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.BulkRequestService;
+import org.recap.service.RequestService;
 import org.recap.util.UserAuthUtil;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Date;
 
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -33,6 +38,9 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
 
     @Mock
     HttpServletRequest request;
+
+    @Mock
+    RequestService requestService;
 
     @Mock
     HttpSession session;
@@ -76,6 +84,15 @@ public class BulkRequestControllerUT extends BaseTestCaseUT {
         boolean response = bulkRequestController.bulkRequest(request);
         assertNotNull(response);
     }*/
+
+    @Test
+    public void refreshStatus() {
+        String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
+        Mockito.when(requestService.getRefreshedStatus(reqJson, ScsbConstants.TRUE)).thenReturn(ScsbCommonConstants.COMPLETE_STATUS);
+        String result = bulkRequestController.refreshStatus(reqJson);
+        TestCase.assertNotNull(result);
+        assertEquals("Complete", result);
+    }
     @Test
     public void loadCreateRequest(){
         BulkRequestForm bulkRequestForm = getBulkRequestForm();

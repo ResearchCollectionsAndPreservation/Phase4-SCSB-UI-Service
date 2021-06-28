@@ -13,6 +13,7 @@ import org.recap.repository.jpa.BulkRequestDetailsRepository;
 import org.recap.repository.jpa.InstitutionDetailsRepository;
 import org.recap.security.UserManagementService;
 import org.recap.service.BulkRequestService;
+import org.recap.service.RequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ public class BulkRequestController extends AbstractController {
 
     @Autowired
     private  UserManagementService userManagementService;
+
+    @Autowired
+    private RequestService requestService;
 
     @Value("${" + PropertyKeyConstants.SCSB_SUPPORT_INSTITUTION + "}")
     private String supportInstitution;
@@ -170,6 +174,10 @@ public class BulkRequestController extends AbstractController {
         return downloadReports;
     }
 
+    @PostMapping("/refreshStatus")
+    public String refreshStatus(@RequestBody String request) {
+        return requestService.getRefreshedStatus(request, ScsbConstants.TRUE);
+    }
     private BulkRequestForm loadCreateRequestPage(BulkRequestForm bulkRequestForm) {
         bulkRequestForm.setRequestingInstitutions(getInstitutions());
         return bulkRequestForm;

@@ -209,6 +209,7 @@ public class ScsbConstants {
     public static final String SUCCESSED = "Successed";
     public static final String FAILED = "Failed";
     public static final String PWD_DELIVERY_RESTRICT_TYPE = "PWD";
+    public static final String FILE_NAMES = "fileNames";
     //AUTHENTICATN
     public static final String FALSE_STRING = "FALSE";
     public static final String TRUE_STRING = "TRUE";

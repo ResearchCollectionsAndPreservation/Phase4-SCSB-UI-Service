@@ -108,10 +108,16 @@ public class RequestServiceUT extends BaseTestCaseUT {
     RequestStatusDetailsRepository requestStatusDetailsRepository;
 
     @Mock
+    BulkRequestDetailsRepository bulkRequestDetailsRepository;
+
+    @Mock
     RequestItemDetailsRepository requestItemDetailsRepository;
 
     @Mock
     RequestItemEntity requestItemEntity;
+
+    @Mock
+    BulkRequestItemEntity bulkRequestItemEntity;
 
     @Mock
     RequestStatusEntity requestStatusEntity;
@@ -129,17 +135,24 @@ public class RequestServiceUT extends BaseTestCaseUT {
         List<String> listOfRequestStatusDesc = new ArrayList<>();
         listOfRequestStatusDesc.add(ScsbCommonConstants.REQUEST_STATUS_REFILED);
         Mockito.when(requestStatusDetailsRepository.findAllRequestStatusDescExceptProcessing()).thenReturn(listOfRequestStatusDesc);
+        Mockito.when(bulkRequestDetailsRepository.findAllBulkRequestStatusDescExceptProcessing()).thenReturn(listOfRequestStatusDesc);
         String[] parameterValues = {"1-1"};
         Mockito.when(request.getParameterValues("status[]")).thenReturn(parameterValues);
         List<RequestItemEntity> requestItemEntityList = new ArrayList<>();
         requestItemEntityList.add(requestItemEntity);
+        List<BulkRequestItemEntity> bulkRequestItemEntitiyList = new ArrayList<>();
+        bulkRequestItemEntitiyList.add(bulkRequestItemEntity);
         Mockito.when(requestItemEntity.getId()).thenReturn(1);
         Mockito.when(requestItemDetailsRepository.findByIdIn(any())).thenReturn(requestItemEntityList);
+        Mockito.when(bulkRequestDetailsRepository.findByIdIn(any())).thenReturn(bulkRequestItemEntitiyList);
         Mockito.when(requestItemEntity.getRequestStatusEntity()).thenReturn(requestStatusEntity);
         Mockito.when(requestStatusEntity.getRequestStatusDescription()).thenReturn(ScsbCommonConstants.REQUEST_STATUS_REFILED);
+        Mockito.when(bulkRequestItemEntity.getBulkRequestStatus()).thenReturn(ScsbCommonConstants.REQUEST_STATUS_REFILED);
         String reqJson = "{\"status\":[\"29-0\",\"5-1\"]}";
-        String status = requestService.getRefreshedStatus(reqJson);
-        assertNotNull(status);
+        String statusBulkRequest = requestService.getRefreshedStatus(reqJson,ScsbConstants.TRUE);
+        assertNotNull(statusBulkRequest);
+        String statusRequest = requestService.getRefreshedStatus(reqJson,ScsbConstants.FALSE);
+        assertNotNull(statusRequest);
     }
 
     @Test
