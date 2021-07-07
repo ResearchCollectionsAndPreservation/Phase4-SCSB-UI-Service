@@ -307,6 +307,8 @@ public class RequestService {
         JSONObject jsonObject = new JSONObject();
         Boolean multipleItemBarcodes = false;
         Boolean isRecallAvailable = false;
+        Boolean isRecallAvailableforRequestingInst = true;
+
         Map<String, String> deliveryLocationsMap = new LinkedHashMap<>();
         Map<String, String> frozenInstitutionPropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_ENABLE_CIRCULATION_FREEZE);
         if (StringUtils.isNotBlank(requestForm.getItemBarcodeInRequest())) {
@@ -366,6 +368,9 @@ public class RequestService {
                                             requestForm.setRequestingInstitution(replaceReqInst);
                                         }
                                         if ("true".equals(requestForm.getOnChange()) && StringUtils.isNotBlank(requestForm.getRequestingInstitution())) {
+                                            InstitutionEntity requestingInstitutionEntity = institutionDetailsRepository.findByInstitutionCode(requestForm.getRequestingInstitution());
+                                            Map<String, String> recallAvailablePropertyMap = propertyUtil.getPropertyByKeyForAllInstitutions(PropertyKeyConstants.ILS.ILS_RECALL_FUNCTIONALITY_AVAILABLE);
+                                            isRecallAvailableforRequestingInst = Boolean.parseBoolean(recallAvailablePropertyMap.get(requestingInstitutionEntity.getInstitutionCode()));
                                             getRequestService().processCustomerAndDeliveryCodes(requestForm, deliveryLocationsMap, userDetailsForm, itemEntity, institutionId);
                                             deliveryLocationsMap = sortDeliveryLocationForRecapUser(deliveryLocationsMap, userDetailsForm);
                                         }
@@ -390,7 +395,7 @@ public class RequestService {
             if (CollectionUtils.isNotEmpty(storageLocations)) {
                 jsonObject.put(ScsbConstants.REQUESTED_ITEM_STORAGE_LOCATION, StringUtils.join(storageLocations, ","));
             }
-            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes) && isRecallAvailable) {
+            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes) && (isRecallAvailable && isRecallAvailableforRequestingInst)) {
                 requestForm.setRequestType(ScsbCommonConstants.RECALL);
                 requestTypes.add(requestForm.getRequestType());
             }
@@ -399,7 +404,7 @@ public class RequestService {
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntities) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
-                if(!isRecallAvailable) {
+                if(!(isRecallAvailable && isRecallAvailableforRequestingInst)) {
                     requestTypes.remove(ScsbCommonConstants.RECALL);
                 }
 
@@ -408,11 +413,11 @@ public class RequestService {
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntityList) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
-                if(!isRecallAvailable) {
+                if(!(isRecallAvailable && isRecallAvailableforRequestingInst)) {
                     requestTypes.remove(ScsbCommonConstants.RECALL);
                 }
             }
-            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes) && !isRecallAvailable) {
+            if (!multipleItemBarcodes && CollectionUtils.isNotEmpty(notAvailableBarcodes) && !(isRecallAvailable && isRecallAvailableforRequestingInst)) {
                 requestTypes = new LinkedHashSet<>();
             }
             jsonObject.put(ScsbConstants.REQUEST_TYPES, requestTypes);
