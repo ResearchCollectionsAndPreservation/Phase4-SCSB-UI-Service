@@ -116,7 +116,7 @@ public class RequestServiceUtilUT extends BaseTestCaseUT {
     @Test
     public void getTransactionReportss(){
         TransactionReports transactionReports = getTransactionReports();
-        Object[] object = {getTransactionReports(),1,2,1,1,2,2,1,1};
+        Object[] object = {getTransactionReports(),1,2,1,1,2,2,1,1,1,1};
         List<Object[]> list = new ArrayList<>();
         list.add(object);
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(Arrays.asList(getCollectionGroupEntity()));
@@ -129,7 +129,7 @@ public class RequestServiceUtilUT extends BaseTestCaseUT {
     @Test
     public void getTransactionReportsExport(){
         TransactionReports transactionReports = getTransactionReports();
-        Object[] object = {getTransactionReports(),1,2,1,1,2,2,1,1};
+        Object[] object = {getTransactionReports(),1,2,1,1,2,2,1,1,1,1};
         List<Object[]> list = new ArrayList<>();
         list.add(object);
         Mockito.when(collectionGroupDetailsRepository.findAll()).thenReturn(Arrays.asList(getCollectionGroupEntity()));
