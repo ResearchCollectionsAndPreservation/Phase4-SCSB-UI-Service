@@ -246,6 +246,7 @@ public class CollectionController extends AbstractController {
             searchRecordsRequest.setFieldValue(limitedBarcodes(collectionForm));
             List<CollectionGroupEntity> collectionGroupEntities = collectionGroupDetailsRepository.findAll();
             searchRecordsRequest.setCollectionGroupDesignations(scsbService.pullCGDCodesList(collectionGroupEntities));
+            searchRecordsRequest.setBarcodeSearch(false);
             SearchRecordsResponse searchRecordsResponse = searchUtil.requestSearchResults(searchRecordsRequest);
             List<SearchResultRow> searchResultRows = searchRecordsResponse.getSearchResultRows();
             collectionForm.setSearchResultRows(Collections.emptyList());
