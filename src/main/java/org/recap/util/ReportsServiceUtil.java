@@ -43,6 +43,14 @@ public class ReportsServiceUtil {
     @Value("${" + PropertyKeyConstants.TITLE_MATCH_REPORT_EXPORT_LIMIT + "}")
     private Integer titleReportExportLimit;
 
+
+    @Value("${" + PropertyKeyConstants.SCSB_BUCKET_NAME + "}")
+    private String s3BucketName;
+
+    @Value("${" + PropertyKeyConstants.TITLE_MATCH_REPORT_DIR + "}")
+    private String titleReportDir;
+
+
     @Autowired
     private ReportsUtil reportsUtil;
 
@@ -155,8 +163,8 @@ public class ReportsServiceUtil {
                 if (titleMatchedReport.getTitleMatchCounts() == null) {
                     titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
                 }
-            } else {
-                if (titleMatchedReport.getTitleMatchedReports() == null && titleMatchedReport.getMessage() == null) {
+            }else {
+                if (titleMatchedReport.getTitleMatchedReports() == null && titleMatchedReport.getMessage() == null && titleMatchedReport.getReportMessage() == null) {
                     titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
                 }
             }
