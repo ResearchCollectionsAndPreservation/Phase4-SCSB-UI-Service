@@ -431,7 +431,7 @@ public class RequestService {
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntities) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
-                if(!(isRecallAvailable && isRecallAvailableforRequestingInst)) {
+                if(!(isRecallAvailable && isRecallAvailableforRequestingInst) || CollectionUtils.isEmpty(notAvailableBarcodes)) {
                     requestTypes.remove(ScsbCommonConstants.RECALL);
                 }
 
@@ -440,7 +440,7 @@ public class RequestService {
                 for (RequestTypeEntity requestTypeEntity : requestTypeEntityList) {
                     requestTypes.add(requestTypeEntity.getRequestTypeCode());
                 }
-                if(!(isRecallAvailable && isRecallAvailableforRequestingInst)) {
+                if(!(isRecallAvailable && isRecallAvailableforRequestingInst) || CollectionUtils.isEmpty(notAvailableBarcodes)) {
                     requestTypes.remove(ScsbCommonConstants.RECALL);
                 }
             }
