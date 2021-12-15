@@ -41,7 +41,7 @@ repositories {
 
 
 dependencies {
-	compile fileTree(dir: '/data/commonjar', include: '*2.0.jar')
+	compile fileTree(dir: '/data/commonjar', include: '*2.1.jar')
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
@@ -90,6 +90,14 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+}
+
+configurations.all {
+	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+		if (details.requested.group == 'org.apache.logging.log4j') {
+			details.useVersion '2.16.0'
+		}
+	}
 }
 
 dependencyManagement {
