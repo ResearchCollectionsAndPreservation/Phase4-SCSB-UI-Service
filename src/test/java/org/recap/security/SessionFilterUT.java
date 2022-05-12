@@ -84,6 +84,23 @@ public class SessionFilterUT extends BaseTestCaseUT{
     }
 
     @Test
+    public void doFilterTest() throws Exception {
+        Mockito.when(context.getAuthentication()).thenReturn(authentication);
+        PowerMockito.mockStatic(HelperUtil.class);
+        PowerMockito.mockStatic(SecurityContextHolder.class);
+        when(HelperUtil.isAnonymousUser(Mockito.any())).thenReturn(false);
+        when(HelperUtil.getBean(Mockito.any())).thenReturn(userInstitutionCache);
+        Mockito.when(userInstitutionCache.getInstitutionForRequestSessionId(Mockito.anyString())).thenReturn("PUL");
+        when(SecurityContextHolder.getContext()).thenReturn(context);
+        Mockito.when(request.getSession()).thenReturn(httpSession);
+        Mockito.when(httpSession.getId()).thenReturn("1");
+        Mockito.when(request.getSession(false)).thenReturn(httpSession);
+        Mockito.when(httpSession.getAttribute(ScsbConstants.USER_TOKEN)).thenReturn(null);
+        Mockito.when(userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_TOUCH_EXISTIN_SESSION_URL, usernamePasswordToken)).thenReturn(false);
+        sessionFilter.doFilter(request, response, filterChain);
+    }
+
+    @Test
     public void testDoNothingMethods() throws ServletException {
         sessionFilter.destroy();
         sessionFilter.init(filterConfig);

@@ -1,24 +1,26 @@
 package org.recap.util;
 
+import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.recap.model.marc.BibMarcRecord;
 import org.recap.model.marc.HoldingsMarcRecord;
 import org.recap.model.marc.ItemMarcRecord;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by pvsubrah on 6/15/16.
@@ -282,7 +284,122 @@ public class MarcUtilUT {
         String fieldValue = marcUtil.getDataFieldValue(record, "876", 'p');
         assertEquals(fieldValue, "32101095533293");
     }
+    @Test
+    public void getDataFieldValueTest() throws Exception {
+        MarcUtil marcUtil = new MarcUtil();
+        Record record = new RecordImpl();
+        String fieldValue = marcUtil.getDataFieldValue(record, "876", 'p');
+        assertNull(fieldValue);
+    }
+    @Test
+    public void getDataFieldValueasnull() throws Exception {
+        MarcUtil marcUtil = new MarcUtil();
+        Record record = new RecordImpl();
+        DataField dataField = new DataField() {
+            @Override
+            public char getIndicator1() {
+                return 0;
+            }
 
+            @Override
+            public void setIndicator1(char aFirstInd) {
+
+            }
+
+            @Override
+            public char getIndicator2() {
+                return 0;
+            }
+
+            @Override
+            public void setIndicator2(char aSecondInd) {
+
+            }
+
+            @Override
+            public List<Subfield> getSubfields() {
+                return null;
+            }
+
+            @Override
+            public List<Subfield> getSubfields(char aCode) {
+                return null;
+            }
+
+            @Override
+            public List<Subfield> getSubfields(String aPattern) {
+                return null;
+            }
+
+            @Override
+            public String getSubfieldsAsString(String aPattern) {
+                return null;
+            }
+
+            @Override
+            public String getSubfieldsAsString(String aPattern, char aPaddingChar) {
+                return null;
+            }
+
+            @Override
+            public Subfield getSubfield(char aCode) {
+                return null;
+            }
+
+            @Override
+            public void addSubfield(Subfield aSubfield) {
+
+            }
+
+            @Override
+            public void addSubfield(int aIndex, Subfield aSubfield) {
+
+            }
+
+            @Override
+            public void removeSubfield(Subfield aSubfield) {
+
+            }
+
+            @Override
+            public int countSubfields() {
+                return 0;
+            }
+
+            @Override
+            public void setId(Long id) {
+
+            }
+
+            @Override
+            public Long getId() {
+                return null;
+            }
+
+            @Override
+            public String getTag() {
+                return null;
+            }
+
+            @Override
+            public void setTag(String tag) {
+
+            }
+
+            @Override
+            public boolean find(String pattern) {
+                return false;
+            }
+
+            @Override
+            public int compareTo(VariableField o) {
+                return 0;
+            }
+        }; char subField;
+//        String fieldValue = marcUtil.getDataFieldValue(record, "876", 'p');
+        ReflectionTestUtils.invokeMethod(marcUtil, "getDataFieldValue", dataField, 'c');
+
+    }
     @Test
     public void getControlFieldValue() throws Exception {
         MarcUtil marcUtil = new MarcUtil();
