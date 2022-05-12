@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--!DOCTYPE InstitutionProperties SYSTEM "/home/recap1/Desktop/InstitutionProperties.dtd"-->
+<InstitutionProperties>
+   <comment>application.properties</comment>
+   <ApplicationData>
+      <Institution>
+         <InstitutionCode>PUL2</InstitutionCode>
+         <InstitutionName>Princeton University</InstitutionName>
+         <IlsProtocol>SIP2</IlsProtocol>
+      </Institution>
+      <CrossPartners>
+         <CrossPartner>
+            <CustomerCode>PA</CustomerCode>
+            <DeliveryRestrictions>AC,AD,AR,AV,BC,BL,BS,BT,BU,BZ,CA,CF,CI,CJ,CM,CS,CV,EA,GE,GS,HS,LE,ML,MP,MR,MZ,OH,RH,RS,SW,UT</DeliveryRestrictions>
+            <InstitutionCode>CUL</InstitutionCode>
+         </CrossPartner>
+         <CrossPartner>
+            <CustomerCode>PB</CustomerCode>
+            <DeliveryRestrictions>NB,NC,ND,NE,NF,NG,NH,NI,NJ,NK,NM,NN,NO,NP,NR,NS,NT,NV,NX,NY,NZ,SA,SM,SP,SR</DeliveryRestrictions>
+            <InstitutionCode>NYPL</InstitutionCode>
+         </CrossPartner>
+      </CrossPartners>
+      <GenericPatrons>
+         <GenericPatron>
+            <RequestInstitutionCode />
+            <OwningInstitutionCode />
+            <EDDPatron />
+            <RetrievalPatron />
+         </GenericPatron>
+         <GenericPatron>
+            <RequestInstitutionCode />
+            <OwningInstitutionCode />
+            <EDDPatron />
+            <RetrievalPatron />
+         </GenericPatron>
+      </GenericPatrons>
+   </ApplicationData>
+   <ApplicationConfiguration>
+      <login>
+         <entry key="auth.service.login">https://fed.princeton.edu/cas/login</entry>
+         <entry key="auth.service.logout">https://fed.princeton.edu/cas/logout?service</entry>
+         <entry key="auth.service.prefix">https://fed.princeton.edu/cas</entry>
+         <entry key="auth.type">cas</entry>
+         <entry key="ils.protocol">SIP2</entry>
+      </login>
+      <request>
+         <entry key="ils.request.protocol">SIP2</entry>
+         <entry key="ils.edd.patron.id">10000001</entry>
+         <entry key="ils.cul.edd.patron.id">20000001</entry>
+         <entry key="ils.nypl.edd.patron.id">30000001</entry>
+         <entry key="ils.pul.edd.patron.id">10000002</entry>
+         <entry key="ils.cul.cross.partner.patron.id">20000002</entry>
+         <entry key="ils.nypl.cross.partner.patron.id">30000002</entry>
+         <entry key="ils.pul.cross.partner.patron.id">10000003</entry>
+         <entry key="ils.server">voyagertest0001.cc.columbia.edu</entry>
+         <entry key="ils.bibdata.api.endpoint">https://bibdata.pul.edu/barcode/{barcode}/scsb</entry>
+         <entry key=".ils.bibdata.api.parameter">/v0.1/recap/pul-bibs?barcode={barcode}  customercode={customercode}</entry>
+         <entry key="ils.server.operator.user.id">htcuserid</entry>
+         <entry key="ils.server.operator.password">htcpassword</entry>
+         <entry key="ils.server.operator.location">htc</entry>
+      </request>
+      <etl>
+         <entry key="etl.initial.data.loaded.date">09/18/2020</entry>
+      </etl>
+      <emails>
+         <entry key="email.accession.reconciliation.to" />
+         <entry key="email.accession.reconciliation.cc">srini.induri@htcindia.com</entry>
+         <entry key="email.accession.reports.to">srini.induri@htcindia.com</entry>
+         <entry key="email.recall.request.to">srini.induri@htcindia.com</entry>
+         <entry key="email.request.recall.cc">srini.induri@htcindia.com</entry>
+         <entry key="email.submit.collection.to">srini.induri@htcindia.com</entry>
+         <entry key="email.submit.collection.cc">srini.induri@htcindia.com</entry>
+         <entry key="email.submit.collection.nofiles.to">srini.induri@htcindia.com</entry>
+         <entry key="email.request.refile.to">srini.induri@htcindia.com</entry>
+         <entry key="email.data.dump.to">srini.induri@htcindia.com</entry>
+         <entry key="email.data.dump.cc">srini.induri@htcindia.com</entry>
+         <entry key="email.matching.reports.to">srini.induri@htcindia.com</entry>
+         <entry key="email.admin.role.to">srini.induri@htcindia.com</entry>
+         <entry key="email.technical.support.to">srini.induri@htcindia.com</entry>
+      </emails>
+   </ApplicationConfiguration>
+</InstitutionProperties>
