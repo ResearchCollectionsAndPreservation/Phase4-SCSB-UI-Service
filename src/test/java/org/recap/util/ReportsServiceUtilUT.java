@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -78,6 +79,21 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void requestCgdItemcounts(){
+        ReportsForm reportsForm = new ReportsForm();
+        ReportsResponse reportsResponse = new ReportsResponse();
+        reportsResponse.setMessage("sucess");
+        ResponseEntity<ReportsResponse> responseEntity = new ResponseEntity<ReportsResponse>(reportsResponse, HttpStatus.OK);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<Boolean>>any());
+        ReportsResponse response = reportsServiceUtil.requestCgdItemCounts(reportsForm);
+        assertEquals(responseEntity.getBody(), response);
+    }
+
+    @Test
     public void requestDeaccessionResultsTest(){
         ReportsForm reportsForm = new ReportsForm();
         reportsForm.setPageNumber(10);
@@ -114,6 +130,21 @@ public class ReportsServiceUtilUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<Boolean>>any());
         reportsServiceUtil.requestIncompleteRecords(reportsForm);
+        assertNotNull(responseEntity.getBody());
+    }
+
+    @Test
+    public void getReportsResponsenotnull(){
+        ReportsRequest reportsRequest = new ReportsRequest();
+        ReportsResponse reportsResponse = new ReportsResponse();
+        reportsResponse.setMessage("sucess");
+        ResponseEntity<ReportsResponse> responseEntity = new ResponseEntity<ReportsResponse>(reportsResponse, HttpStatus.OK);
+        doReturn(responseEntity).when(restTemplate).exchange(
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.any(HttpMethod.class),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.<Class<Boolean>>any());
+        ReflectionTestUtils.invokeMethod(reportsServiceUtil, "getReportsResponse", reportsRequest, "test");
         assertNotNull(responseEntity.getBody());
     }
 

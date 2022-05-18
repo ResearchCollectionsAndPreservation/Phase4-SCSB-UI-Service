@@ -255,7 +255,6 @@ public class ReportsController extends AbstractController {
         facetsForm.setInstitutionList(instList);
         facetsForm.setStorageLocationsList(storageLocationsList);
         facetsForm.setCgdCodesList(cgdCodesList);
-        log.info("Institutions List Returned");
         return facetsForm;
     }
 

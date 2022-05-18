@@ -20,12 +20,10 @@ public class XSSFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        log.info("init method called");
     }
 
     @Override
     public void destroy() {
-        log.info("Destroyed");
     }
 
     @Override

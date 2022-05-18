@@ -93,7 +93,6 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/previous")
     public SearchRecordsResponse searchPrevious(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        log.info("searchPrevious called");
         return searchRecordsPage(searchRecordsRequest);
     }
 
@@ -105,7 +104,6 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/next")
     public SearchRecordsResponse searchNext(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        log.info("searchNext  Called");
         return searchRecordsPage(searchRecordsRequest);
     }
 
@@ -117,7 +115,6 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/first")
     public SearchRecordsResponse searchFirst(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        log.info("searchFirst  Called");
         searchRecordsRequest.setPageNumber(0);
         return searchUtil.searchRecord(searchRecordsRequest);
     }
@@ -130,7 +127,6 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/last")
     public SearchRecordsResponse searchLast(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        log.info("searchLast  Called");
         return searchRecordsPage(searchRecordsRequest);
     }
 
@@ -143,7 +139,6 @@ public class SearchRecordsController extends ScsbController {
      */
     @PostMapping("/export")
     public byte[] exportRecords(@RequestBody SearchRecordsRequest searchRecordsRequest) throws Exception {
-        log.info("exportRecords  Called");
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String fileNameWithExtension = "ExportRecords_" + dateFormat.format(new Date()) + ".csv";
         File csvFile = csvUtil.writeSearchResultsToCsv(searchRecordsRequest.getSearchResultRows(), fileNameWithExtension);
@@ -158,7 +153,6 @@ public class SearchRecordsController extends ScsbController {
 
     @PostMapping("/pageChanges")
     public SearchRecordsResponse onPageSizeChange(@RequestBody SearchRecordsRequest searchRecordsRequest) {
-        log.info("showEntries size changed calling with size: {}", searchRecordsRequest.getPageSize());
         Integer pageNumber = searchRecordsRequest.getPageNumber();
         searchRecordsRequest.setPageNumber(0);
         SearchRecordsResponse searchRecordsResponse = searchRecordsPage(searchRecordsRequest);

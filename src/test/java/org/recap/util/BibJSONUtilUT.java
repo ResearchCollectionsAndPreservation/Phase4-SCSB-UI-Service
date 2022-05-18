@@ -3,6 +3,7 @@ package org.recap.util;
 
 import info.freelibrary.marc4j.impl.RecordImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.marc4j.marc.Record;
 import org.recap.BaseTestCaseUT;
@@ -130,6 +131,12 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
             "            </datafield>\n" +
             "            <datafield ind1=\" \" ind2=\" \" tag=\"952\">\n" +
             "              <subfield code=\"h\">*OFK 84-1944</subfield>\n" +
+            "            </datafield>\n" +
+            "            <datafield ind1=\" \" ind2=\"0\" tag=\"020\">\n" +
+            "              <subfield code=\"a\">Bahrain</subfield>\n" +
+            "            </datafield>\n" +
+            "            <datafield ind1=\" \" ind2=\"0\" tag=\"022\">\n" +
+            "              <subfield code=\"a\">Bahrain</subfield>\n" +
             "            </datafield>\n" +
             "          </record>\n" +
             "        </collection>";
@@ -261,4 +268,12 @@ public class BibJSONUtilUT extends BaseTestCaseUT {
         assertNull(result);
     }
 
+    @Test
+    public void getLeaderTest(){
+        BibJSONUtil bibJSONUtil = new BibJSONUtil();
+        Record marcRecord = new RecordImpl();
+        String result = bibJSONUtil.getLeader(marcRecord);
+        assertNull(result);
+
+    }
 }

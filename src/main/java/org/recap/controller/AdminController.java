@@ -83,7 +83,6 @@ public class AdminController {
     }
 
     private Map<String, String> loadIMSData(MultipartFile multipartFile) {
-        log.info("Load IMS Locations");
         InstitutionEntity institutionEntity = new InstitutionEntity();
         try {
             File file = convertMultiPartToFile(multipartFile);
@@ -121,7 +120,6 @@ public class AdminController {
     private Map<String, String> loadInitialData(MultipartFile multipartFile) {
         boolean status = true;
         InstitutionEntity institutionEntity = new InstitutionEntity();
-        log.info("loadInitialData -->");
         try {
             File file = convertMultiPartToFile(multipartFile);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
