@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 
 public class ReportsUtilTest extends BaseTestCaseUT {
@@ -63,12 +64,37 @@ public class ReportsUtilTest extends BaseTestCaseUT {
     }
 
     @Test
+    public void populatePartnersCountForRequestTest() throws ParseException {
+        List<InstitutionEntity> institutionEntities = new ArrayList<>();
+        ReportsForm reportsForm = new ReportsForm();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
+        Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(institutionEntities);
+        Mockito.when(requestItemDetailsRepository.getPhysicalAndEDDCounts(any(), any(), any(), any(), any(), any(),any())).thenReturn(1L);
+        ReportsForm form = reportsUtil.populatePartnersCountForRequest(reportsForm,fromDate,toDate);
+        assertNotNull(form);
+    }
+    @Test
     public void populateRequestTypeInformation() throws ParseException {
         ReportsForm reportsForm = new ReportsForm();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
         Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
         Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getInstitutionEntity()));
+        ReportsForm form = reportsUtil.populateRequestTypeInformation(reportsForm,fromDate,toDate);
+        assertNotNull(form);
+    }
+
+
+    @Test
+    public void populateRequestTypeInformationTest() throws ParseException {
+        List<InstitutionEntity> institutionEntities = new ArrayList<>();
+        ReportsForm reportsForm = new ReportsForm();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date fromDate = simpleDateFormat.parse("2016-12-30 00:00:00");
+        Date toDate = simpleDateFormat.parse("2020-12-31 23:59:59");
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(institutionEntities);
         ReportsForm form = reportsUtil.populateRequestTypeInformation(reportsForm,fromDate,toDate);
         assertNotNull(form);
     }

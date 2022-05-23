@@ -167,6 +167,17 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void onPageSizeChangeTEst() {
+        SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
+        searchRecordsRequest.setPageNumber(0);
+        SearchRecordsResponse searchRecordsResponse = getSearchRecordsResponse();
+        when(searchUtil.searchAndSetResults(any())).thenReturn(searchRecordsResponse);
+        SearchRecordsResponse response = searchRecordsController.onPageSizeChange(searchRecordsRequest);
+        assertNotNull(response);
+        assertEquals(searchRecordsResponse, response);
+    }
+
+    @Test
     public void isEmptyField() {
         SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
         searchRecordsRequest.setFieldValue("10");
@@ -203,6 +214,26 @@ public class SearchRecordsControllerUT extends BaseTestCaseUT {
         userDetailsForm.setLoginInstitutionId(1);
         InstitutionEntity institutionEntity = getInstitutionEntity();
         Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
+        ReflectionTestUtils.invokeMethod(searchRecordsController, "processRequest", searchRecordsRequest, userDetailsForm, redirectAttributes);
+    }
+
+    @Test
+    public void processRequestTest() {
+        SearchRecordsRequest searchRecordsRequest = getSearchRecordsRequest();
+        searchRecordsRequest.setErrorMessage("error");
+        SearchResultRow searchResultRow = new SearchResultRow();
+        searchResultRow.setRequestId(1);
+        searchResultRow.setSelected(true);
+        searchResultRow.setCollectionGroupDesignation("Private");
+        searchResultRow.setOwningInstitution("PUL");
+        searchResultRow.setTitle("test");
+        searchResultRow.setBarcode("23456");
+        searchRecordsRequest.setSearchResultRows(Arrays.asList(searchResultRow));
+        UserDetailsForm userDetailsForm = new UserDetailsForm();
+        userDetailsForm.setSuperAdmin(true);
+        userDetailsForm.setRecapPermissionAllowed(true);
+        userDetailsForm.setLoginInstitutionId(1);
+        Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.empty());
         ReflectionTestUtils.invokeMethod(searchRecordsController, "processRequest", searchRecordsRequest, userDetailsForm, redirectAttributes);
     }
 

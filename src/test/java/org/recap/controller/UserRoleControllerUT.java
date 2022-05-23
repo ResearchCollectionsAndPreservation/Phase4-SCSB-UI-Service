@@ -82,6 +82,14 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     @Test
     public void searchUserRoleException() {
         UserRoleForm userRoleForm = new UserRoleForm();
+        Mockito.when(session.getAttribute(ScsbConstants.USER_ID)).thenThrow(new NullPointerException());
+        UserRoleForm userRole = userRoleController.searchUserRole(userRoleForm, request);
+        assertNotNull(userRole);
+    }
+
+    @Test
+    public void searchUserRoleExceptionTest() {
+        UserRoleForm userRoleForm = new UserRoleForm();
         usersSessionAttributes();
         Mockito.when(session.getAttribute(ScsbConstants.USER_ID)).thenThrow(new NullPointerException());
         UserRoleForm userRole = userRoleController.searchUserRole(userRoleForm, request);
@@ -101,6 +109,15 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     public void exportUsersException(){
         UserRoleForm userRoleForm = new UserRoleForm();
         Mockito.when(request.getSession()).thenReturn(session);
+        Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.FALSE);
+        UserRoleForm userRole = userRoleController.exportUsers(userRoleForm, request);
+        assertNotNull(userRole);
+    }
+
+    @Test
+    public void exportUsersExceptionTest(){
+        UserRoleForm userRoleForm = new UserRoleForm();
+        Mockito.when(request.getSession()).thenReturn(session);
         Mockito.when(userAuthUtil.isAuthenticated(session, ScsbConstants.SCSB_SHIRO_USER_ROLE_URL)).thenReturn(Boolean.TRUE);
         UserRoleForm userRole = userRoleController.exportUsers(userRoleForm, request);
         assertNotNull(userRole);
@@ -110,6 +127,13 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     public void deleteUser() {
         UserRoleForm userRoleForm = new UserRoleForm();
         usersSessionAttributes();
+        UserRoleForm userRoleForm1 = userRoleController.deleteUser(3, userRoleForm.getSearchNetworkId(), 10, 1, 2, request);
+        assertNotNull(userRoleForm1);
+    }
+    @Test
+    public void deleteUserExceptionTest() {
+        UserRoleForm userRoleForm = new UserRoleForm();
+        Mockito.doThrow(new NullPointerException()).when(userDetailsRepository).delete(any());
         UserRoleForm userRoleForm1 = userRoleController.deleteUser(3, userRoleForm.getSearchNetworkId(), 10, 1, 2, request);
         assertNotNull(userRoleForm1);
     }
@@ -126,6 +150,13 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     public void searchFirstPage() {
         UserRoleForm userRoleForm = new UserRoleForm();
         usersSessionAttributes();
+        UserRoleForm userRoleForm1 = userRoleController.searchFirstPage(userRoleForm, request);
+        assertNotNull(userRoleForm1);
+    }
+
+    @Test
+    public void searchFirstPageTest() {
+        UserRoleForm userRoleForm = new UserRoleForm();
         UserRoleForm userRoleForm1 = userRoleController.searchFirstPage(userRoleForm, request);
         assertNotNull(userRoleForm1);
     }
@@ -164,9 +195,41 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void createUserRequestTest() {
+        UserRoleForm userRoleForm = new UserRoleForm();
+        Mockito.when(userRoleService.saveNewUserToDB(any())).thenReturn(getUsersEntity().get(0));
+        UserRoleForm userRoleForm1 = userRoleController.createUserRequest(userRoleForm, request);
+        assertNotNull(userRoleForm1);
+    }
+
+    @Test
+    public void userEntityTest() {
+        UserRoleForm userRoleForm = new UserRoleForm();
+        usersSessionAttributes();
+        Mockito.when(userRoleService.saveNewUserToDB(any())).thenReturn(null);
+        UserRoleForm userRoleForm1 = userRoleController.createUserRequest(userRoleForm, request);
+        assertNotNull(userRoleForm1);
+    }
+
+    @Test
     public void editUser() {
         usersSessionAttributes();
         Mockito.when(userDetailsRepository.findById(any())).thenReturn(Optional.of(getUsersEntity().get(0)));
+        UserRoleForm userRoleForm1 = userRoleController.editUser(1, "smith", request);
+        assertNotNull(userRoleForm1);
+    }
+
+    @Test
+    public void editUserTest() {
+        Mockito.when(userDetailsRepository.findById(any())).thenReturn(Optional.of(getUsersEntity().get(0)));
+        UserRoleForm userRoleForm1 = userRoleController.editUser(1, "smith", request);
+        assertNotNull(userRoleForm1);
+    }
+
+    @Test
+    public void editUserGetUE() {
+        usersSessionAttributes();
+        Mockito.when(userDetailsRepository.findById(any())).thenReturn(Optional.empty());
         UserRoleForm userRoleForm1 = userRoleController.editUser(1, "smith", request);
         assertNotNull(userRoleForm1);
     }
@@ -186,6 +249,21 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         UserRoleForm userRoleForm1 = userRoleController.saveEditUserDetails(userId, networkLoginId, userDescription, institutionId, userEmailId, roleIds, request);
         assertNotNull(userRoleForm1);
     }
+
+    @Test
+    public void saveEditUserDetailsWithoutDbTest() {
+        Integer userId = 3;
+        String networkLoginId = "test";
+        String userDescription = "test description";
+        Integer institutionId = 1;
+        String userEmailId = "test@mail.com";
+        List<Integer> role = new ArrayList<>();
+        role.add(2);
+        List<Integer> roleIds = role;
+        UserRoleForm userRoleForm1 = userRoleController.saveEditUserDetails(userId, networkLoginId, userDescription, institutionId, userEmailId, roleIds, request);
+        assertNotNull(userRoleForm1);
+    }
+
 
     @Test
     public void saveEditUserDetailsWithoutDb() {
@@ -208,6 +286,13 @@ public class UserRoleControllerUT extends BaseTestCaseUT {
         UserRoleForm userRoleForm1 = userRoleController.userRoles(request);
         assertNotNull(userRoleForm1);
     }
+
+    @Test
+    public void userRolesTest() {
+        UserRoleForm userRoleForm1 = userRoleController.userRoles(request);
+        assertNotNull(userRoleForm1);
+    }
+
 
     private void usersSessionAttributes() {
         Page<UsersEntity> usersEntityPage = new PageImpl<>(getUsersEntity());

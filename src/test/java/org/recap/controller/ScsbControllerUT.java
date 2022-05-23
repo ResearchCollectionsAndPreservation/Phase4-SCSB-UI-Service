@@ -37,6 +37,13 @@ public class ScsbControllerUT extends BaseTestCaseUT {
         scsbController.disableRequestSearchInstitutionDropDown(requestForm);
     }
 
+    @Test
+    public void disableRequestSearchInstitutionDropDownTest(){
+        RequestForm requestForm = getRequestFormTest();
+        Mockito.doCallRealMethod().when(scsbController).disableRequestSearchInstitutionDropDown(requestForm);
+        scsbController.disableRequestSearchInstitutionDropDown(requestForm);
+    }
+
     private RequestItemEntity getRequestItemEntity(){
         RequestItemEntity requestItemEntity = new RequestItemEntity();
         requestItemEntity.setCreatedBy("Test");
@@ -99,6 +106,12 @@ public class ScsbControllerUT extends BaseTestCaseUT {
         List<String> institutionList = new ArrayList<>();
         institutionList.add("PUL");
         requestForm.setInstitutionList(institutionList);
+        return requestForm;
+    }
+
+    private RequestForm getRequestFormTest() {
+        RequestForm requestForm = new RequestForm();
+        requestForm.setRequestId(0);
         return requestForm;
     }
 }

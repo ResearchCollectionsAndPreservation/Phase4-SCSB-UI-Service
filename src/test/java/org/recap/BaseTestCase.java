@@ -22,6 +22,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSessionEvent;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = Main.class)
 @WebAppConfiguration
@@ -79,6 +81,9 @@ public class BaseTestCase {
     @Test
     public void loadContexts() {
         System.out.println();
+    }
+
+    protected void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
     }
 /*
     @Before
