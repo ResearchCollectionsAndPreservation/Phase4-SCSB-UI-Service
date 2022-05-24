@@ -158,6 +158,21 @@ public class AdminControllerUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
         ReflectionTestUtils.invokeMethod(adminController,"loadInstitutionData", nodeList);
     }
+
+    @Test
+    public void loadInstitutionDataExceptionTest(){
+        Map<String, String> fileuploadResponse = new HashMap<>();
+        Mockito.when(nodeList.getLength()).thenReturn(1);
+        Mockito.when(nodeList.item(0)).thenReturn(element);
+        Mockito.when(element.getElementsByTagName("InstitutionCode")).thenReturn(nodeList);
+        Mockito.when(element.getElementsByTagName("InstitutionName")).thenReturn(nodeList);
+        Mockito.when(element.getElementsByTagName("IlsProtocol")).thenReturn(nodeList);
+        Mockito.when(nodeList.item(0).getTextContent()).thenReturn("PUL");
+        Mockito.doThrow(new NullPointerException()).when(institutionDetailsRepository).save(any());
+        ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
+        ReflectionTestUtils.invokeMethod(adminController,"loadInstitutionData", nodeList);
+    }
+
     @Test
     public void loadInstitutionDataException(){
         Map<String, String> fileuploadResponse = new HashMap<>();
@@ -191,6 +206,19 @@ public class AdminControllerUT extends BaseTestCaseUT {
         Mockito.when(nodeList.getLength()).thenReturn(1);
         Mockito.when(nodeList.item(0)).thenReturn(element);
         Mockito.when(element.getNodeType()).thenReturn(Node.ELEMENT_NODE);
+        Mockito.when(element.getAttribute(anyString())).thenReturn("test");
+        Mockito.when(element.getTextContent()).thenReturn("test");
+        Mockito.doThrow(new NullPointerException()).when(scsbPropertiesDetailRepository).saveAndFlush(any());
+        ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
+        ReflectionTestUtils.invokeMethod(adminController,"loadConfigData",institutionEntity, nodeList);
+    }
+
+    @Test
+    public void loadConfigDataExceptionTest(){
+        Map<String, String> fileuploadResponse = new HashMap<>();
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Mockito.when(nodeList.getLength()).thenReturn(1);
+        Mockito.when(nodeList.item(0)).thenReturn(element);
         Mockito.when(element.getAttribute(anyString())).thenReturn("test");
         Mockito.when(element.getTextContent()).thenReturn("test");
         Mockito.doThrow(new NullPointerException()).when(scsbPropertiesDetailRepository).saveAndFlush(any());
@@ -243,6 +271,23 @@ public class AdminControllerUT extends BaseTestCaseUT {
         ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
         ReflectionTestUtils.invokeMethod(adminController,"loadLocationData",institutionEntity, nodeList);
     }
+
+    @Test
+    public void loadLocationDataExceptionTest(){
+        Map<String, String> fileuploadResponse = new HashMap<>();
+        InstitutionEntity institutionEntity = getInstitutionEntity();
+        Mockito.when(nodeList.getLength()).thenReturn(1);
+        Mockito.when(nodeList.item(anyInt())).thenReturn(element);
+        Mockito.when(element.hasChildNodes()).thenReturn(Boolean.TRUE);
+        Mockito.when(element.getChildNodes()).thenReturn(nodeList);
+        Mockito.when(element.getElementsByTagName(any())).thenReturn(nodeList);
+        Mockito.when(nodeList.item(0).getTextContent()).thenReturn("Recap");
+        Mockito.when(element.getNodeName()).thenReturn("BulkCustomerCodes");
+        Mockito.doThrow(new NullPointerException()).when(locationDetailsRepository).saveAndFlush(any());
+        ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
+        ReflectionTestUtils.invokeMethod(adminController,"loadLocationData",institutionEntity, nodeList);
+    }
+
     @Test
     public void loadCustomerData(){
         Map<String, String> fileuploadResponse = new HashMap<>();
@@ -251,6 +296,13 @@ public class AdminControllerUT extends BaseTestCaseUT {
         Mockito.when(element.getElementsByTagName(any())).thenReturn(nodeList);
         Mockito.when(element.getNodeType()).thenReturn(Node.ELEMENT_NODE);
         Mockito.when(element.getTextContent()).thenReturn("test");
+        ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
+        ReflectionTestUtils.invokeMethod(adminController,"loadCustomerData",institutionEntity, element);
+    }
+    @Test
+    public void loadCustomerDataTest(){
+        Map<String, String> fileuploadResponse = new HashMap<>();
+        InstitutionEntity institutionEntity = getInstitutionEntity();
         ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
         ReflectionTestUtils.invokeMethod(adminController,"loadCustomerData",institutionEntity, element);
     }
@@ -274,6 +326,14 @@ public class AdminControllerUT extends BaseTestCaseUT {
         Mockito.when(element.getElementsByTagName(any())).thenReturn(nodeList);
         Mockito.when(element.getNodeType()).thenReturn(Node.ELEMENT_NODE);
         Mockito.when(element.getTextContent()).thenReturn("test");
+        ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
+        ReflectionTestUtils.invokeMethod(adminController,"loadBulkCustomerData",institutionEntity, element);
+    }
+
+    @Test
+    public void loadBulkCustomerDataTest(){
+        Map<String, String> fileuploadResponse = new HashMap<>();
+        InstitutionEntity institutionEntity = new InstitutionEntity();
         ReflectionTestUtils.setField(adminController,"fileuploadResponse",fileuploadResponse);
         ReflectionTestUtils.invokeMethod(adminController,"loadBulkCustomerData",institutionEntity, element);
     }

@@ -46,7 +46,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
+
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -167,6 +168,18 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void processSearchRequestTest() {
+        BulkRequestItemEntity bulkRequestItemEntity = getBulkRequestItemEntity();
+        Page<BulkRequestItemEntity> bulkRequestItemEntities = new PageImpl<>(Arrays.asList(bulkRequestItemEntity));
+        Mockito.when(securityUtil.getDecryptedValue(any())).thenReturn("test@gmail.com");
+        Mockito.when(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(any())).thenReturn(Arrays.asList(getInstitutionEntity()));
+        Mockito.when(userDetailsRepository.findByLoginId(any())).thenReturn(new UsersEntity());
+        Mockito.when(bulkSearchRequestService.processSearchRequest(any())).thenReturn(bulkRequestItemEntities);
+        BulkRequestForm form = bulkRequestService.processSearchRequest(bulkRequestForm);
+        assertNotNull(form);
+    }
+
+    @Test
     public void processSearchRequestException() {
         BulkRequestForm bulkRequestForm = getBulkRequestForm();
         bulkRequestForm.setBulkSearchResultRows(Arrays.asList(getBulkSearchResultRow()));
@@ -211,6 +224,18 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
         assertNotNull(request);
     }
 
+    @Test
+    public void testSaveUpdatedRequestStatusTest() throws Exception {
+        Mockito.when(requestItemEntity.getRequestStatusEntity()).thenReturn(requestStatusEntity);
+        Mockito.when(bulkRequestItemEntity.getBulkRequestStatus()).thenReturn("");
+        Mockito.when(requestStatusEntity.getRequestStatusCode()).thenReturn("EXCEPTION");
+        Mockito.when(bulkRequestDetailsRepository.findById(1)).thenReturn(Optional.of(bulkRequestItemEntity));
+        File bibContentFile = getBibContentFile();
+        String sourceBibContent = FileUtils.readFileToString(bibContentFile, "UTF-8");
+        Mockito.when(bulkRequestItemEntity.getBulkRequestFileData()).thenReturn(sourceBibContent.getBytes(StandardCharsets.UTF_8));
+        BulkRequestItemEntity request = bulkRequestService.saveUpadatedRequestStatus(1);
+        assertNotNull(request);
+    }
     private File getBibContentFile() throws URISyntaxException {
         URL resource = null;
         resource = getClass().getResource("BulkRequest.csv");
@@ -382,5 +407,26 @@ public class BulkRequestServiceUT extends BaseTestCaseUT {
                 ArgumentMatchers.any(),
                 ArgumentMatchers.<Class<Boolean>>any());
         ReflectionTestUtils.invokeMethod(bulkRequestService, "processPatronValidation", bulkRequestForm);
+    }
+
+    @Test
+    public void getDecryptedPatronEmailIdTest(){
+        String patronEmailAddress ="";
+        Mockito.when(securityUtil.getDecryptedValue("")).thenReturn("");
+        ReflectionTestUtils.invokeMethod(bulkRequestService, "getDecryptedPatronEmailId", patronEmailAddress);
+    }
+
+    @Test
+    public void getEncryptedPatronEmailIdTest(){
+        String patronEmailAddress ="";
+        Mockito.when(securityUtil.getEncryptedValue("")).thenReturn("");
+        ReflectionTestUtils.invokeMethod(bulkRequestService, "getEncryptedPatronEmailId", patronEmailAddress);
+    }
+
+    @Test
+    public void getEncryptedPatronEmailIdtest(){
+        String patronEmailAddress ="test@gmail.com";
+        Mockito.when(securityUtil.getEncryptedValue(any())).thenReturn("test@gmail.com");
+        ReflectionTestUtils.invokeMethod(bulkRequestService, "getEncryptedPatronEmailId", patronEmailAddress);
     }
 }

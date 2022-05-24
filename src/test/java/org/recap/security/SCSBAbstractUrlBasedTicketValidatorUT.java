@@ -43,6 +43,49 @@ public class SCSBAbstractUrlBasedTicketValidatorUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void constructValidationUrlTest(){
+        String ticket = "ticket";
+        String serviceUrl = "http://localhost:9095/requestItem/";
+        Map<String,String> customParameters = new HashMap<>();
+        customParameters.put("renew", "test");
+        SCSBAbstractUrlBasedTicketValidator = new SCSBCas20ServiceTicketValidator("http://localhost:9095/requestItem");
+        SCSBAbstractUrlBasedTicketValidator.setCustomParameters(customParameters);
+        SCSBAbstractUrlBasedTicketValidator.setRenew(true);
+        SCSBAbstractUrlBasedTicketValidator.setEncoding("Test");
+        //ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
+        String validateUrl = SCSBAbstractUrlBasedTicketValidator.constructValidationUrl(ticket,serviceUrl);
+        assertNotNull(validateUrl);
+    }
+
+    @Test
+    public void constructValidationUrlasNull(){
+        String ticket = "ticket";
+        String serviceUrl = "http://localhost:9095/requestItem/";
+        Map<String,String> customParameters = new HashMap<>();
+        customParameters.put("renew", "test");
+        SCSBAbstractUrlBasedTicketValidator = new SCSBCas20ServiceTicketValidator("http://localhost:9095/requestItem");
+        SCSBAbstractUrlBasedTicketValidator.setCustomParameters(customParameters);
+        SCSBAbstractUrlBasedTicketValidator.setRenew(false);
+        SCSBAbstractUrlBasedTicketValidator.setEncoding("Test");
+        //ReflectionTestUtils.setField(SCSBAbstractUrlBasedTicketValidator,"logger",log);
+        String validateUrl = SCSBAbstractUrlBasedTicketValidator.constructValidationUrl(ticket,serviceUrl);
+        assertNotNull(validateUrl);
+    }
+
+    @Test
+    public void constructValidationUrlasNullTest(){
+        String ticket = "ticket";
+        String serviceUrl = "http://localhost:9095/requestItem/";
+        Map<String,String> customParameters = new HashMap<>();
+
+        customParameters.putAll(customParameters);
+        SCSBAbstractUrlBasedTicketValidator = new SCSBCas20ServiceTicketValidator("http://localhost:9095/requestItem");
+        SCSBAbstractUrlBasedTicketValidator.setCustomParameters(null);
+        String validateUrl = SCSBAbstractUrlBasedTicketValidator.constructValidationUrl(ticket,serviceUrl);
+        assertNotNull(validateUrl);
+    }
+
+    @Test
     public void validate() throws TicketValidationException {
         String ticket = "ticket";
         String serviceUrl = "http://localhost:9095/requestItem/";
