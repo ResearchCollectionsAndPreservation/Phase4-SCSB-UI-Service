@@ -43,5 +43,15 @@ public class CsrfCookieGeneratorFilterUT extends BaseTestCaseUT {
         assertTrue(true);
     }
 
+    @Test
+    public void testDoFilterInternalTest() throws ServletException, IOException {
+        Mockito.when((CsrfToken) request.getAttribute("_csrf")).thenReturn(csrfToken);
+        String actualToken = "X-CSRF-TOKEN";
+        Mockito.when(request.getHeader(actualToken)).thenReturn("X-CSRF-TOKEN");
+        csrfCookieGeneratorFilter.doFilterInternal(request,httpServletResponse,filterChain);
+        assertTrue(true);
+    }
+
+
 
 }

@@ -171,6 +171,39 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
     }
 
     @Test
+    public void getJobParametersTest(){
+        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
+        scheduleJobsForm.setJobName("Test");
+        when(jobParamDetailRepository.findByJobName(any())).thenReturn(getJobParamEntity());
+        ResponseEntity responseEntity = new ResponseEntity<>(scheduleJobsForm, HttpStatus.OK);
+        ScheduleJobsForm jobsForm = scheduleJobsController.getJobParameters(scheduleJobsForm,request);
+        assertNotNull(jobsForm);
+    }
+
+    @Test
+    public void getJobParamEntityAsNull(){
+        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
+        scheduleJobsForm.setJobName("Test");
+        when(jobDetailsRepository.findByJobName(any())).thenReturn(getJobEntity());
+        when(jobParamDetailRepository.findByJobName(any())).thenReturn(null);
+        ResponseEntity responseEntity = new ResponseEntity<>(scheduleJobsForm, HttpStatus.OK);
+        ScheduleJobsForm jobsForm = scheduleJobsController.getJobParameters(scheduleJobsForm,request);
+        assertNotNull(jobsForm);
+    }
+
+    @Test
+    public void getJobParamEntityAsNullTest(){
+        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
+        scheduleJobsForm.setJobName("Test");
+        when(jobDetailsRepository.findByJobName(any())).thenReturn(getJobEntity());
+        JobParamEntity jobParamEntity = new JobParamEntity();
+        when(jobParamDetailRepository.findByJobName(any())).thenReturn(jobParamEntity);
+        ResponseEntity responseEntity = new ResponseEntity<>(scheduleJobsForm, HttpStatus.OK);
+        ScheduleJobsForm jobsForm = scheduleJobsController.getJobParameters(scheduleJobsForm,request);
+        assertNotNull(jobsForm);
+    }
+
+    @Test
     public void getInstitutions() {
         List<InstitutionEntity> institutions = new ArrayList<>();
         institutions.add(getInstitutionEntity());
@@ -251,5 +284,30 @@ public class ScheduleJobsControllerUT extends BaseTestCaseUT {
         ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", scheduleJobsForm, nextRunTime);
     }
 
+    @Test
+    public void saveJobEntityAsNull() {
+        ScheduleJobsForm scheduleJobsForm = getScheduleJobsForm();
+        Date nextRunTime = new Date();
+        JobEntity jobEntity = getJobEntity();
+        JobParamEntity jobParamEntity = getJobParamEntity();
+        Mockito.when(jobDetailsRepository.save(any())).thenReturn(jobEntity);
+        Mockito.when(jobParamDetailRepository.findByJobName(any())).thenReturn(jobParamEntity);
+        Mockito.when(jobParamDetailRepository.save(any())).thenReturn(jobParamEntity);
+        ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", scheduleJobsForm, nextRunTime);
+    }
+
+    @Test
+    public void saveJobScheduleTypeTest() {
+        ScheduleJobsForm scheduleJobsForm = new ScheduleJobsForm();
+        scheduleJobsForm.setScheduleType("Unschedule");
+        Date nextRunTime = new Date();
+        JobEntity jobEntity = getJobEntity();
+        JobParamEntity jobParamEntity = getJobParamEntity();
+        Mockito.when(jobDetailsRepository.findByJobName(any())).thenReturn(jobEntity);
+        Mockito.when(jobDetailsRepository.save(any())).thenReturn(jobEntity);
+        Mockito.when(jobParamDetailRepository.findByJobName(any())).thenReturn(jobParamEntity);
+        Mockito.when(jobParamDetailRepository.save(any())).thenReturn(jobParamEntity);
+        ReflectionTestUtils.invokeMethod(scheduleJobsController, "saveJob", scheduleJobsForm, nextRunTime);
+    }
 
 }

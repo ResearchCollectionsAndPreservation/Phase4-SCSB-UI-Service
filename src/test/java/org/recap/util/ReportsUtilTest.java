@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 
 public class ReportsUtilTest extends BaseTestCaseUT {
@@ -138,6 +137,13 @@ public class ReportsUtilTest extends BaseTestCaseUT {
     public void exportIncompleteRecords(){
         List<IncompleteReportResultsRow> incompleteReportResultsRows = new ArrayList<>();
         incompleteReportResultsRows.add(new IncompleteReportResultsRow());
+        File file = reportsUtil.exportIncompleteRecords(incompleteReportResultsRows,".xml");
+        assertNotNull(file);
+    }
+
+    @Test
+    public void exportIncompleteRecordsTest(){
+        List<IncompleteReportResultsRow> incompleteReportResultsRows = new ArrayList<>();
         File file = reportsUtil.exportIncompleteRecords(incompleteReportResultsRows,".xml");
         assertNotNull(file);
     }
