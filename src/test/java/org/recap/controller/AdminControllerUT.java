@@ -108,11 +108,11 @@ public class AdminControllerUT extends BaseTestCaseUT {
         Map<String, String> uploadFile = adminController.uploadFile(multipartFile);
         assertNotNull(uploadFile);
     }
-    @Test
-    public void uploadFileException() throws IOException, URISyntaxException {
-        Map<String, String> uploadFile = adminController.uploadFile(null);
-        assertNotNull(uploadFile);
-    }
+//    @Test
+//    public void uploadFileException() throws IOException, URISyntaxException {
+//        Map<String, String> uploadFile = adminController.uploadFile(null);
+//        assertNotNull(uploadFile);
+//    }
     @Test
     public void uploadFileParserConfigurationException() throws IOException, URISyntaxException {
         Mockito.when(multipartFile.getOriginalFilename()).thenReturn("AdminDetails");

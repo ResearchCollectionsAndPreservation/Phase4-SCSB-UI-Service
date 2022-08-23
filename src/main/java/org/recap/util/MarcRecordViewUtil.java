@@ -139,7 +139,7 @@ public class MarcRecordViewUtil {
         return bibliographicMarcForm;
     }
 
-    private void setBibliographicMarcFormWithBibValues(Record marcRecord, BibJSONUtil bibJSONUtil, BibliographicMarcForm bibliographicMarcForm) {
+    private static void setBibliographicMarcFormWithBibValues(Record marcRecord, BibJSONUtil bibJSONUtil, BibliographicMarcForm bibliographicMarcForm) {
         bibliographicMarcForm.setTitle(bibJSONUtil.getTitleDisplay(marcRecord));
         bibliographicMarcForm.setAuthor(bibJSONUtil.getAuthorDisplayValue(marcRecord));
         bibliographicMarcForm.setPublisher(bibJSONUtil.getPublisherValue(marcRecord));
@@ -152,7 +152,7 @@ public class MarcRecordViewUtil {
         bibliographicMarcForm.setBibDataFields(buildBibDataFields(marcRecord));
     }
 
-    private List<BibDataField> buildBibDataFields(Record marcRecord) {
+    private static List<BibDataField> buildBibDataFields(Record marcRecord) {
         List<BibDataField> bibDataFields = new ArrayList<>();
         List<DataField> marcDataFields = marcRecord.getDataFields();
         if (!CollectionUtils.isEmpty(marcDataFields)) {

@@ -388,7 +388,7 @@ public class RequestController extends ScsbController {
             }
             jsonObject.put(ScsbCommonConstants.REQUEST_STATUS, requestStatus);
             jsonObject.put(ScsbConstants.REQUEST_NOTES, requestNotes);
-        } catch (Exception exception) {
+        } catch (RuntimeException | JSONException exception) {
             log.error(ScsbCommonConstants.LOG_ERROR, exception);
             log.debug(exception.getMessage());
         }
@@ -592,7 +592,7 @@ public class RequestController extends ScsbController {
 
     private ResponseEntity<RequestForm> exceptionRports(String institutionCode, String fromDate, String toDate, RequestForm requestForm, boolean isExport) {
         requestForm.setInstitution(institutionCode);
-        requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList()));
+        requestForm.setInstitutionList(institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toCollection(ArrayList::new)));
         Page<RequestItemEntity> requestItemEntities = null;
         List<SearchResultRow> searchResultRows = null;
         List<RequestItemEntity> requestItemEntitiesList = null;
@@ -679,7 +679,7 @@ public class RequestController extends ScsbController {
         return searchAndSetResults(disableRequestSearchInstitutionDropDown(requestForm));
     }
 
-    private void setBibData(RequestItemEntity requestItemEntity, SearchResultRow searchResultRow, List<SearchResultRow> searchResultRows) {
+    private static void setBibData(RequestItemEntity requestItemEntity, SearchResultRow searchResultRow, List<SearchResultRow> searchResultRows) {
         ItemEntity itemEntity = requestItemEntity.getItemEntity();
         if (null != itemEntity && CollectionUtils.isNotEmpty(itemEntity.getBibliographicEntities())) {
             searchResultRow.setBibId(itemEntity.getBibliographicEntities().get(0).getId());
@@ -699,7 +699,7 @@ public class RequestController extends ScsbController {
         requestForm.setPageNumber(0);
         return searchAndSetResults(requestForm);
     }
-    private  int findTotatlPageCount(TransactionReports transactionReports){
+    private  static int findTotatlPageCount(TransactionReports transactionReports){
         return ((transactionReports.getTotalRecordsCount()%transactionReports.getPageSize()) == 0)? (transactionReports.getTotalRecordsCount()/transactionReports.getPageSize()) :
                 (transactionReports.getTotalRecordsCount()/transactionReports.getPageSize())+1;
     }

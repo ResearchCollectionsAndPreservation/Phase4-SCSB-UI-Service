@@ -208,7 +208,7 @@ public class BulkRequestService {
     }
 
 
-    private Integer getPageNumberOnPageSizeChange(BulkRequestForm bulkRequestForm) throws ParseException {
+    private static Integer getPageNumberOnPageSizeChange(BulkRequestForm bulkRequestForm) throws ParseException {
         int totalRecordsCount;
         Integer pageNumber = bulkRequestForm.getPageNumber();
         totalRecordsCount = NumberFormat.getNumberInstance().parse(bulkRequestForm.getTotalRecordsCount()).intValue();
@@ -267,7 +267,7 @@ public class BulkRequestService {
         return bulkRequestItemEntity.get();
     }
 
-    private void getCurrentRequestStatus(BulkRequestItemEntity bulkRequestItemEntity,Map<Integer, String> currentStatus,Map<Integer, String> exceptionNote) {
+    private static void getCurrentRequestStatus(BulkRequestItemEntity bulkRequestItemEntity,Map<Integer, String> currentStatus,Map<Integer, String> exceptionNote) {
         for(RequestItemEntity requestItemEntity : bulkRequestItemEntity.getRequestItemEntities()){
             currentStatus.put(requestItemEntity.getId(),requestItemEntity.getRequestStatusEntity().getRequestStatusCode());
             if("EXCEPTION".equalsIgnoreCase(requestItemEntity.getRequestStatusEntity().getRequestStatusCode())){
@@ -276,7 +276,7 @@ public class BulkRequestService {
         }
     }
 
-    private void buildCsvRows(StringBuilder csvRowBuilder, Map<Integer, String> currentStatus, Map<Integer, String> exceptionNote, String[] bulkRequestData,int count) {
+    private static void buildCsvRows(StringBuilder csvRowBuilder, Map<Integer, String> currentStatus, Map<Integer, String> exceptionNote, String[] bulkRequestData,int count) {
         boolean exceptionStatus = false;
         csvRowBuilder.append(bulkRequestData[0]).append(",");
         csvRowBuilder.append(bulkRequestData[1]).append(",");

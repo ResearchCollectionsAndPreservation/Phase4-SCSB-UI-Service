@@ -27,10 +27,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -61,13 +64,9 @@ public class AdminController {
     private FileUploadService fileUploadService;
 
     @PostMapping("/upload")
-    public Map<String, String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public Map<String, String> uploadFile(@RequestParam("file") MultipartFile file)  {
         fileuploadResponse = new LinkedHashMap<>();
-        try {
-            fileuploadResponse = loadInitialData(file);
-        } catch (Exception e) {
-            log.error(ScsbCommonConstants.LOG_ERROR, e);
-        }
+        fileuploadResponse = loadInitialData(file);
         return fileuploadResponse;
     }
 
@@ -109,7 +108,7 @@ public class AdminController {
         return fileuploadResponse;
     }
 
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
+    private static File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convFile)) {
             fos.write(file.getBytes());
@@ -183,7 +182,7 @@ public class AdminController {
                 try {
                     institutionDetailsRepository.save(institutionEntity);
                     fileuploadResponse.put("Institution Added Status", ScsbConstants.SUCCESSED);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     fileuploadResponse.put("Institution Added Status", ScsbConstants.FAILED);
                     log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
@@ -213,7 +212,7 @@ public class AdminController {
                 try {
                     scsbPropertiesDetailRepository.saveAndFlush(scsbProprtiesEntity);
                     fileuploadResponse.put("SCSB Properties Added Status", ScsbConstants.SUCCESSED);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     fileuploadResponse.put("SCSB Properties Added Status", ScsbConstants.FAILED);
                     log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
@@ -239,7 +238,7 @@ public class AdminController {
                 try {
                     locationDetailsRepository.saveAndFlush(locationEntity);
                     fileuploadResponse.put("Locations Added Status", ScsbConstants.SUCCESSED);
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     fileuploadResponse.put("Locations Added Status", ScsbConstants.FAILED);
                     log.error(ScsbCommonConstants.LOG_ERROR, e);
                 }
@@ -291,7 +290,7 @@ public class AdminController {
             try {
                 ownerCodeDetailsRepository.saveAndFlush(ownerCodeEntity);
                 fileuploadResponse.put("Customer Code Added Status", ScsbConstants.SUCCESSED);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 fileuploadResponse.put("Customer Code Added Status", ScsbConstants.FAILED);
                 log.error(ScsbCommonConstants.LOG_ERROR, e);
             }
@@ -309,7 +308,7 @@ public class AdminController {
             try {
                 bulkCustomerCodeDetailsRepository.saveAndFlush(bulkCustomerCodeEntity);
                 fileuploadResponse.put(" Bulk Customer Code Added Status", ScsbConstants.SUCCESSED);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 fileuploadResponse.put(" Bulk Customer Code Added Status", ScsbConstants.FAILED);
                 log.error(ScsbCommonConstants.LOG_ERROR, e);
             }

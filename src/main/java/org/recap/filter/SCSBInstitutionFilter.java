@@ -76,7 +76,7 @@ public class SCSBInstitutionFilter extends OncePerRequestFilter {
         }
     }
 
-    private void forwardChaining(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, UserInstitutionCache userInstitutionCache, String requestedSessionId) throws IOException, ServletException {
+    private static void forwardChaining(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, UserInstitutionCache userInstitutionCache, String requestedSessionId) throws IOException, ServletException {
         String institutionCode = userInstitutionCache.getInstitutionForRequestSessionId(requestedSessionId);
         if (StringUtils.isNotBlank(institutionCode)) {
             request.setAttribute(ScsbConstants.SCSB_INSTITUTION_CODE, institutionCode);

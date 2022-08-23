@@ -136,7 +136,7 @@ public class CollectionServiceUtil {
             } else {
                 bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.CGD_UPDATE_FAILED + "-" + statusResponse.replace(ScsbCommonConstants.FAILURE + "-", ""));
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR,e);
             bibliographicMarcForm.setErrorMessage(ScsbCommonConstants.CGD_UPDATE_FAILED + "-" + e.getMessage());
         }

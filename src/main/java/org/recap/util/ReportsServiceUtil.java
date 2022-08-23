@@ -91,7 +91,7 @@ public class ReportsServiceUtil {
             ResponseEntity<ReportsResponse> responseEntity = restTemplate.exchange(scsbUrl + ScsbConstants.SCSB_REPORTS_CGD_ITEM_COUNTS_URL, HttpMethod.POST, httpEntity, ReportsResponse.class);
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR, e);
             reportsResponse.setMessage(e.getMessage());
             return reportsResponse;
@@ -137,7 +137,7 @@ public class ReportsServiceUtil {
             ResponseEntity<ReportsResponse> responseEntity = restTemplate.exchange(scsbUrl + reportUrl, HttpMethod.POST, httpEntity, ReportsResponse.class);
             reportsResponse = responseEntity.getBody();
             return reportsResponse;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR, e);
             reportsResponse.setMessage(e.getMessage());
             return reportsResponse;
@@ -174,14 +174,14 @@ public class ReportsServiceUtil {
                 return titleMatchedReport;
             else
                 return mapData(titleMatchedReport);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR, e);
             titleMatchedReport.setMessage(ScsbConstants.REPORTS_INCOMPLETE_RECORDS_NOT_FOUND);
             return titleMatchedReport;
         }
     }
 
-    private TitleMatchedReport mapData(TitleMatchedReport titleMatchedReport) {
+    private static TitleMatchedReport mapData(TitleMatchedReport titleMatchedReport) {
         int count = 0;
         List<TitleMatchedReports> dataList = titleMatchedReport.getTitleMatchedReports();
         titleMatchedReport.setTitleMatchedReports(null);

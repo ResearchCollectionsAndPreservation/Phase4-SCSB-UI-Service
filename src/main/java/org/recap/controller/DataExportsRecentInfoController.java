@@ -59,7 +59,7 @@ public class DataExportsRecentInfoController {
             if (responseEntity.getBody() != null && responseEntity.getStatusCode().is2xxSuccessful()) {
                 s3RecentDataExportInfoList = responseEntity.getBody();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
         }
         return s3RecentDataExportInfoList;
@@ -88,14 +88,14 @@ public class DataExportsRecentInfoController {
             } else {
                 dataExportResponse.setErrorMessage(responseEntity.getBody());
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR, e.getMessage());
             dataExportResponse.setErrorMessage(e.getMessage());
         }
         return dataExportResponse;
     }
 
-    private void setInputMapValues(Map<String, String> inputMap, String institutionCodes, String requestingInstitutionCode, String fetchType,
+    private static void setInputMapValues(Map<String, String> inputMap, String institutionCodes, String requestingInstitutionCode, String fetchType,
                                    String outputFormat, String date, String collectionGroupIds, String transmissionType, String emailToAddress, String imsDepositoryCodes, String userName) {
         inputMap.put("institutionCodes", institutionCodes);
         inputMap.put("requestingInstitutionCode", requestingInstitutionCode);

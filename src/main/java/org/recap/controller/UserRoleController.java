@@ -370,7 +370,7 @@ public class UserRoleController extends AbstractController {
         }
         return userRoleForm;
     }
-    private UserRoleForm getUsersInformation(HttpServletRequest request,UserRoleForm userRoleForm, Integer userId, Page<UsersEntity> usersEntities, String message) {
+    private static UserRoleForm getUsersInformation(HttpServletRequest request,UserRoleForm userRoleForm, Integer userId, Page<UsersEntity> usersEntities, String message) {
         List<UsersEntity> userEntity = usersEntities.getContent();
         if (!userEntity.isEmpty()) {
             setUserRoleFormValues(request,userRoleForm, usersEntities, userId);
@@ -382,13 +382,13 @@ public class UserRoleController extends AbstractController {
         return userRoleForm;
     }
 
-    private List<UserRoleForm> setFormValues(HttpServletRequest request,List<UsersEntity> usersEntities, Integer userId) {
+    private static List<UserRoleForm> setFormValues(HttpServletRequest request,List<UsersEntity> usersEntities, Integer userId) {
         List<UserRoleForm> userRoleFormList = new ArrayList<>();
         appendValues(request,usersEntities, userRoleFormList, userId);
         return userRoleFormList;
     }
 
-    private void appendValues(HttpServletRequest request,Collection<UsersEntity> usersEntities, List<UserRoleForm> userRoleFormList, Integer userId) {
+    private static void appendValues(HttpServletRequest request,Collection<UsersEntity> usersEntities, List<UserRoleForm> userRoleFormList, Integer userId) {
         for (UsersEntity usersEntity : usersEntities) {
             InstitutionEntity institutionEntity = usersEntity.getInstitutionEntity();
             List<RoleEntity> userRole = usersEntity.getUserRole();
@@ -420,7 +420,7 @@ public class UserRoleController extends AbstractController {
         }
     }
 
-    private String roles(String rolesBuffer, String seperator) {
+    private static String roles(String rolesBuffer, String seperator) {
         if (rolesBuffer != null && rolesBuffer.endsWith(seperator)) {
             return rolesBuffer.substring(0, rolesBuffer.length() - 1);
         }
@@ -435,7 +435,7 @@ public class UserRoleController extends AbstractController {
         return userRoleForm;
     }
 
-    private UserRoleForm setUserRoleFormValues(HttpServletRequest request,UserRoleForm userRoleForm, Page<UsersEntity> usersEntities, Integer userId) {
+    private static UserRoleForm setUserRoleFormValues(HttpServletRequest request,UserRoleForm userRoleForm, Page<UsersEntity> usersEntities, Integer userId) {
         userRoleForm.setUserRoleFormList(setFormValues(request,usersEntities.getContent(), userId));
         userRoleForm.setShowResults(true);
         userRoleForm.setTotalRecordsCount(String.valueOf(usersEntities.getTotalElements()));
@@ -443,7 +443,7 @@ public class UserRoleController extends AbstractController {
         return userRoleForm;
     }
 
-    private void setUserRoleFormRoleId(UserRoleForm userRoleForm, Optional<UsersEntity> usersEntity) {
+    private static void setUserRoleFormRoleId(UserRoleForm userRoleForm, Optional<UsersEntity> usersEntity) {
         if (usersEntity.isPresent()) {
             List<RoleEntity> roleEntityList = usersEntity.get().getUserRole();
             List<Integer> roleIds = new ArrayList<>();

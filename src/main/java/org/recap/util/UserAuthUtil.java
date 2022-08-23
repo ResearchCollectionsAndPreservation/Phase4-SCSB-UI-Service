@@ -61,7 +61,7 @@ public class UserAuthUtil {
             RestTemplate restTemplate = new RestTemplate();
             HttpEntity<UsernamePasswordToken> requestEntity = new HttpEntity<>(token, getRestHeaderService().getHttpHeaders());
             statusResponse = restTemplate.postForObject(scsbShiro + serviceURL, requestEntity, Boolean.class);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (serviceURL.contains(ScsbConstants.LOGOUT))
                 log.info(ScsbConstants.LOG_USER_LOGOUT_SUCCESS + " :: {}", token != null ? token.getUsername() : null);
         }

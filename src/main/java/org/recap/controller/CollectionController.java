@@ -216,7 +216,7 @@ public class CollectionController extends AbstractController {
         return buildMissingBarcodes(buildResultRows(trimBarcodes(collectionForm)));
     }
 
-    private String limitedBarcodes(CollectionForm collectionForm) {
+    private static String limitedBarcodes(CollectionForm collectionForm) {
         String[] barcodeArray = collectionForm.getItemBarcodes().split(",");
         if (barcodeArray.length > ScsbCommonConstants.BARCODE_LIMIT) {
             String[] limitBarcodeArray = Arrays.copyOfRange(barcodeArray, 0, ScsbCommonConstants.BARCODE_LIMIT);
@@ -226,7 +226,7 @@ public class CollectionController extends AbstractController {
         return StringUtils.join(barcodeArray, ",");
     }
 
-    private CollectionForm trimBarcodes(CollectionForm collectionForm) {
+    private static CollectionForm trimBarcodes(CollectionForm collectionForm) {
         List<String> barcodeList = new ArrayList<>();
         String[] barcodeArray = collectionForm.getItemBarcodes().split(",");
         for (String barcode : barcodeArray) {
@@ -261,7 +261,7 @@ public class CollectionController extends AbstractController {
         return collectionForm;
     }
 
-    private CollectionForm buildMissingBarcodes(CollectionForm collectionForm) {
+    private static CollectionForm buildMissingBarcodes(CollectionForm collectionForm) {
         Set<String> missingBarcodes = getMissingBarcodes(collectionForm);
         if (CollectionUtils.isNotEmpty(missingBarcodes)) {
             collectionForm.setBarcodesNotFoundErrorMessage(ScsbCommonConstants.BARCODES_NOT_FOUND + " - " + StringUtils.join(missingBarcodes, ","));
@@ -269,7 +269,7 @@ public class CollectionController extends AbstractController {
         return collectionForm;
     }
 
-    private Set<String> getMissingBarcodes(CollectionForm collectionForm) {
+    private static Set<String> getMissingBarcodes(CollectionForm collectionForm) {
         if (StringUtils.isNotBlank(collectionForm.getItemBarcodes())) {
             String[] barcodeArray = collectionForm.getItemBarcodes().split(",");
             if (barcodeArray.length > ScsbCommonConstants.BARCODE_LIMIT) {
@@ -292,7 +292,7 @@ public class CollectionController extends AbstractController {
         return Collections.emptySet();
     }
 
-    private CollectionForm populateCollectionForm(CollectionForm collectionForm, BibliographicMarcForm bibliographicMarcForm) {
+    private static CollectionForm populateCollectionForm(CollectionForm collectionForm, BibliographicMarcForm bibliographicMarcForm) {
         collectionForm.setTitle(bibliographicMarcForm.getTitle());
         collectionForm.setAuthor(bibliographicMarcForm.getAuthor());
         collectionForm.setPublisher(bibliographicMarcForm.getPublisher());

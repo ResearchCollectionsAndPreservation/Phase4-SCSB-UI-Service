@@ -124,7 +124,7 @@ public class LoginController extends AbstractController {
         return ScsbConstants.REDIRECT_SEARCH;
     }
 
-    private boolean userHasRoles(Map<String, Object> resultMap) {
+    private static boolean userHasRoles(Map<String, Object> resultMap) {
         return (Boolean) resultMap.get(ScsbConstants.SEARCH_PRIVILEGE);
     }
 

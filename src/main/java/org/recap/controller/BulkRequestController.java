@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -187,7 +188,7 @@ public class BulkRequestController extends AbstractController {
     }
 
     private List<String> getInstitutions() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private ModelAndView processBulkRequest(BulkRequestForm bulkRequestForm, Model model) {

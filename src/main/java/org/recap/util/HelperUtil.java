@@ -98,7 +98,7 @@ public class HelperUtil {
             try {
                 UserAuthUtil userAuthUtil = HelperUtil.getBean(UserAuthUtil.class);
                 userAuthUtil.authorizedUser(ScsbConstants.SCSB_SHIRO_LOGOUT_URL, (UsernamePasswordToken) attribute);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 log.error("Logout", e);
             }
         }

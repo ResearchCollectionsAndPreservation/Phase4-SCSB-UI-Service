@@ -460,7 +460,7 @@ public class RolesController extends AbstractController {
     }
 
 
-    private boolean isSpecialCharacterCheck(String inputString) {
+    private static boolean isSpecialCharacterCheck(String inputString) {
         Pattern pattern = Pattern.compile("[a-zA-Z0-9_ ]*");
         Matcher matcher = pattern.matcher(inputString);
         return matcher.matches();
@@ -525,7 +525,7 @@ public class RolesController extends AbstractController {
         return roleEntity;
     }
 
-    private List<String> splitStringAndGetList(String inputString) {
+    private static List<String> splitStringAndGetList(String inputString) {
         String[] splittedString = inputString.split(",");
         return Arrays.asList(splittedString);
     }

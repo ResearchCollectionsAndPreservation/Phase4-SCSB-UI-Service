@@ -180,7 +180,7 @@ public class RequestServiceUtil {
         institutionEntities.stream().forEach(inst -> institutionList.put(inst.getId(), inst.getInstitutionCode()));
         return institutionList;
     }
-    private Map<Integer, String> pullCGDCodes(List<CollectionGroupEntity> collectionGroupEntities) {
+    private static Map<Integer, String> pullCGDCodes(List<CollectionGroupEntity> collectionGroupEntities) {
         Map<Integer, String> cgdCodes = new HashMap<>();
         for (CollectionGroupEntity collectionGroupEntity : collectionGroupEntities){
             if(!collectionGroupEntity.getCollectionGroupCode().equalsIgnoreCase(ScsbConstants.NA))
@@ -188,7 +188,7 @@ public class RequestServiceUtil {
         }
         return cgdCodes;
     }
-    private Map<Integer, String> pullImsLocationCodes(List<ImsLocationEntity> imsLocationEntities) {
+    private static Map<Integer, String> pullImsLocationCodes(List<ImsLocationEntity> imsLocationEntities) {
         Map<Integer, String> imsLocationCodes = new HashMap<>();
         for (ImsLocationEntity imsLocationEntity : imsLocationEntities){
             if(!imsLocationEntity.getImsLocationCode().equalsIgnoreCase("UN"))
@@ -205,7 +205,7 @@ public class RequestServiceUtil {
        return requestTypes;
     }
 
-    private List<String> validateTypeUse(TransactionReports transactionReports, List<CollectionGroupEntity> collectionGroupEntities,List<String> listCGDCodes) {
+    private static List<String> validateTypeUse(TransactionReports transactionReports, List<CollectionGroupEntity> collectionGroupEntities,List<String> listCGDCodes) {
             listCGDCodes.add(transactionReports.getCgdType());
             return listCGDCodes;
     }

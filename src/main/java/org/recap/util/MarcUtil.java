@@ -169,7 +169,7 @@ public class MarcUtil {
         return resolveValue(marcRecord, field, ind1, ind2, subField);
     }
 
-    private List<String> resolveValue(Record marcRecord, String field, String ind1, String ind2, String subField) {
+    private static List<String> resolveValue(Record marcRecord, String field, String ind1, String ind2, String subField) {
         List<String> values = new ArrayList<>();
         String indicator1 = StringUtils.isNotBlank(ind1) ? String.valueOf(ind1.charAt(0)) : " ";
         String indicator2 = StringUtils.isNotBlank(ind2) ? String.valueOf(ind2.charAt(0)) : " ";
@@ -193,7 +193,7 @@ public class MarcUtil {
         return values;
     }
 
-    private boolean doIndicatorsMatch(String indicator1, String indicator2, DataField dataField) {
+    private static boolean doIndicatorsMatch(String indicator1, String indicator2, DataField dataField) {
         boolean result = true;
         if (StringUtils.isNotBlank(indicator1)) {
             result = dataField.getIndicator1() == indicator1.charAt(0);
@@ -277,7 +277,7 @@ public class MarcUtil {
         return null;
     }
 
-    private String getDataFieldValue(DataField dataField, char subField) {
+    private static String getDataFieldValue(DataField dataField, char subField) {
         Subfield subfield = dataField.getSubfield(subField);
         if (subfield != null) {
             return subfield.getData();
@@ -416,7 +416,7 @@ public class MarcUtil {
         return content;
     }
 
-    private void setVariableFields(List<VariableField> variableFields, Record bibRecord) {
+    private static void setVariableFields(List<VariableField> variableFields, Record bibRecord) {
         if (org.apache.commons.collections.CollectionUtils.isNotEmpty(variableFields)) {
             for (VariableField variableField : variableFields) {
                 bibRecord.removeVariableField(variableField);

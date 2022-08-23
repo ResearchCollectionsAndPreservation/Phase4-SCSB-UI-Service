@@ -66,7 +66,7 @@ public class CsvUtil {
         return file;
     }
 
-    private void writeMainHeaderRow(CsvWriter csvOutput) throws IOException {
+    private static void writeMainHeaderRow(CsvWriter csvOutput) throws IOException {
         csvOutput.write("Title");
         csvOutput.write("Author");
         csvOutput.write("Publisher");
@@ -80,7 +80,7 @@ public class CsvUtil {
         csvOutput.endRecord();
     }
 
-    private void writeMainDataRow(SearchResultRow searchResultRow, CsvWriter csvOutput) throws IOException {
+    private static void writeMainDataRow(SearchResultRow searchResultRow, CsvWriter csvOutput) throws IOException {
         csvOutput.write(searchResultRow.getTitle());
         csvOutput.write(searchResultRow.getAuthor());
         csvOutput.write(searchResultRow.getPublisher());
@@ -94,7 +94,7 @@ public class CsvUtil {
         csvOutput.endRecord();
     }
 
-    private void writeChildHeaderRow(CsvWriter csvOutput) throws IOException {
+    private static void writeChildHeaderRow(CsvWriter csvOutput) throws IOException {
         csvOutput.write("");
         csvOutput.write("");
         csvOutput.write("");
@@ -107,7 +107,7 @@ public class CsvUtil {
         csvOutput.endRecord();
     }
 
-    private void writeChildDataRow(SearchItemResultRow searchItemResultRow, CsvWriter csvOutput) throws IOException {
+    private static void writeChildDataRow(SearchItemResultRow searchItemResultRow, CsvWriter csvOutput) throws IOException {
         csvOutput.write("");
         csvOutput.write("");
         csvOutput.write("");
@@ -120,7 +120,7 @@ public class CsvUtil {
         csvOutput.endRecord();
     }
 
-    private boolean isAnyItemSelected(List<SearchItemResultRow> searchItemResultRows) {
+    private static boolean isAnyItemSelected(List<SearchItemResultRow> searchItemResultRows) {
         for (SearchItemResultRow searchItemResultRow : searchItemResultRows) {
             if (searchItemResultRow.isSelectedItem()) {
                 return true;

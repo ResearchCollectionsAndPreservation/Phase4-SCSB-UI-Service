@@ -69,7 +69,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
         return stripXSS(value);
     }
 
-    private String stripXSS(String value) {
+    private static String stripXSS(String value) {
         if (value != null) {
             // NOTE: It's highly recommended to use the ESAPI library and uncomment the following line to
             // avoid encoded attacks.

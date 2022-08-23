@@ -241,7 +241,7 @@ public class ReportsUtil {
             }
              if(submitCollectionReprot.getSubmitCollectionResultsRows().isEmpty())
                  submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
-        }catch (Exception e) {
+        }catch (RuntimeException e) {
             submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }
         return new ResponseEntity<>(submitCollectionReprot, HttpStatus.OK);
@@ -261,13 +261,13 @@ public class ReportsUtil {
             submitCollectionReprot = submitCollectionReprotResponseEntity.getBody();
             if(submitCollectionReprot.getSubmitCollectionResultsRows().isEmpty())
                 submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
-        }catch (Exception e) {
+        }catch (RuntimeException e) {
             submitCollectionReprot.setErrorMessage(ScsbCommonConstants.SEARCH_RESULT_ERROR_NO_RECORDS_FOUND);
         }
         return new ResponseEntity<>(submitCollectionReprot, HttpStatus.OK);
     }
 
-    private void writeRow(IncompleteReportResultsRow incompleteReportResultsRow, CsvWriter csvOutput) throws IOException {
+    private static void writeRow(IncompleteReportResultsRow incompleteReportResultsRow, CsvWriter csvOutput) throws IOException {
         csvOutput.write(incompleteReportResultsRow.getTitle());
         csvOutput.write(incompleteReportResultsRow.getAuthor());
         csvOutput.write(incompleteReportResultsRow.getCustomerCode());
@@ -276,7 +276,7 @@ public class ReportsUtil {
         csvOutput.endRecord();
     }
 
-    private void writeHeader(CsvWriter csvOutput) throws Exception{
+    private static void writeHeader(CsvWriter csvOutput) throws Exception{
         csvOutput.write("Title");
         csvOutput.write("Author");
         csvOutput.write("Customer code");
@@ -291,7 +291,7 @@ public class ReportsUtil {
      * @return
      */
     public List<String> getInstitutions() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toList());
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getInstitutionCode).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -307,7 +307,7 @@ public class ReportsUtil {
      * @return
      */
     private List<Integer> getInstitutionIds() {
-        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getId).collect(Collectors.toList());
+        return institutionDetailsRepository.getInstitutionCodeForSuperAdmin(supportInstitution).stream().map(InstitutionEntity::getId).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**

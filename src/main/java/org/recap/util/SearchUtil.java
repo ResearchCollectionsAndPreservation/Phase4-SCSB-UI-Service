@@ -43,7 +43,7 @@ public class SearchUtil {
             ResponseEntity<SearchRecordsResponse> responseEntity = restTemplate.exchange(scsbGatewayUrl + ScsbConstants.SCSB_SEARCH_SERVICE_URL, HttpMethod.POST, httpEntity, SearchRecordsResponse.class);
             searchRecordsResponse = responseEntity.getBody();
             return searchRecordsResponse;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error(ScsbCommonConstants.LOG_ERROR, e);
             return searchRecordsResponse;
         }
