@@ -223,11 +223,16 @@ public class ScsbConstants {
     public static final String PWD_DELIVERY_RESTRICT_TYPE = "PWD";
     public static final String FILE_NAMES = "fileNames";
     //AUTHENTICATN
+
     public static final String FALSE_STRING = "FALSE";
     public static final String TRUE_STRING = "TRUE";
     public static final String USER_AUTHENTICATED = "user_authenticated";
     public static final String API_PATH = "api_path";
     public static final String MVM = "MVM";
+    public static final String CSP_VALUE = "csp.value";
+    public static final String CSP_ENABLE = "csp.enable";
+    public static final String CSP = "Content-Security-Policy";
+
     private ScsbConstants() {
         //Do nothing
     }

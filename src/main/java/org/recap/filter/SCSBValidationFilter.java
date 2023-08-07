@@ -1,8 +1,11 @@
 package org.recap.filter;
 
 import org.apache.http.HttpStatus;
+import org.recap.PropertyKeyConstants;
 import org.recap.ScsbConstants;
 import org.recap.spring.ApplicationContextProvider;
+import org.recap.spring.PropertyValueProvider;
+import org.recap.util.HelperUtil;
 import org.recap.util.UserAuthUtil;
 
 import javax.servlet.Filter;
@@ -28,6 +31,11 @@ public class SCSBValidationFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         var user_authenticated = ScsbConstants.FALSE_STRING;
         try {
+            PropertyValueProvider propertyValueProvider = HelperUtil.getBean(PropertyValueProvider.class);
+            if (propertyValueProvider.getProperty(ScsbConstants.CSP_ENABLE).equals(Boolean.TRUE)) {
+                httpServletResponse.addHeader(ScsbConstants.CSP,
+                        "default-src " + propertyValueProvider.getProperty(PropertyKeyConstants.SCSB_UI_URL) + propertyValueProvider.getProperty(ScsbConstants.CSP_VALUE));
+            }
             HttpSession session = httpServletRequest.getSession(ScsbConstants.FALSE);
             Optional<String> API_PATH = Optional.ofNullable(httpServletRequest.getHeader(ScsbConstants.API_PATH));
             API_PATH = (API_PATH.isEmpty()) ? Optional.ofNullable(ScsbConstants.SEARCH.toLowerCase()) : API_PATH;

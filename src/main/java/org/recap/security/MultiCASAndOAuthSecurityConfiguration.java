@@ -48,6 +48,15 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
     @Value("${" + PropertyKeyConstants.SCSB_APP_SERVICE_LOGOUT + "}")
     private String appServiceLogout;
 
+    @Value("${" + PropertyKeyConstants.SCSB_UI_URL + "}")
+    private String scsbUiUrl;
+
+    @Value("${" + ScsbConstants.CSP_ENABLE + "}")
+    private Boolean cspEnable;
+
+    @Value("${" + ScsbConstants.CSP_VALUE + "}")
+    private String cspValue;
+
     @Autowired
     private CASPropertyProvider casPropertyProvider;
 
@@ -76,7 +85,9 @@ public class MultiCASAndOAuthSecurityConfiguration extends WebSecurityConfigurer
 
         SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer = http.sessionManagement();
         httpSecuritySessionManagementConfigurer.invalidSessionUrl("/home");
-
+        if (cspEnable) {
+            http.headers(headers -> headers.contentSecurityPolicy(contentSecurityPolicy -> contentSecurityPolicy.policyDirectives( "default-src "+ scsbUiUrl + cspValue )));
+        }
         http.logout().logoutUrl(ScsbConstants.LOG_USER_LOGOUT_URL).logoutSuccessUrl("/").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID");
         // @formatter:on
