@@ -201,6 +201,7 @@ public class RequestServiceUT{
         Mockito.when(requestStatusEntity.getRequestStatusDescription()).thenReturn(ScsbCommonConstants.REQUEST_STATUS_REFILED);
         List<String> requestStatuses = new ArrayList<>();
         requestService.findAllRequestStatusExceptProcessing(requestStatuses);
+        requestService.findAllRequestStatus(requestStatuses);
         requestService.getRequestServiceUtil();
         assertTrue(true);
     }

@@ -140,6 +140,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Mockito.when(requestServiceUtil.searchRequests(any())).thenReturn(requestItemEntities);
         Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
+        Mockito.doNothing().when(requestService).findAllRequestStatus(any());
         Mockito.when(institutionDetailsRepository.findById(any())).thenReturn(Optional.of(institutionEntity));
         RequestForm form = requestController.goToSearchRequest(requestForm, request);
         assertNotNull(form);
@@ -218,6 +219,7 @@ public class RequestControllerUT extends BaseTestCaseUT {
         Page<RequestItemEntity> requestItemEntities = new PageImpl<RequestItemEntity>(new ArrayList<>());
         Mockito.when(request.getSession(false)).thenReturn(session);
         Mockito.doNothing().when(requestService).findAllRequestStatusExceptProcessing(any());
+        Mockito.doNothing().when(requestService).findAllRequestStatus(any());
         Mockito.doNothing().when(requestService).getInstitutionForSuperAdmin(any());
         Mockito.when(userAuthUtil.getUserDetails(session, ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         RequestForm form = requestController.loadSearchRequest(request);
