@@ -503,6 +503,7 @@ public class RequestControllerTestUT  {
         Mockito.when(requestController.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
         Mockito.doCallRealMethod().when(requestServiceMocked).getInstitutionForSuperAdmin(institutionCodeList);
         Mockito.doNothing().when(requestServiceMocked).findAllRequestStatusExceptProcessing(requestStatuses);
+        Mockito.doNothing().when(requestServiceMocked).findAllRequestStatus(requestStatuses);
         Mockito.when(requestController.getUserAuthUtil()).thenReturn(userAuthUtil);
         Mockito.when(requestController.getUserAuthUtil().getUserDetails(request.getSession(false), ScsbConstants.REQUEST_PRIVILEGE)).thenReturn(userDetailsForm);
         Mockito.when(requestController.getInstitutionDetailsRepository()).thenReturn(institutionDetailsRepository);
