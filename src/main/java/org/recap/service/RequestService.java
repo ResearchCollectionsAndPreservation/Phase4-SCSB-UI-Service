@@ -615,6 +615,19 @@ public class RequestService extends AbstractController {
     }
 
     /**
+     * Adds all the request status description in scsb into the request statuses list.
+     *
+     * @param requestStatuses the request statuses
+     */
+    public void findAllRequestStatus(List<String> requestStatuses) {
+        Iterable<RequestStatusEntity> requestStatusEntities = getRequestStatusDetailsRepository().findAll();
+        for (Iterator iterator = requestStatusEntities.iterator(); iterator.hasNext(); ) {
+            RequestStatusEntity requestStatusEntity = (RequestStatusEntity) iterator.next();
+            requestStatuses.add(requestStatusEntity.getRequestStatusDescription());
+        }
+    }
+
+    /**
      * Adds the institution code into the institution list for super admin role.
      *
      * @param institutionList the institution list

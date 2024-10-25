@@ -690,7 +690,7 @@ public class RequestController extends ScsbController {
     private RequestForm setFormValues(RequestForm requestForm, UserDetailsForm userDetails) {
         List<String> requestStatuses = new ArrayList<>();
         List<String> institutionList = new ArrayList<>();
-        getRequestService().findAllRequestStatusExceptProcessing(requestStatuses);
+        getRequestService().findAllRequestStatus(requestStatuses);
         requestForm.setRequestStatuses(requestStatuses);
         return setFormValuesToDisableSearchInstitution(requestForm, userDetails, institutionList);
     }
